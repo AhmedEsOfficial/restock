@@ -37,12 +37,25 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 dependencies {
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.bundles.lifecycle)
+
+    // Coroutines (for viewModelScope)
+    implementation(libs.bundles.coroutines)
 
     // Compose
     implementation(platform(libs.compose.bom))
