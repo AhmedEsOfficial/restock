@@ -17,6 +17,12 @@ dependencies {
     // Coroutines
     implementation(libs.coroutines.core)
 
+    // DateTime for domain models
+    api(libs.kotlinx.datetime)
+
+    // Immutable Collections for stable state
+    api(libs.kotlinx.collections.immutable)
+
     // Testing
     testImplementation(libs.bundles.testing)
 }

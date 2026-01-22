@@ -47,8 +47,15 @@ dependencies {
     // Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.compose)
+    implementation(libs.compose.material.icons.core)
     implementation(libs.compose.material.icons.extended)
     debugImplementation(libs.bundles.compose.debug)
+
+    // Coil for image loading
+    implementation(libs.bundles.coil)
+
+    // Immutable Collections for stable Compose state
+    implementation(libs.kotlinx.collections.immutable)
 
     // Testing
     testImplementation(libs.bundles.testing)

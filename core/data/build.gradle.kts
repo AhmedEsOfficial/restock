@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
@@ -58,16 +59,37 @@ dependencies {
     implementation(libs.bundles.room)
     ksp(libs.room.compiler)
 
+    // SQLCipher for database encryption
+    implementation(libs.sqlcipher.android)
+
     // DataStore
     implementation(libs.datastore.preferences)
+    implementation(libs.datastore.core)
 
     // Coroutines
     implementation(libs.bundles.coroutines)
 
+    // Serialization
+    implementation(libs.kotlin.serialization.json)
+
+    // Ktor Networking
+    implementation(libs.bundles.ktor)
+    implementation(libs.okhttp.logging)
+
+    // WorkManager for background processing
+    implementation(libs.work.runtime)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.work.compiler)
+
+    // DateTime
+    implementation(libs.kotlinx.datetime)
+
     // Testing
     testImplementation(libs.bundles.testing)
-    testImplementation(libs.room.testing)
+    testImplementation(libs.bundles.testing.room)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.bundles.testing.android)
-    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.bundles.testing.hilt)
+    androidTestImplementation(libs.work.testing)
     kspAndroidTest(libs.hilt.compiler)
 }

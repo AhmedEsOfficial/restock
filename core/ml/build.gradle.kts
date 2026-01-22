@@ -14,6 +14,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        // Add ndk abiFilters for TensorFlow Lite (optional - for smaller APK)
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
     }
 
     buildTypes {
@@ -50,11 +55,21 @@ dependencies {
     // Coroutines
     implementation(libs.bundles.coroutines)
 
-    // TensorFlow Lite (placeholder for future ML features)
-    // implementation(libs.tensorflow.lite)
-    // implementation(libs.tensorflow.lite.support)
+    // TensorFlow Lite for pattern learning
+    implementation(libs.bundles.tensorflow)
+
+    // WorkManager for background pattern processing
+    implementation(libs.work.runtime)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.work.compiler)
+
+    // DateTime for pattern calculations
+    implementation(libs.kotlinx.datetime)
 
     // Testing
     testImplementation(libs.bundles.testing)
     androidTestImplementation(libs.bundles.testing.android)
+    androidTestImplementation(libs.bundles.testing.hilt)
+    androidTestImplementation(libs.work.testing)
+    kspAndroidTest(libs.hilt.compiler)
 }

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
@@ -17,7 +18,7 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.restock.HiltTestRunner"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -58,6 +59,9 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            // Exclude duplicate files from TensorFlow Lite
+            excludes += "/META-INF/INDEX.LIST"
+            excludes += "/META-INF/io.netty.versions.properties"
         }
     }
 }
@@ -67,6 +71,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation(project(":core:ml"))
 
     // Feature modules
     implementation(project(":feature:list"))
@@ -78,6 +83,7 @@ dependencies {
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.bundles.lifecycle)
+    implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.activity.compose)
 
     // Compose
@@ -93,14 +99,24 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
+    // WorkManager for background tasks
+    implementation(libs.work.runtime)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.work.compiler)
+
     // Coroutines
     implementation(libs.bundles.coroutines)
 
+    // Serialization
+    implementation(libs.kotlin.serialization.json)
+
     // Testing
     testImplementation(libs.bundles.testing)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.bundles.testing.android)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
-    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.bundles.testing.hilt)
+    androidTestImplementation(libs.work.testing)
     kspAndroidTest(libs.hilt.compiler)
 }
