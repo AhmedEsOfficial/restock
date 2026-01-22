@@ -90,6 +90,9 @@ dependencies {
     testImplementation(libs.robolectric)
     androidTestImplementation(libs.bundles.testing.android)
     androidTestImplementation(libs.bundles.testing.hilt)
+    androidTestImplementation(libs.bundles.testing.room)
     androidTestImplementation(libs.work.testing)
+    androidTestImplementation(libs.turbine)
+    androidTestImplementation(libs.coroutines.test)
     kspAndroidTest(libs.hilt.compiler)
 }
