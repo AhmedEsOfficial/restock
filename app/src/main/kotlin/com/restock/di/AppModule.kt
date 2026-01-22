@@ -1,41 +1,29 @@
 package com.restock.di
 
+import com.restock.core.data.di.ApplicationScope
+import com.restock.core.data.di.DefaultDispatcher
+import com.restock.core.data.di.IoDispatcher
+import com.restock.core.data.di.MainDispatcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import javax.inject.Qualifier
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
-
-/**
- * Qualifier for the IO dispatcher used for disk and network operations.
- */
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class IoDispatcher
-
-/**
- * Qualifier for the Default dispatcher used for CPU-intensive operations.
- */
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class DefaultDispatcher
-
-/**
- * Qualifier for the Main dispatcher used for UI operations.
- */
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class MainDispatcher
 
 /**
  * Application-level Hilt module providing common dependencies.
  *
  * This module provides:
  * - Coroutine dispatchers for different use cases
+ * - Application-scoped CoroutineScope for long-running operations
  * - Application-wide singleton dependencies
+ *
+ * Qualifiers are defined in [com.restock.core.data.di.DispatcherQualifiers]
+ * to allow usage across all modules.
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -64,4 +52,17 @@ object AppModule {
     @Singleton
     @MainDispatcher
     fun provideMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
+
+    /**
+     * Provides an application-scoped CoroutineScope.
+     *
+     * Uses SupervisorJob + Default dispatcher for background work
+     * that should outlive individual screens/components.
+     */
+    @Provides
+    @Singleton
+    @ApplicationScope
+    fun provideApplicationScope(
+        @DefaultDispatcher dispatcher: CoroutineDispatcher
+    ): CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
 }
