@@ -117,6 +117,7 @@ fun RestockTheme(
 
     CompositionLocalProvider(
         LocalSpacing provides Spacing(),
+        LocalElevation provides Elevation(),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -143,4 +144,12 @@ object RestockTheme {
         @Composable
         @androidx.compose.runtime.ReadOnlyComposable
         get() = LocalSpacing.current
+
+    /**
+     * Access elevation values from the current theme.
+     */
+    val elevation: Elevation
+        @Composable
+        @androidx.compose.runtime.ReadOnlyComposable
+        get() = LocalElevation.current
 }

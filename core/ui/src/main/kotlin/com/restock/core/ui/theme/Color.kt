@@ -31,6 +31,11 @@ object RestockColors {
     val OnSuccess = Color(0xFFFFFFFF) // Text on success surfaces
     val Error = Color(0xFFEF4444) // Error states
     val OnError = Color(0xFFFFFFFF) // Text on error surfaces
+    val Warning = Color(0xFFF59E0B) // Warning states (same as Accent/Amber)
+    val OnWarning = Color(0xFF1F1F1F) // Text on warning surfaces
+    val Info = Color(0xFF3B82F6) // Info states (Blue)
+    val OnInfo = Color(0xFFFFFFFF) // Text on info surfaces
+    val Disabled = Color(0xFFD1D5DB) // Disabled elements (Gray)
 
     // Muted colors
     val Muted = Color(0xFF8B8680) // Secondary text, placeholders
@@ -73,6 +78,11 @@ object RestockDarkColors {
     val OnSuccess = Color(0xFF1F1F1F)
     val Error = Color(0xFFEF4444)
     val OnError = Color(0xFFFFFFFF)
+    val Warning = Color(0xFFF59E0B)
+    val OnWarning = Color(0xFF1F1F1F)
+    val Info = Color(0xFF60A5FA)
+    val OnInfo = Color(0xFF1F1F1F)
+    val Disabled = Color(0xFF4B5563)
 
     val Muted = Color(0xFF9CA3AF)
     val MutedVariant = Color(0xFF6B7280)

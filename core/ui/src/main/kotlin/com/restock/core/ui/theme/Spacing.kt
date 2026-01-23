@@ -32,14 +32,28 @@ data class Spacing(
     val xxxl: Dp = 48.dp,
     // Semantic spacing
     val cardPadding: Dp = 16.dp,
+    val cardPaddingHorizontal: Dp = 12.dp,
+    val cardPaddingVertical: Dp = 14.dp,
     val listItemGap: Dp = 8.dp,
     val sectionGap: Dp = 24.dp,
     val screenPadding: Dp = 16.dp,
-    val bottomNavHeight: Dp = 80.dp,
-    // Touch targets (minimum 48dp for accessibility)
-    val minTouchTarget: Dp = 48.dp,
+    val screenPaddingTop: Dp = 48.dp,
+    // Component sizing
+    val bottomNavHeight: Dp = 64.dp,
+    val listItemMinHeight: Dp = 56.dp,
+    val inputFieldHeight: Dp = 52.dp,
+    val suggestionCardWidth: Dp = 140.dp,
+    val buttonHeight: Dp = 48.dp,
+    // Icon sizes
+    val iconSizeSmall: Dp = 20.dp,
     val iconSize: Dp = 24.dp,
     val iconSizeLarge: Dp = 32.dp,
+    // Touch targets (minimum 48dp for accessibility)
+    val minTouchTarget: Dp = 48.dp,
+    val checkboxSize: Dp = 24.dp,
+    val checkboxTouchTarget: Dp = 48.dp,
+    // Swipe threshold
+    val swipeThreshold: Dp = 72.dp,
 )
 
 /**
@@ -93,7 +107,51 @@ object RestockSpacing {
     val screenPadding: Dp
         @Composable @ReadOnlyComposable
         get() = LocalSpacing.current.screenPadding
+    val screenPaddingTop: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.screenPaddingTop
+
+    // Component sizing
+    val bottomNavHeight: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.bottomNavHeight
+    val listItemMinHeight: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.listItemMinHeight
+    val inputFieldHeight: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.inputFieldHeight
+    val suggestionCardWidth: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.suggestionCardWidth
+    val buttonHeight: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.buttonHeight
+
+    // Icon sizes
+    val iconSizeSmall: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.iconSizeSmall
+    val iconSize: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.iconSize
+    val iconSizeLarge: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.iconSizeLarge
+
+    // Touch targets
     val minTouchTarget: Dp
         @Composable @ReadOnlyComposable
         get() = LocalSpacing.current.minTouchTarget
+    val checkboxSize: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.checkboxSize
+    val checkboxTouchTarget: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.checkboxTouchTarget
+
+    // Swipe
+    val swipeThreshold: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.swipeThreshold
 }
