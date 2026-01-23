@@ -14,5 +14,5 @@ data class Purchase(
     val purchasedAt: Instant,
     val quantity: Int = 1,
     val priceCents: Int? = null,
-    val storeId: String? = null
+    val storeId: String? = null,
 )

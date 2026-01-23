@@ -1,7 +1,6 @@
 package com.restock.core.domain.repository
 
 import com.restock.core.domain.model.GroceryItem
-import com.restock.core.domain.model.ItemWithMealTags
 import com.restock.core.domain.model.MealTag
 import com.restock.core.domain.model.MealType
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
  * Implementations manage the associations between items and meal types.
  */
 interface MealTagRepository {
-
     /**
      * Observe all meal tags.
      */
@@ -38,12 +36,18 @@ interface MealTagRepository {
      *
      * If the tag already exists, increments the frequency count.
      */
-    suspend fun addTag(itemId: String, mealType: MealType): Result<Unit>
+    suspend fun addTag(
+        itemId: String,
+        mealType: MealType,
+    ): Result<Unit>
 
     /**
      * Remove a tag from an item.
      */
-    suspend fun removeTag(itemId: String, mealType: MealType): Result<Unit>
+    suspend fun removeTag(
+        itemId: String,
+        mealType: MealType,
+    ): Result<Unit>
 
     /**
      * Remove all tags for an item.

@@ -18,15 +18,13 @@ import androidx.navigation.compose.rememberNavController
  * routes to all feature screens.
  */
 @Composable
-fun RestockNavHost(
-    modifier: Modifier = Modifier
-) {
+fun RestockNavHost(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
         startDestination = "list",
-        modifier = modifier
+        modifier = modifier,
     ) {
         // Main list screen (home)
         composable("list") {
@@ -67,15 +65,15 @@ fun RestockNavHost(
 @Composable
 private fun PlaceholderScreen(
     title: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium,
         )
     }
 }

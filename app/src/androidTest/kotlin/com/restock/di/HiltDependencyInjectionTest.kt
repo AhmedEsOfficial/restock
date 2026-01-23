@@ -11,13 +11,13 @@ import com.restock.core.domain.repository.PatternRepository
 import com.restock.core.domain.repository.PurchaseRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * Instrumented test to verify Hilt dependency injection is working correctly.
@@ -31,7 +31,6 @@ import javax.inject.Inject
  */
 @HiltAndroidTest
 class HiltDependencyInjectionTest {
-
     @get:Rule
     val hiltRule = HiltAndroidRule(this)
 

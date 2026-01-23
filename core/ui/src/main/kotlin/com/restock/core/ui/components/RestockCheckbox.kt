@@ -53,57 +53,59 @@ fun RestockCheckbox(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    size: Dp = 24.dp
+    size: Dp = 24.dp,
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = if (checked) RestockColors.Success else Color.Transparent,
         animationSpec = tween(durationMillis = 150),
-        label = "checkbox_background"
+        label = "checkbox_background",
     )
 
     val borderColor by animateColorAsState(
         targetValue = if (checked) RestockColors.Success else RestockColors.MutedVariant,
         animationSpec = tween(durationMillis = 150),
-        label = "checkbox_border"
+        label = "checkbox_border",
     )
 
     val checkmarkColor by animateColorAsState(
         targetValue = if (checked) RestockColors.OnSuccess else Color.Transparent,
         animationSpec = tween(durationMillis = 150),
-        label = "checkbox_checkmark"
+        label = "checkbox_checkmark",
     )
 
     Box(
-        modifier = modifier
-            .size(48.dp) // Minimum touch target
-            .clip(CircleShape)
-            .clickable(
-                enabled = enabled,
-                onClick = { onCheckedChange(!checked) },
-                role = Role.Checkbox,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(bounded = true)
-            ),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .size(48.dp) // Minimum touch target
+                .clip(CircleShape)
+                .clickable(
+                    enabled = enabled,
+                    onClick = { onCheckedChange(!checked) },
+                    role = Role.Checkbox,
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = ripple(bounded = true),
+                ),
+        contentAlignment = Alignment.Center,
     ) {
         Box(
-            modifier = Modifier
-                .size(size)
-                .clip(CircleShape)
-                .background(backgroundColor)
-                .border(
-                    width = 2.dp,
-                    color = borderColor,
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .size(size)
+                    .clip(CircleShape)
+                    .background(backgroundColor)
+                    .border(
+                        width = 2.dp,
+                        color = borderColor,
+                        shape = CircleShape,
+                    ),
+            contentAlignment = Alignment.Center,
         ) {
             if (checked) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
                     modifier = Modifier.size(size * 0.7f),
-                    tint = checkmarkColor
+                    tint = checkmarkColor,
                 )
             }
         }
@@ -125,28 +127,29 @@ fun RestockLabeledCheckbox(
     onCheckedChange: (Boolean) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     Row(
-        modifier = modifier
-            .clickable(
-                enabled = enabled,
-                onClick = { onCheckedChange(!checked) },
-                role = Role.Checkbox
-            )
-            .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .clickable(
+                    enabled = enabled,
+                    onClick = { onCheckedChange(!checked) },
+                    role = Role.Checkbox,
+                )
+                .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         RestockCheckbox(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            enabled = enabled
+            enabled = enabled,
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = if (enabled) RestockColors.OnSurface else RestockColors.Muted
+            color = if (enabled) RestockColors.OnSurface else RestockColors.Muted,
         )
     }
 }
@@ -158,7 +161,7 @@ private fun RestockCheckboxUncheckedPreview() {
     RestockTheme {
         RestockCheckbox(
             checked = false,
-            onCheckedChange = {}
+            onCheckedChange = {},
         )
     }
 }
@@ -169,7 +172,7 @@ private fun RestockCheckboxCheckedPreview() {
     RestockTheme {
         RestockCheckbox(
             checked = true,
-            onCheckedChange = {}
+            onCheckedChange = {},
         )
     }
 }
@@ -182,7 +185,7 @@ private fun RestockLabeledCheckboxPreview() {
         RestockLabeledCheckbox(
             checked = checked,
             onCheckedChange = { checked = it },
-            label = "Milk"
+            label = "Milk",
         )
     }
 }

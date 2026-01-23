@@ -23,21 +23,20 @@ import com.restock.core.ui.theme.RestockTheme
  * TODO: Implement full functionality in Sprint 7-8
  */
 @Composable
-fun SuggestionsScreen(
-    modifier: Modifier = Modifier
-) {
+fun SuggestionsScreen(modifier: Modifier = Modifier) {
     Scaffold(
-        modifier = modifier
+        modifier = modifier,
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "Smart Suggestions",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
             )
         }
     }

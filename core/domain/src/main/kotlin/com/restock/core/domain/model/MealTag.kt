@@ -7,7 +7,8 @@ enum class MealType(val displayName: String) {
     BREAKFAST("Breakfast"),
     LUNCH("Lunch"),
     DINNER("Dinner"),
-    SNACK("Snack");
+    SNACK("Snack"),
+    ;
 
     companion object {
         fun fromString(value: String): MealType? {
@@ -25,7 +26,7 @@ data class MealTag(
     val id: String,
     val itemId: String,
     val mealType: MealType,
-    val frequencyCount: Int = 1
+    val frequencyCount: Int = 1,
 )
 
 /**
@@ -34,5 +35,5 @@ data class MealTag(
 data class ItemWithMealTags(
     val itemId: String,
     val itemName: String,
-    val mealTypes: List<MealType>
+    val mealTypes: List<MealType>,
 )

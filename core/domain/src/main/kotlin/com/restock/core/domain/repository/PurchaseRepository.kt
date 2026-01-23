@@ -1,8 +1,8 @@
 package com.restock.core.domain.repository
 
 import com.restock.core.domain.model.Purchase
-import kotlinx.coroutines.flow.Flow
 import java.time.Instant
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Repository interface for purchase history.
@@ -11,7 +11,6 @@ import java.time.Instant
  * which feeds into the pattern learning system.
  */
 interface PurchaseRepository {
-
     /**
      * Observe all purchases sorted by date descending.
      */
@@ -45,7 +44,10 @@ interface PurchaseRepository {
     /**
      * Get purchases within a date range.
      */
-    suspend fun getPurchasesInRange(start: Instant, end: Instant): List<Purchase>
+    suspend fun getPurchasesInRange(
+        start: Instant,
+        end: Instant,
+    ): List<Purchase>
 
     /**
      * Record a new purchase.

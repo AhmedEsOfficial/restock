@@ -7,26 +7,28 @@ import java.time.Instant
 /**
  * Maps PurchaseEntity to Purchase domain model.
  */
-fun PurchaseEntity.toDomain(): Purchase = Purchase(
-    id = id,
-    itemId = itemId,
-    purchasedAt = Instant.ofEpochMilli(purchasedAt),
-    quantity = quantity,
-    priceCents = priceCents,
-    storeId = storeId
-)
+fun PurchaseEntity.toDomain(): Purchase =
+    Purchase(
+        id = id,
+        itemId = itemId,
+        purchasedAt = Instant.ofEpochMilli(purchasedAt),
+        quantity = quantity,
+        priceCents = priceCents,
+        storeId = storeId,
+    )
 
 /**
  * Maps Purchase domain model to PurchaseEntity.
  */
-fun Purchase.toEntity(): PurchaseEntity = PurchaseEntity(
-    id = id,
-    itemId = itemId,
-    purchasedAt = purchasedAt.toEpochMilli(),
-    quantity = quantity,
-    priceCents = priceCents,
-    storeId = storeId
-)
+fun Purchase.toEntity(): PurchaseEntity =
+    PurchaseEntity(
+        id = id,
+        itemId = itemId,
+        purchasedAt = purchasedAt.toEpochMilli(),
+        quantity = quantity,
+        priceCents = priceCents,
+        storeId = storeId,
+    )
 
 /**
  * Maps a list of PurchaseEntities to domain models.

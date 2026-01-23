@@ -1,7 +1,5 @@
 package com.restock.core.domain.model
 
-import java.time.Instant
-
 /**
  * Domain model representing a smart suggestion.
  *
@@ -15,7 +13,7 @@ data class Suggestion(
     val confidenceScore: Double,
     val daysSinceLastPurchase: Int,
     val expectedIntervalDays: Int,
-    val urgencyScore: Double
+    val urgencyScore: Double,
 ) {
     companion object {
         /**
@@ -33,7 +31,7 @@ data class Suggestion(
  */
 fun calculateUrgencyScore(
     daysSinceLastPurchase: Int,
-    expectedIntervalDays: Int
+    expectedIntervalDays: Int,
 ): Double {
     if (expectedIntervalDays <= 0) return 0.0
 

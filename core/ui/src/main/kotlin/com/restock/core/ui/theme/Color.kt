@@ -11,40 +11,39 @@ import androidx.compose.ui.graphics.Color
  * - Meal tag colors for categorization
  */
 object RestockColors {
-
     // Primary colors
-    val Primary = Color(0xFF1F1F1F)           // Text, icons, primary buttons
-    val OnPrimary = Color(0xFFFFFFFF)         // Text on primary surfaces
-    val PrimaryContainer = Color(0xFF333333)   // Container for primary elements
+    val Primary = Color(0xFF1F1F1F) // Text, icons, primary buttons
+    val OnPrimary = Color(0xFFFFFFFF) // Text on primary surfaces
+    val PrimaryContainer = Color(0xFF333333) // Container for primary elements
 
     // Accent colors
-    val Accent = Color(0xFFF59E0B)            // Suggestions, smart badges, highlights
-    val OnAccent = Color(0xFF1F1F1F)          // Text on accent surfaces
+    val Accent = Color(0xFFF59E0B) // Suggestions, smart badges, highlights
+    val OnAccent = Color(0xFF1F1F1F) // Text on accent surfaces
 
     // Background colors
-    val Background = Color(0xFFFFFBF5)        // Main background (warm off-white)
-    val OnBackground = Color(0xFF1F1F1F)      // Text on background
-    val Surface = Color(0xFFFFFFFF)           // Cards, inputs, elevated surfaces
-    val OnSurface = Color(0xFF1F1F1F)         // Text on surfaces
+    val Background = Color(0xFFFFFBF5) // Main background (warm off-white)
+    val OnBackground = Color(0xFF1F1F1F) // Text on background
+    val Surface = Color(0xFFFFFFFF) // Cards, inputs, elevated surfaces
+    val OnSurface = Color(0xFF1F1F1F) // Text on surfaces
 
     // Semantic colors
-    val Success = Color(0xFF10B981)           // Checked items, confirmations
-    val OnSuccess = Color(0xFFFFFFFF)         // Text on success surfaces
-    val Error = Color(0xFFEF4444)             // Error states
-    val OnError = Color(0xFFFFFFFF)           // Text on error surfaces
+    val Success = Color(0xFF10B981) // Checked items, confirmations
+    val OnSuccess = Color(0xFFFFFFFF) // Text on success surfaces
+    val Error = Color(0xFFEF4444) // Error states
+    val OnError = Color(0xFFFFFFFF) // Text on error surfaces
 
     // Muted colors
-    val Muted = Color(0xFF8B8680)             // Secondary text, placeholders
-    val MutedVariant = Color(0xFFB8B4AF)      // Borders, dividers
+    val Muted = Color(0xFF8B8680) // Secondary text, placeholders
+    val MutedVariant = Color(0xFFB8B4AF) // Borders, dividers
 
     // Overlay colors
-    val Scrim = Color(0x80000000)             // Modal overlays (50% black)
+    val Scrim = Color(0x80000000) // Modal overlays (50% black)
 
     // Meal tag colors (per design spec)
-    val Breakfast = Color(0xFFF59E0B)         // Amber
-    val Lunch = Color(0xFF10B981)             // Emerald
-    val Dinner = Color(0xFF6366F1)            // Indigo
-    val Snack = Color(0xFFEC4899)             // Pink
+    val Breakfast = Color(0xFFF59E0B) // Amber
+    val Lunch = Color(0xFF10B981) // Emerald
+    val Dinner = Color(0xFF6366F1) // Indigo
+    val Snack = Color(0xFFEC4899) // Pink
 
     // Meal tag container colors (lighter variants for backgrounds)
     val BreakfastContainer = Color(0xFFFEF3C7)

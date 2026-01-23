@@ -86,9 +86,8 @@ import kotlinx.coroutines.launch
  * @param Event One-shot events (navigation, snackbars, etc.). Should be a sealed interface.
  */
 abstract class BaseViewModel<State : Any, Action : Any, Event : Any>(
-    initialState: State
+    initialState: State,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(initialState)
 
     /**

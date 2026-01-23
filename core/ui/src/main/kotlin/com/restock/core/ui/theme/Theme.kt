@@ -15,79 +15,67 @@ import androidx.core.view.WindowCompat
 /**
  * Light color scheme for Restock using Material 3.
  */
-private val LightColorScheme = lightColorScheme(
-    primary = RestockColors.Primary,
-    onPrimary = RestockColors.OnPrimary,
-    primaryContainer = RestockColors.PrimaryContainer,
-    onPrimaryContainer = RestockColors.OnPrimary,
-
-    secondary = RestockColors.Accent,
-    onSecondary = RestockColors.OnAccent,
-    secondaryContainer = RestockColors.Accent.copy(alpha = 0.1f),
-    onSecondaryContainer = RestockColors.Accent,
-
-    tertiary = RestockColors.Success,
-    onTertiary = RestockColors.OnSuccess,
-    tertiaryContainer = RestockColors.Success.copy(alpha = 0.1f),
-    onTertiaryContainer = RestockColors.Success,
-
-    error = RestockColors.Error,
-    onError = RestockColors.OnError,
-    errorContainer = RestockColors.Error.copy(alpha = 0.1f),
-    onErrorContainer = RestockColors.Error,
-
-    background = RestockColors.Background,
-    onBackground = RestockColors.OnBackground,
-
-    surface = RestockColors.Surface,
-    onSurface = RestockColors.OnSurface,
-    surfaceVariant = RestockColors.Background,
-    onSurfaceVariant = RestockColors.Muted,
-
-    outline = RestockColors.MutedVariant,
-    outlineVariant = RestockColors.MutedVariant.copy(alpha = 0.5f),
-
-    scrim = RestockColors.Scrim
-)
+private val LightColorScheme =
+    lightColorScheme(
+        primary = RestockColors.Primary,
+        onPrimary = RestockColors.OnPrimary,
+        primaryContainer = RestockColors.PrimaryContainer,
+        onPrimaryContainer = RestockColors.OnPrimary,
+        secondary = RestockColors.Accent,
+        onSecondary = RestockColors.OnAccent,
+        secondaryContainer = RestockColors.Accent.copy(alpha = 0.1f),
+        onSecondaryContainer = RestockColors.Accent,
+        tertiary = RestockColors.Success,
+        onTertiary = RestockColors.OnSuccess,
+        tertiaryContainer = RestockColors.Success.copy(alpha = 0.1f),
+        onTertiaryContainer = RestockColors.Success,
+        error = RestockColors.Error,
+        onError = RestockColors.OnError,
+        errorContainer = RestockColors.Error.copy(alpha = 0.1f),
+        onErrorContainer = RestockColors.Error,
+        background = RestockColors.Background,
+        onBackground = RestockColors.OnBackground,
+        surface = RestockColors.Surface,
+        onSurface = RestockColors.OnSurface,
+        surfaceVariant = RestockColors.Background,
+        onSurfaceVariant = RestockColors.Muted,
+        outline = RestockColors.MutedVariant,
+        outlineVariant = RestockColors.MutedVariant.copy(alpha = 0.5f),
+        scrim = RestockColors.Scrim,
+    )
 
 /**
  * Dark color scheme for Restock using Material 3.
  * Placeholder for future dark theme implementation.
  */
-private val DarkColorScheme = darkColorScheme(
-    primary = RestockDarkColors.Primary,
-    onPrimary = RestockDarkColors.OnPrimary,
-    primaryContainer = RestockDarkColors.PrimaryContainer,
-    onPrimaryContainer = RestockDarkColors.OnPrimary,
-
-    secondary = RestockDarkColors.Accent,
-    onSecondary = RestockDarkColors.OnAccent,
-    secondaryContainer = RestockDarkColors.Accent.copy(alpha = 0.2f),
-    onSecondaryContainer = RestockDarkColors.Accent,
-
-    tertiary = RestockDarkColors.Success,
-    onTertiary = RestockDarkColors.OnSuccess,
-    tertiaryContainer = RestockDarkColors.Success.copy(alpha = 0.2f),
-    onTertiaryContainer = RestockDarkColors.Success,
-
-    error = RestockDarkColors.Error,
-    onError = RestockDarkColors.OnError,
-    errorContainer = RestockDarkColors.Error.copy(alpha = 0.2f),
-    onErrorContainer = RestockDarkColors.Error,
-
-    background = RestockDarkColors.Background,
-    onBackground = RestockDarkColors.OnBackground,
-
-    surface = RestockDarkColors.Surface,
-    onSurface = RestockDarkColors.OnSurface,
-    surfaceVariant = RestockDarkColors.Surface,
-    onSurfaceVariant = RestockDarkColors.Muted,
-
-    outline = RestockDarkColors.MutedVariant,
-    outlineVariant = RestockDarkColors.MutedVariant.copy(alpha = 0.5f),
-
-    scrim = RestockDarkColors.Scrim
-)
+private val DarkColorScheme =
+    darkColorScheme(
+        primary = RestockDarkColors.Primary,
+        onPrimary = RestockDarkColors.OnPrimary,
+        primaryContainer = RestockDarkColors.PrimaryContainer,
+        onPrimaryContainer = RestockDarkColors.OnPrimary,
+        secondary = RestockDarkColors.Accent,
+        onSecondary = RestockDarkColors.OnAccent,
+        secondaryContainer = RestockDarkColors.Accent.copy(alpha = 0.2f),
+        onSecondaryContainer = RestockDarkColors.Accent,
+        tertiary = RestockDarkColors.Success,
+        onTertiary = RestockDarkColors.OnSuccess,
+        tertiaryContainer = RestockDarkColors.Success.copy(alpha = 0.2f),
+        onTertiaryContainer = RestockDarkColors.Success,
+        error = RestockDarkColors.Error,
+        onError = RestockDarkColors.OnError,
+        errorContainer = RestockDarkColors.Error.copy(alpha = 0.2f),
+        onErrorContainer = RestockDarkColors.Error,
+        background = RestockDarkColors.Background,
+        onBackground = RestockDarkColors.OnBackground,
+        surface = RestockDarkColors.Surface,
+        onSurface = RestockDarkColors.OnSurface,
+        surfaceVariant = RestockDarkColors.Surface,
+        onSurfaceVariant = RestockDarkColors.Muted,
+        outline = RestockDarkColors.MutedVariant,
+        outlineVariant = RestockDarkColors.MutedVariant.copy(alpha = 0.5f),
+        scrim = RestockDarkColors.Scrim,
+    )
 
 /**
  * Restock application theme.
@@ -109,7 +97,7 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun RestockTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
@@ -128,13 +116,13 @@ fun RestockTheme(
     }
 
     CompositionLocalProvider(
-        LocalSpacing provides Spacing()
+        LocalSpacing provides Spacing(),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = RestockTypography,
             shapes = RestockShapes,
-            content = content
+            content = content,
         )
     }
 }

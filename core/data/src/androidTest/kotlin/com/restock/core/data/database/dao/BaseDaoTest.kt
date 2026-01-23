@@ -12,7 +12,6 @@ import org.junit.Before
  * Base class for DAO instrumented tests providing in-memory database setup.
  */
 abstract class BaseDaoTest {
-
     protected lateinit var database: RestockDatabase
     protected lateinit var itemDao: ItemDao
     protected lateinit var currentListDao: CurrentListDao
@@ -23,9 +22,10 @@ abstract class BaseDaoTest {
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        database = Room.inMemoryDatabaseBuilder(context, RestockDatabase::class.java)
-            .allowMainThreadQueries()
-            .build()
+        database =
+            Room.inMemoryDatabaseBuilder(context, RestockDatabase::class.java)
+                .allowMainThreadQueries()
+                .build()
 
         itemDao = database.itemDao()
         currentListDao = database.currentListDao()
@@ -47,13 +47,13 @@ abstract class BaseDaoTest {
         name: String = TEST_ITEM_NAME,
         normalizedName: String = TEST_NORMALIZED_NAME,
         createdAt: Long = TEST_CREATED_AT,
-        isActive: Boolean = true
+        isActive: Boolean = true,
     ) = ItemEntity(
         id = id,
         name = name,
         normalizedName = normalizedName,
         createdAt = createdAt,
-        isActive = isActive
+        isActive = isActive,
     )
 
     companion object {

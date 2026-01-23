@@ -21,19 +21,18 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
-
     /**
      * Provides the Room database instance.
      */
     @Provides
     @Singleton
     fun provideDatabase(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): RestockDatabase {
         return Room.databaseBuilder(
             context,
             RestockDatabase::class.java,
-            RestockDatabase.DATABASE_NAME
+            RestockDatabase.DATABASE_NAME,
         )
             .fallbackToDestructiveMigration()
             .build()

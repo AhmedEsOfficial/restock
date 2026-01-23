@@ -8,11 +8,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import javax.inject.Singleton
 
 /**
  * Application-level Hilt module providing common dependencies.
@@ -28,7 +28,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
     /**
      * Provides the IO dispatcher for disk and network operations.
      */
@@ -63,6 +62,6 @@ object AppModule {
     @Singleton
     @ApplicationScope
     fun provideApplicationScope(
-        @DefaultDispatcher dispatcher: CoroutineDispatcher
+        @DefaultDispatcher dispatcher: CoroutineDispatcher,
     ): CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>ComplexInterface:CurrentListDao.kt$CurrentListDao</ID>
+    <ID>ComplexInterface:ItemDao.kt$ItemDao</ID>
+    <ID>ComplexInterface:MealTagDao.kt$MealTagDao</ID>
+    <ID>ComplexInterface:PurchaseDao.kt$PurchaseDao</ID>
+    <ID>MaxLineLength:MealTagDao.kt$MealTagDao$@Query("UPDATE meal_tags SET frequency_count = frequency_count + 1 WHERE item_id = :itemId AND meal_type = :mealType")</ID>
+    <ID>TooManyFunctions:CurrentListDao.kt$CurrentListDao</ID>
+    <ID>TooManyFunctions:ItemDao.kt$ItemDao</ID>
+    <ID>TooManyFunctions:MealTagDao.kt$MealTagDao</ID>
+    <ID>TooManyFunctions:PurchaseDao.kt$PurchaseDao</ID>
+    <ID>UnusedImports:CurrentListDao.kt$import androidx.room.Transaction</ID>
+    <ID>UnusedImports:CurrentListDao.kt$import com.restock.core.data.database.entity.ItemEntity</ID>
+    <ID>UnusedImports:PatternDao.kt$import androidx.room.Update</ID>
+    <ID>UnusedPrivateProperty:MealTagRepositoryImpl.kt$MealTagRepositoryImpl$private val itemDao: ItemDao</ID>
+  </CurrentIssues>
+</SmellBaseline>

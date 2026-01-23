@@ -25,12 +25,12 @@ import com.restock.core.ui.theme.RestockTheme
 enum class MealType(
     val displayName: String,
     val color: Color,
-    val containerColor: Color
+    val containerColor: Color,
 ) {
     BREAKFAST("Breakfast", RestockColors.Breakfast, RestockColors.BreakfastContainer),
     LUNCH("Lunch", RestockColors.Lunch, RestockColors.LunchContainer),
     DINNER("Dinner", RestockColors.Dinner, RestockColors.DinnerContainer),
-    SNACK("Snack", RestockColors.Snack, RestockColors.SnackContainer)
+    SNACK("Snack", RestockColors.Snack, RestockColors.SnackContainer),
 }
 
 /**
@@ -48,29 +48,31 @@ fun RestockMealChip(
     mealType: MealType,
     modifier: Modifier = Modifier,
     selected: Boolean = true,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
 ) {
     val backgroundColor = if (selected) mealType.containerColor else Color.Transparent
     val textColor = if (selected) mealType.color else RestockColors.Muted
 
-    val clickableModifier = if (onClick != null) {
-        Modifier.clickable(role = Role.Button, onClick = onClick)
-    } else {
-        Modifier
-    }
+    val clickableModifier =
+        if (onClick != null) {
+            Modifier.clickable(role = Role.Button, onClick = onClick)
+        } else {
+            Modifier
+        }
 
     Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(RestockShapeTokens.ChipRadius))
-            .background(backgroundColor)
-            .then(clickableModifier)
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(RestockShapeTokens.ChipRadius))
+                .background(backgroundColor)
+                .then(clickableModifier)
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = mealType.displayName,
             style = MaterialTheme.typography.labelSmall,
-            color = textColor
+            color = textColor,
         )
     }
 }
@@ -90,26 +92,28 @@ fun RestockChip(
     modifier: Modifier = Modifier,
     containerColor: Color = RestockColors.Accent.copy(alpha = 0.1f),
     contentColor: Color = RestockColors.Accent,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
 ) {
-    val clickableModifier = if (onClick != null) {
-        Modifier.clickable(role = Role.Button, onClick = onClick)
-    } else {
-        Modifier
-    }
+    val clickableModifier =
+        if (onClick != null) {
+            Modifier.clickable(role = Role.Button, onClick = onClick)
+        } else {
+            Modifier
+        }
 
     Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(RestockShapeTokens.ChipRadius))
-            .background(containerColor)
-            .then(clickableModifier)
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(RestockShapeTokens.ChipRadius))
+                .background(containerColor)
+                .then(clickableModifier)
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall,
-            color = contentColor
+            color = contentColor,
         )
     }
 }

@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,7 +27,7 @@ fun RestockButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     Button(
         onClick = onClick,
@@ -37,7 +35,7 @@ fun RestockButton(
         enabled = enabled,
         shape = RestockShapes.small,
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
-        content = content
+        content = content,
     )
 }
 
@@ -54,12 +52,12 @@ fun RestockButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     RestockButton(
         onClick = onClick,
         modifier = modifier,
-        enabled = enabled
+        enabled = enabled,
     ) {
         Text(text = text)
     }
@@ -78,7 +76,7 @@ fun RestockOutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     OutlinedButton(
         onClick = onClick,
@@ -86,7 +84,7 @@ fun RestockOutlinedButton(
         enabled = enabled,
         shape = RestockShapes.small,
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
-        content = content
+        content = content,
     )
 }
 
@@ -103,12 +101,12 @@ fun RestockOutlinedButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     RestockOutlinedButton(
         onClick = onClick,
         modifier = modifier,
-        enabled = enabled
+        enabled = enabled,
     ) {
         Text(text = text)
     }
@@ -127,7 +125,7 @@ fun RestockTextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     TextButton(
         onClick = onClick,
@@ -135,7 +133,7 @@ fun RestockTextButton(
         enabled = enabled,
         shape = RestockShapes.small,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-        content = content
+        content = content,
     )
 }
 
@@ -152,12 +150,12 @@ fun RestockTextButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     RestockTextButton(
         onClick = onClick,
         modifier = modifier,
-        enabled = enabled
+        enabled = enabled,
     ) {
         Text(text = text)
     }

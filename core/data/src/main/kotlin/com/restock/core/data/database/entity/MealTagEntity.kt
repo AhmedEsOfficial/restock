@@ -19,25 +19,22 @@ import androidx.room.PrimaryKey
             entity = ItemEntity::class,
             parentColumns = ["id"],
             childColumns = ["item_id"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
     indices = [
-        Index(value = ["item_id", "meal_type"], unique = true)
-    ]
+        Index(value = ["item_id", "meal_type"], unique = true),
+    ],
 )
 data class MealTagEntity(
     @PrimaryKey
     val id: String,
-
     @ColumnInfo(name = "item_id")
     val itemId: String,
-
     @ColumnInfo(name = "meal_type")
     val mealType: String,
-
     @ColumnInfo(name = "frequency_count")
-    val frequencyCount: Int = 1
+    val frequencyCount: Int = 1,
 )
 
 /**

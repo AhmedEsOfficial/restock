@@ -13,7 +13,7 @@ data class GroceryItem(
     val name: String,
     val normalizedName: String,
     val createdAt: Instant,
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
 )
 
 /**

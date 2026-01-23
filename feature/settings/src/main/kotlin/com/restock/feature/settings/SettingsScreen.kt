@@ -25,21 +25,20 @@ import com.restock.core.ui.theme.RestockTheme
  * TODO: Implement full functionality in later sprints
  */
 @Composable
-fun SettingsScreen(
-    modifier: Modifier = Modifier
-) {
+fun SettingsScreen(modifier: Modifier = Modifier) {
     Scaffold(
-        modifier = modifier
+        modifier = modifier,
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "Settings",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
             )
         }
     }

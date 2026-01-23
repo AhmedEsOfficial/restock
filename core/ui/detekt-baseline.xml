@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>BracesOnIfStatements:RestockTextField.kt$else</ID>
+    <ID>MagicNumber:RestockCheckbox.kt$0.7f</ID>
+    <ID>UnusedImports:RestockButton.kt$import androidx.compose.material3.ButtonDefaults</ID>
+    <ID>UnusedImports:RestockButton.kt$import androidx.compose.material3.MaterialTheme</ID>
+    <ID>UnusedImports:RestockCard.kt$import androidx.compose.ui.graphics.Color</ID>
+    <ID>UnusedImports:RestockCard.kt$import androidx.compose.ui.unit.Dp</ID>
+    <ID>UnusedImports:RestockCard.kt$import com.restock.core.ui.theme.RestockShapeTokens</ID>
+    <ID>UnusedImports:RestockTextField.kt$import androidx.compose.material3.MaterialTheme</ID>
+    <ID>UnusedImports:RestockTextField.kt$import androidx.compose.runtime.mutableStateOf</ID>
+    <ID>UnusedImports:RestockTextField.kt$import androidx.compose.runtime.remember</ID>
+    <ID>UnusedImports:RestockTextField.kt$import androidx.compose.ui.text.input.KeyboardType</ID>
+    <ID>UnusedImports:Type.kt$import androidx.compose.ui.text.font.Font</ID>
+  </CurrentIssues>
+</SmellBaseline>

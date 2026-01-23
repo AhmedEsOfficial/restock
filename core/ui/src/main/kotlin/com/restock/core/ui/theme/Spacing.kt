@@ -30,18 +30,16 @@ data class Spacing(
     val xl: Dp = 32.dp,
     val xxl: Dp = 40.dp,
     val xxxl: Dp = 48.dp,
-
     // Semantic spacing
     val cardPadding: Dp = 16.dp,
     val listItemGap: Dp = 8.dp,
     val sectionGap: Dp = 24.dp,
     val screenPadding: Dp = 16.dp,
     val bottomNavHeight: Dp = 80.dp,
-
     // Touch targets (minimum 48dp for accessibility)
     val minTouchTarget: Dp = 48.dp,
     val iconSize: Dp = 24.dp,
-    val iconSizeLarge: Dp = 32.dp
+    val iconSizeLarge: Dp = 32.dp,
 )
 
 /**
@@ -58,18 +56,44 @@ val LocalSpacing = staticCompositionLocalOf { Spacing() }
  * ```
  */
 object RestockSpacing {
-    val xxs: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.xxs
-    val xs: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.xs
-    val sm: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.sm
-    val md: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.md
-    val lg: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.lg
-    val xl: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.xl
-    val xxl: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.xxl
-    val xxxl: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.xxxl
+    val xxs: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.xxs
+    val xs: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.xs
+    val sm: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.sm
+    val md: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.md
+    val lg: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.lg
+    val xl: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.xl
+    val xxl: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.xxl
+    val xxxl: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.xxxl
 
-    val cardPadding: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.cardPadding
-    val listItemGap: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.listItemGap
-    val sectionGap: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.sectionGap
-    val screenPadding: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.screenPadding
-    val minTouchTarget: Dp @Composable @ReadOnlyComposable get() = LocalSpacing.current.minTouchTarget
+    val cardPadding: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.cardPadding
+    val listItemGap: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.listItemGap
+    val sectionGap: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.sectionGap
+    val screenPadding: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.screenPadding
+    val minTouchTarget: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.minTouchTarget
 }

@@ -14,7 +14,7 @@ data class Pattern(
     val confidenceScore: Double,
     val sampleCount: Int,
     val lastCalculated: Instant,
-    val lastSuggested: Instant? = null
+    val lastSuggested: Instant? = null,
 ) {
     companion object {
         /**
@@ -32,7 +32,8 @@ data class Pattern(
      * Whether this pattern has enough confidence to be suggested.
      */
     val isSuggestionReady: Boolean
-        get() = confidenceScore >= SUGGESTION_CONFIDENCE_THRESHOLD &&
+        get() =
+            confidenceScore >= SUGGESTION_CONFIDENCE_THRESHOLD &&
                 sampleCount >= MIN_PURCHASES
 }
 
@@ -47,7 +48,7 @@ data class PatternWithItem(
     val sampleCount: Int,
     val lastCalculated: Instant,
     val lastSuggested: Instant?,
-    val lastPurchasedAt: Instant?
+    val lastPurchasedAt: Instant?,
 ) {
     /**
      * Human-readable interval description.

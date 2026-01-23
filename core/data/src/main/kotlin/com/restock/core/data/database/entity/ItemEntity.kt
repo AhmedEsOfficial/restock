@@ -14,22 +14,18 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "items",
     indices = [
-        Index(value = ["normalized_name"], unique = true)
-    ]
+        Index(value = ["normalized_name"], unique = true),
+    ],
 )
 data class ItemEntity(
     @PrimaryKey
     val id: String,
-
     @ColumnInfo(name = "name")
     val name: String,
-
     @ColumnInfo(name = "normalized_name")
     val normalizedName: String,
-
     @ColumnInfo(name = "created_at")
     val createdAt: Long,
-
     @ColumnInfo(name = "is_active")
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
 )

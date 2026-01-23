@@ -19,36 +19,29 @@ import androidx.room.PrimaryKey
             entity = ItemEntity::class,
             parentColumns = ["id"],
             childColumns = ["item_id"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
     indices = [
         Index(value = ["item_id"]),
-        Index(value = ["position"])
-    ]
+        Index(value = ["position"]),
+    ],
 )
 data class CurrentListEntity(
     @PrimaryKey
     val id: String,
-
     @ColumnInfo(name = "item_id")
     val itemId: String,
-
     @ColumnInfo(name = "quantity")
     val quantity: Int = 1,
-
     @ColumnInfo(name = "unit")
     val unit: String? = null,
-
     @ColumnInfo(name = "added_at")
     val addedAt: Long,
-
     @ColumnInfo(name = "checked_at")
     val checkedAt: Long? = null,
-
     @ColumnInfo(name = "position")
     val position: Int,
-
     @ColumnInfo(name = "is_checked")
-    val isChecked: Boolean = false
+    val isChecked: Boolean = false,
 )

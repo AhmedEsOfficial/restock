@@ -18,15 +18,16 @@ data class CurrentListItem(
     val addedAt: Instant,
     val checkedAt: Instant? = null,
     val position: Int,
-    val isChecked: Boolean = false
+    val isChecked: Boolean = false,
 ) {
     /**
      * Returns a display string for the quantity if > 1.
      */
     val quantityDisplay: String?
-        get() = if (quantity > 1) {
-            if (unit != null) "$quantity $unit" else "×$quantity"
-        } else {
-            unit
-        }
+        get() =
+            if (quantity > 1) {
+                if (unit != null) "$quantity $unit" else "×$quantity"
+            } else {
+                unit
+            }
 }

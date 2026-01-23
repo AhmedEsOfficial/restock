@@ -11,7 +11,6 @@ import dagger.hilt.android.HiltAndroidApp
  */
 @HiltAndroidApp
 class RestockApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
         // Application-wide initialization can be added here

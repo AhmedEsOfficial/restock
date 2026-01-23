@@ -7,7 +7,6 @@ import java.time.Instant
  * Room type converters for complex data types.
  */
 class Converters {
-
     /**
      * Convert Instant to Long for storage.
      */

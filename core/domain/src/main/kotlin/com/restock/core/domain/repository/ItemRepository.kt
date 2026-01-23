@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
  * handling persistence and data transformations.
  */
 interface ItemRepository {
-
     /**
      * Observe all active items sorted by name.
      */
@@ -34,12 +33,18 @@ interface ItemRepository {
     /**
      * Search items by name prefix for autocomplete.
      */
-    suspend fun searchByNamePrefix(query: String, limit: Int = 10): List<GroceryItem>
+    suspend fun searchByNamePrefix(
+        query: String,
+        limit: Int = 10,
+    ): List<GroceryItem>
 
     /**
      * Search items by name containing query.
      */
-    suspend fun searchByName(query: String, limit: Int = 20): List<GroceryItem>
+    suspend fun searchByName(
+        query: String,
+        limit: Int = 20,
+    ): List<GroceryItem>
 
     /**
      * Insert a new item.

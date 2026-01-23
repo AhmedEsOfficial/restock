@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface ItemDao {
-
     /**
      * Observe all active items sorted by name.
      */
@@ -42,13 +41,19 @@ interface ItemDao {
      * Search items by name prefix for autocomplete.
      */
     @Query("SELECT * FROM items WHERE is_active = 1 AND name LIKE :query || '%' ORDER BY name ASC LIMIT :limit")
-    suspend fun searchByNamePrefix(query: String, limit: Int = 10): List<ItemEntity>
+    suspend fun searchByNamePrefix(
+        query: String,
+        limit: Int = 10,
+    ): List<ItemEntity>
 
     /**
      * Search items by name containing query.
      */
     @Query("SELECT * FROM items WHERE is_active = 1 AND name LIKE '%' || :query || '%' ORDER BY name ASC LIMIT :limit")
-    suspend fun searchByName(query: String, limit: Int = 20): List<ItemEntity>
+    suspend fun searchByName(
+        query: String,
+        limit: Int = 20,
+    ): List<ItemEntity>
 
     /**
      * Insert a new item.

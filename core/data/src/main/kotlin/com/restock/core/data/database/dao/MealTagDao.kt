@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 data class ItemWithMealTags(
     val itemId: String,
     val itemName: String,
-    val mealTypes: List<String>
+    val mealTypes: List<String>,
 )
 
 /**
@@ -21,7 +21,6 @@ data class ItemWithMealTags(
  */
 @Dao
 interface MealTagDao {
-
     /**
      * Observe all meal tags.
      */
@@ -43,20 +42,25 @@ interface MealTagDao {
     /**
      * Get items by meal type.
      */
-    @Query("""
+    @Query(
+        """
         SELECT DISTINCT i.id, i.name
         FROM items i
         INNER JOIN meal_tags mt ON i.id = mt.item_id
         WHERE mt.meal_type = :mealType AND i.is_active = 1
         ORDER BY mt.frequency_count DESC
-    """)
+    """,
+    )
     suspend fun getItemsByMealType(mealType: String): List<ItemIdAndName>
 
     /**
      * Check if a tag exists for an item.
      */
     @Query("SELECT * FROM meal_tags WHERE item_id = :itemId AND meal_type = :mealType LIMIT 1")
-    suspend fun findTag(itemId: String, mealType: String): MealTagEntity?
+    suspend fun findTag(
+        itemId: String,
+        mealType: String,
+    ): MealTagEntity?
 
     /**
      * Insert a new tag.
@@ -67,14 +71,22 @@ interface MealTagDao {
     /**
      * Increment frequency count for an existing tag.
      */
-    @Query("UPDATE meal_tags SET frequency_count = frequency_count + 1 WHERE item_id = :itemId AND meal_type = :mealType")
-    suspend fun incrementFrequency(itemId: String, mealType: String)
+    @Query(
+        "UPDATE meal_tags SET frequency_count = frequency_count + 1 WHERE item_id = :itemId AND meal_type = :mealType",
+    )
+    suspend fun incrementFrequency(
+        itemId: String,
+        mealType: String,
+    )
 
     /**
      * Delete a tag.
      */
     @Query("DELETE FROM meal_tags WHERE item_id = :itemId AND meal_type = :mealType")
-    suspend fun delete(itemId: String, mealType: String)
+    suspend fun delete(
+        itemId: String,
+        mealType: String,
+    )
 
     /**
      * Delete all tags for an item.
@@ -94,5 +106,5 @@ interface MealTagDao {
  */
 data class ItemIdAndName(
     val id: String,
-    val name: String
+    val name: String,
 )

@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import com.restock.core.data.database.entity.PatternEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -19,7 +18,7 @@ data class PatternWithItem(
     val sampleCount: Int,
     val lastCalculated: Long,
     val lastSuggested: Long?,
-    val lastPurchasedAt: Long?
+    val lastPurchasedAt: Long?,
 )
 
 /**
@@ -27,11 +26,11 @@ data class PatternWithItem(
  */
 @Dao
 interface PatternDao {
-
     /**
      * Observe all patterns with item details, sorted by confidence.
      */
-    @Query("""
+    @Query(
+        """
         SELECT
             p.item_id as itemId,
             i.name as itemName,
@@ -45,13 +44,15 @@ interface PatternDao {
         INNER JOIN items i ON p.item_id = i.id
         WHERE i.is_active = 1
         ORDER BY p.confidence_score DESC
-    """)
+    """,
+    )
     fun observePatternsWithItems(): Flow<List<PatternWithItem>>
 
     /**
      * Get high-confidence patterns for suggestions.
      */
-    @Query("""
+    @Query(
+        """
         SELECT
             p.item_id as itemId,
             i.name as itemName,
@@ -67,10 +68,11 @@ interface PatternDao {
           AND p.confidence_score >= :minConfidence
           AND p.sample_count >= :minSamples
         ORDER BY p.confidence_score DESC
-    """)
+    """,
+    )
     suspend fun getHighConfidencePatterns(
         minConfidence: Double = 0.6,
-        minSamples: Int = 3
+        minSamples: Int = 3,
     ): List<PatternWithItem>
 
     /**
@@ -101,7 +103,10 @@ interface PatternDao {
      * Update last suggested timestamp.
      */
     @Query("UPDATE patterns SET last_suggested = :timestamp WHERE item_id = :itemId")
-    suspend fun updateLastSuggested(itemId: String, timestamp: Long)
+    suspend fun updateLastSuggested(
+        itemId: String,
+        timestamp: Long,
+    )
 
     /**
      * Delete pattern for an item.

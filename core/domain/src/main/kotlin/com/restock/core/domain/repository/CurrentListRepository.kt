@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
  * Implementations manage the list of items currently being shopped for.
  */
 interface CurrentListRepository {
-
     /**
      * Observe the current list with item details.
      */
@@ -51,7 +50,7 @@ interface CurrentListRepository {
     suspend fun addItem(
         itemId: String,
         quantity: Int = 1,
-        unit: String? = null
+        unit: String? = null,
     ): Result<CurrentListItem>
 
     /**
@@ -72,12 +71,18 @@ interface CurrentListRepository {
     /**
      * Update the quantity of an item.
      */
-    suspend fun updateQuantity(id: String, quantity: Int): Result<Unit>
+    suspend fun updateQuantity(
+        id: String,
+        quantity: Int,
+    ): Result<Unit>
 
     /**
      * Update the position of an item (for drag-and-drop reordering).
      */
-    suspend fun updatePosition(id: String, newPosition: Int): Result<Unit>
+    suspend fun updatePosition(
+        id: String,
+        newPosition: Int,
+    ): Result<Unit>
 
     /**
      * Reorder items after drag-and-drop.
@@ -89,7 +94,7 @@ interface CurrentListRepository {
     suspend fun reorderItems(
         itemId: String,
         fromPosition: Int,
-        toPosition: Int
+        toPosition: Int,
     ): Result<Unit>
 
     /**

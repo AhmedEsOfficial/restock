@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>ClassOrdering:Pattern.kt$Pattern$/** * Whether this pattern has enough confidence to be suggested. */ val isSuggestionReady: Boolean get() = confidenceScore &gt;= SUGGESTION_CONFIDENCE_THRESHOLD &amp;&amp; sampleCount &gt;= MIN_PURCHASES</ID>
+    <ID>ComplexInterface:CurrentListRepository.kt$CurrentListRepository</ID>
+    <ID>ComplexInterface:ItemRepository.kt$ItemRepository</ID>
+    <ID>ComplexInterface:PurchaseRepository.kt$PurchaseRepository</ID>
+    <ID>TooManyFunctions:CurrentListRepository.kt$CurrentListRepository</ID>
+    <ID>TooManyFunctions:ItemRepository.kt$ItemRepository</ID>
+    <ID>TooManyFunctions:PurchaseRepository.kt$PurchaseRepository</ID>
+    <ID>UnusedImports:MealTagRepository.kt$import com.restock.core.domain.model.ItemWithMealTags</ID>
+    <ID>UnusedImports:Suggestion.kt$import java.time.Instant</ID>
+  </CurrentIssues>
+</SmellBaseline>

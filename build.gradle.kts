@@ -8,6 +8,9 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    // Code quality plugins
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.ktlint)
 }
 
 // Configure all projects
@@ -15,8 +18,39 @@ allprojects {
     // Common configurations can be added here if needed
 }
 
-// Configure all Android subprojects
+// Configure all subprojects
 subprojects {
+    // Apply code quality plugins
+    apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    // Configure Detekt
+    detekt {
+        config.setFrom(files("${rootProject.projectDir}/config/detekt/detekt.yml"))
+        buildUponDefaultConfig = true
+        allRules = false
+        parallel = true
+        autoCorrect = false
+        ignoreFailures = false
+        // Use baseline file if it exists (allows gradual adoption)
+        val baselineFile = file("detekt-baseline.xml")
+        if (baselineFile.exists()) {
+            baseline = baselineFile
+        }
+    }
+
+    // Configure Ktlint
+    ktlint {
+        android.set(true)
+        outputColorName.set("RED")
+        ignoreFailures.set(false)
+        enableExperimentalRules.set(false)
+        filter {
+            exclude("**/generated/**")
+            exclude("**/build/**")
+        }
+    }
+
     // Apply common configurations after project evaluation
     afterEvaluate {
         // Common Android configurations
@@ -43,7 +77,7 @@ subprojects {
                 freeCompilerArgs.addAll(
                     "-opt-in=kotlin.RequiresOptIn",
                     "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                    "-opt-in=kotlinx.coroutines.FlowPreview"
+                    "-opt-in=kotlinx.coroutines.FlowPreview",
                 )
             }
         }

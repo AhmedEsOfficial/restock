@@ -10,22 +10,24 @@ import java.time.Instant
 /**
  * Maps MealTagEntity to MealTag domain model.
  */
-fun MealTagEntity.toDomain(): MealTag = MealTag(
-    id = id,
-    itemId = itemId,
-    mealType = MealType.fromString(mealType) ?: MealType.SNACK,
-    frequencyCount = frequencyCount
-)
+fun MealTagEntity.toDomain(): MealTag =
+    MealTag(
+        id = id,
+        itemId = itemId,
+        mealType = MealType.fromString(mealType) ?: MealType.SNACK,
+        frequencyCount = frequencyCount,
+    )
 
 /**
  * Maps MealTag domain model to MealTagEntity.
  */
-fun MealTag.toEntity(): MealTagEntity = MealTagEntity(
-    id = id,
-    itemId = itemId,
-    mealType = mealType.name.lowercase(),
-    frequencyCount = frequencyCount
-)
+fun MealTag.toEntity(): MealTagEntity =
+    MealTagEntity(
+        id = id,
+        itemId = itemId,
+        mealType = mealType.name.lowercase(),
+        frequencyCount = frequencyCount,
+    )
 
 /**
  * Maps a list of MealTagEntities to domain models.
@@ -38,13 +40,14 @@ fun List<MealTagEntity>.toDomain(): List<MealTag> = map { it.toDomain() }
  * Note: This creates a partial GroceryItem with default values for fields
  * not returned by the meal tag query.
  */
-fun ItemIdAndName.toGroceryItem(): GroceryItem = GroceryItem(
-    id = id,
-    name = name,
-    normalizedName = name.lowercase().trim(),
-    createdAt = Instant.EPOCH,
-    isActive = true
-)
+fun ItemIdAndName.toGroceryItem(): GroceryItem =
+    GroceryItem(
+        id = id,
+        name = name,
+        normalizedName = name.lowercase().trim(),
+        createdAt = Instant.EPOCH,
+        isActive = true,
+    )
 
 /**
  * Maps a list of ItemIdAndName to GroceryItems.

@@ -31,18 +31,21 @@ import com.restock.core.data.database.entity.PurchaseEntity
         CurrentListEntity::class,
         PurchaseEntity::class,
         PatternEntity::class,
-        MealTagEntity::class
+        MealTagEntity::class,
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = true,
 )
 @TypeConverters(Converters::class)
 abstract class RestockDatabase : RoomDatabase() {
-
     abstract fun itemDao(): ItemDao
+
     abstract fun currentListDao(): CurrentListDao
+
     abstract fun purchaseDao(): PurchaseDao
+
     abstract fun patternDao(): PatternDao
+
     abstract fun mealTagDao(): MealTagDao
 
     companion object {

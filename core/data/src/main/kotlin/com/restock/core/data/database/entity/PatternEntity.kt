@@ -19,30 +19,25 @@ import androidx.room.PrimaryKey
             entity = ItemEntity::class,
             parentColumns = ["id"],
             childColumns = ["item_id"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
     indices = [
-        Index(value = ["confidence_score"])
-    ]
+        Index(value = ["confidence_score"]),
+    ],
 )
 data class PatternEntity(
     @PrimaryKey
     @ColumnInfo(name = "item_id")
     val itemId: String,
-
     @ColumnInfo(name = "avg_interval_days")
     val avgIntervalDays: Double,
-
     @ColumnInfo(name = "confidence_score")
     val confidenceScore: Double,
-
     @ColumnInfo(name = "sample_count")
     val sampleCount: Int,
-
     @ColumnInfo(name = "last_calculated")
     val lastCalculated: Long,
-
     @ColumnInfo(name = "last_suggested")
-    val lastSuggested: Long? = null
+    val lastSuggested: Long? = null,
 )

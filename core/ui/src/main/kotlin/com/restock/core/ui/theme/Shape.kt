@@ -14,13 +14,17 @@ import androidx.compose.ui.unit.dp
  * - Large: 16dp - Suggestion cards, sheets
  * - Extra Large: 24dp - Modals, bottom sheets
  */
-val RestockShapes = Shapes(
-    extraSmall = RoundedCornerShape(4.dp),
-    small = RoundedCornerShape(8.dp),
-    medium = RoundedCornerShape(14.dp),    // List item cards
-    large = RoundedCornerShape(16.dp),     // Suggestion cards
-    extraLarge = RoundedCornerShape(24.dp) // Bottom sheets, dialogs
-)
+val RestockShapes =
+    Shapes(
+        extraSmall = RoundedCornerShape(4.dp),
+        small = RoundedCornerShape(8.dp),
+        // List item cards
+        medium = RoundedCornerShape(14.dp),
+        // Suggestion cards
+        large = RoundedCornerShape(16.dp),
+        // Bottom sheets, dialogs
+        extraLarge = RoundedCornerShape(24.dp),
+    )
 
 /**
  * Additional shape constants for specific use cases.

@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
  * Implementations manage pattern storage and retrieval.
  */
 interface PatternRepository {
-
     /**
      * Observe all patterns with item details.
      */

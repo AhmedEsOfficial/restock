@@ -23,21 +23,20 @@ import com.restock.core.ui.theme.RestockTheme
  * TODO: Implement full functionality in later sprints
  */
 @Composable
-fun HistoryScreen(
-    modifier: Modifier = Modifier
-) {
+fun HistoryScreen(modifier: Modifier = Modifier) {
     Scaffold(
-        modifier = modifier
+        modifier = modifier,
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "Purchase History",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
             )
         }
     }

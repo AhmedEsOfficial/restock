@@ -4,10 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
 import com.restock.core.data.database.entity.CurrentListEntity
-import com.restock.core.data.database.entity.ItemEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -23,7 +21,7 @@ data class CurrentListItemWithDetails(
     val addedAt: Long,
     val checkedAt: Long?,
     val position: Int,
-    val isChecked: Boolean
+    val isChecked: Boolean,
 )
 
 /**
@@ -31,11 +29,11 @@ data class CurrentListItemWithDetails(
  */
 @Dao
 interface CurrentListDao {
-
     /**
      * Observe the current list with item details, sorted by position.
      */
-    @Query("""
+    @Query(
+        """
         SELECT
             cl.id as currentListId,
             cl.item_id as itemId,
@@ -50,13 +48,15 @@ interface CurrentListDao {
         FROM current_list cl
         INNER JOIN items i ON cl.item_id = i.id
         ORDER BY cl.is_checked ASC, cl.position ASC
-    """)
+    """,
+    )
     fun observeCurrentList(): Flow<List<CurrentListItemWithDetails>>
 
     /**
      * Observe unchecked items in the list.
      */
-    @Query("""
+    @Query(
+        """
         SELECT
             cl.id as currentListId,
             cl.item_id as itemId,
@@ -72,13 +72,15 @@ interface CurrentListDao {
         INNER JOIN items i ON cl.item_id = i.id
         WHERE cl.is_checked = 0
         ORDER BY cl.position ASC
-    """)
+    """,
+    )
     fun observeUncheckedItems(): Flow<List<CurrentListItemWithDetails>>
 
     /**
      * Observe checked items in the list (in cart).
      */
-    @Query("""
+    @Query(
+        """
         SELECT
             cl.id as currentListId,
             cl.item_id as itemId,
@@ -94,7 +96,8 @@ interface CurrentListDao {
         INNER JOIN items i ON cl.item_id = i.id
         WHERE cl.is_checked = 1
         ORDER BY cl.checked_at DESC
-    """)
+    """,
+    )
     fun observeCheckedItems(): Flow<List<CurrentListItemWithDetails>>
 
     /**
@@ -143,7 +146,10 @@ interface CurrentListDao {
      * Mark an item as checked.
      */
     @Query("UPDATE current_list SET is_checked = 1, checked_at = :checkedAt WHERE id = :id")
-    suspend fun checkItem(id: String, checkedAt: Long)
+    suspend fun checkItem(
+        id: String,
+        checkedAt: Long,
+    )
 
     /**
      * Mark an item as unchecked.
@@ -155,13 +161,19 @@ interface CurrentListDao {
      * Update the quantity of an item.
      */
     @Query("UPDATE current_list SET quantity = :quantity WHERE id = :id")
-    suspend fun updateQuantity(id: String, quantity: Int)
+    suspend fun updateQuantity(
+        id: String,
+        quantity: Int,
+    )
 
     /**
      * Update item position.
      */
     @Query("UPDATE current_list SET position = :position WHERE id = :id")
-    suspend fun updatePosition(id: String, position: Int)
+    suspend fun updatePosition(
+        id: String,
+        position: Int,
+    )
 
     /**
      * Delete an item from the current list.

@@ -1,0 +1,80 @@
+# EditorConfig for Restock Android Project
+# https://editorconfig.org
+
+root = true
+
+# Default settings for all files
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 120
+
+# Kotlin files
+[*.{kt,kts}]
+indent_size = 4
+max_line_length = 120
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+ij_kotlin_name_count_to_use_star_import = 999
+ij_kotlin_name_count_to_use_star_import_for_members = 999
+ij_kotlin_packages_to_use_import_on_demand = unset
+ij_kotlin_imports_layout = *,java.**,javax.**,kotlin.**,kotlinx.**,^
+
+# Ktlint specific settings
+ktlint_function_naming_ignore_when_annotated_with = Composable
+ktlint_standard_function-naming = disabled
+
+# Java files
+[*.java]
+indent_size = 4
+
+# XML files (Android resources, layouts, manifests)
+[*.xml]
+indent_size = 4
+
+# JSON files
+[*.json]
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = off
+
+# Gradle files
+[*.gradle]
+indent_size = 4
+
+# Gradle Kotlin DSL
+[*.gradle.kts]
+indent_size = 4
+
+# Properties files
+[*.properties]
+charset = latin1
+
+# Shell scripts
+[*.sh]
+indent_size = 2
+
+# Batch scripts
+[*.bat]
+end_of_line = crlf
+indent_size = 4
+
+# GitHub Actions
+[.github/**/*.yml]
+indent_size = 2
+
+# ProGuard rules
+[*.pro]
+indent_size = 4

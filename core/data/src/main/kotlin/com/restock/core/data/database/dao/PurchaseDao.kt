@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface PurchaseDao {
-
     /**
      * Observe all purchases sorted by date descending.
      */
@@ -46,18 +45,23 @@ interface PurchaseDao {
     /**
      * Get items with minimum number of purchases (for pattern calculation).
      */
-    @Query("""
+    @Query(
+        """
         SELECT item_id FROM purchases
         GROUP BY item_id
         HAVING COUNT(*) >= :minPurchases
-    """)
+    """,
+    )
     suspend fun getItemsWithMinPurchases(minPurchases: Int): List<String>
 
     /**
      * Get purchases within a date range.
      */
     @Query("SELECT * FROM purchases WHERE purchased_at BETWEEN :startTime AND :endTime ORDER BY purchased_at DESC")
-    suspend fun getPurchasesInRange(startTime: Long, endTime: Long): List<PurchaseEntity>
+    suspend fun getPurchasesInRange(
+        startTime: Long,
+        endTime: Long,
+    ): List<PurchaseEntity>
 
     /**
      * Insert a new purchase.
