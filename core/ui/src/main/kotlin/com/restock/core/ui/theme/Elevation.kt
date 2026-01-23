@@ -27,8 +27,7 @@ data class Elevation(
     val level2: Dp = 4.dp,
     /** Prominent elevation for modals and bottom sheets */
     val level3: Dp = 8.dp,
-    // Semantic elevation values
-    /** Elevation for list item cards (maps to level1) */
+    /** Elevation for list item cards - semantic alias for level1 */
     val listItemCard: Dp = 1.dp,
     /** Elevation for suggestion cards (maps to level2) */
     val suggestionCard: Dp = 4.dp,

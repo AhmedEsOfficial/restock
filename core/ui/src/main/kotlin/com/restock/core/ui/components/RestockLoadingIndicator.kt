@@ -76,6 +76,8 @@ fun RestockLoadingIndicatorSmall(
     )
 }
 
+private const val PULSING_DOT_DELAY_MS = 150
+
 /**
  * Pulsing dot loading indicator for subtle loading states.
  *
@@ -99,44 +101,49 @@ fun RestockPulsingDots(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         repeat(dotCount) { index ->
-            val delay = index * 150
+            val delay = index * PULSING_DOT_DELAY_MS
 
             val scale by infiniteTransition.animateFloat(
                 initialValue = 0.6f,
                 targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(
-                        durationMillis = 600,
-                        delayMillis = delay,
-                        easing = LinearEasing,
+                animationSpec =
+                    infiniteRepeatable(
+                        animation =
+                            tween(
+                                durationMillis = 600,
+                                delayMillis = delay,
+                                easing = LinearEasing,
+                            ),
+                        repeatMode = RepeatMode.Reverse,
                     ),
-                    repeatMode = RepeatMode.Reverse,
-                ),
                 label = "dot_scale_$index",
             )
 
             val alpha by infiniteTransition.animateFloat(
                 initialValue = 0.4f,
                 targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(
-                        durationMillis = 600,
-                        delayMillis = delay,
-                        easing = LinearEasing,
+                animationSpec =
+                    infiniteRepeatable(
+                        animation =
+                            tween(
+                                durationMillis = 600,
+                                delayMillis = delay,
+                                easing = LinearEasing,
+                            ),
+                        repeatMode = RepeatMode.Reverse,
                     ),
-                    repeatMode = RepeatMode.Reverse,
-                ),
                 label = "dot_alpha_$index",
             )
 
             Box(
-                modifier = Modifier
-                    .size(dotSize)
-                    .scale(scale)
-                    .background(
-                        color = color.copy(alpha = alpha),
-                        shape = CircleShape,
-                    ),
+                modifier =
+                    Modifier
+                        .size(dotSize)
+                        .scale(scale)
+                        .background(
+                            color = color.copy(alpha = alpha),
+                            shape = CircleShape,
+                        ),
             )
         }
     }
@@ -189,22 +196,25 @@ fun RestockShimmerBox(modifier: Modifier = Modifier) {
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.3f,
         targetValue = 0.7f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 1000,
-                easing = LinearEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = 1000,
+                        easing = LinearEasing,
+                    ),
+                repeatMode = RepeatMode.Reverse,
             ),
-            repeatMode = RepeatMode.Reverse,
-        ),
         label = "shimmer_alpha",
     )
 
     Box(
-        modifier = modifier
-            .background(
-                color = RestockColors.MutedVariant.copy(alpha = alpha),
-                shape = MaterialTheme.shapes.small,
-            ),
+        modifier =
+            modifier
+                .background(
+                    color = RestockColors.MutedVariant.copy(alpha = alpha),
+                    shape = MaterialTheme.shapes.small,
+                ),
     )
 }
 
@@ -258,16 +268,19 @@ private fun RestockShimmerBoxPreview() {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             RestockShimmerBox(
-                modifier = Modifier
-                    .size(width = 200.dp, height = 24.dp),
+                modifier =
+                    Modifier
+                        .size(width = 200.dp, height = 24.dp),
             )
             RestockShimmerBox(
-                modifier = Modifier
-                    .size(width = 150.dp, height = 16.dp),
+                modifier =
+                    Modifier
+                        .size(width = 150.dp, height = 16.dp),
             )
             RestockShimmerBox(
-                modifier = Modifier
-                    .size(width = 180.dp, height = 16.dp),
+                modifier =
+                    Modifier
+                        .size(width = 180.dp, height = 16.dp),
             )
         }
     }

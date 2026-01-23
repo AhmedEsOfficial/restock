@@ -41,8 +41,17 @@ object RestockColors {
     val Muted = Color(0xFF8B8680) // Secondary text, placeholders
     val MutedVariant = Color(0xFFB8B4AF) // Borders, dividers
 
+    // Divider colors
+    val Divider = Muted.copy(alpha = 0.2f) // List dividers, separators
+    val DividerStrong = Muted.copy(alpha = 0.4f) // More prominent dividers
+
+    // Surface variants (semantic aliases)
+    val Card = Surface // Alias for card backgrounds
+    val SurfaceVariant = Background // Alias for secondary surfaces
+
     // Overlay colors
     val Scrim = Color(0x80000000) // Modal overlays (50% black)
+    val ScrimLight = Color(0x40000000) // Lighter overlay (25% black)
 
     // Meal tag colors (per design spec)
     val Breakfast = Color(0xFFF59E0B) // Amber
@@ -87,7 +96,17 @@ object RestockDarkColors {
     val Muted = Color(0xFF9CA3AF)
     val MutedVariant = Color(0xFF6B7280)
 
+    // Divider colors
+    val Divider = Muted.copy(alpha = 0.2f)
+    val DividerStrong = Muted.copy(alpha = 0.4f)
+
+    // Surface variants
+    val Card = Surface
+    val SurfaceVariant = Surface
+
+    // Overlay colors
     val Scrim = Color(0x80000000)
+    val ScrimLight = Color(0x40000000)
 
     val Breakfast = Color(0xFFF59E0B)
     val Lunch = Color(0xFF10B981)

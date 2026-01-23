@@ -34,6 +34,11 @@ output-reports:
   active: true
   exclude: []
 
+formatting:
+  active: true
+  Indentation:
+    active: false
+
 comments:
   active: true
   AbsentOrWrongFileLicense:

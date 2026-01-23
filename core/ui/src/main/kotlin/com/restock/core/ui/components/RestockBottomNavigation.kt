@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
@@ -80,9 +79,10 @@ fun RestockBottomNavigation(
         shadowElevation = 8.dp,
     ) {
         NavigationBar(
-            modifier = Modifier
-                .height(64.dp)
-                .windowInsetsPadding(WindowInsets.navigationBars),
+            modifier =
+                Modifier
+                    .height(64.dp)
+                    .windowInsetsPadding(WindowInsets.navigationBars),
             containerColor = Color.Transparent,
             tonalElevation = 0.dp,
         ) {
@@ -105,13 +105,14 @@ fun RestockBottomNavigation(
                             style = MaterialTheme.typography.labelSmall,
                         )
                     },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = RestockColors.Primary,
-                        selectedTextColor = RestockColors.Primary,
-                        unselectedIconColor = RestockColors.Muted,
-                        unselectedTextColor = RestockColors.Muted,
-                        indicatorColor = RestockColors.Surface,
-                    ),
+                    colors =
+                        NavigationBarItemDefaults.colors(
+                            selectedIconColor = RestockColors.Primary,
+                            selectedTextColor = RestockColors.Primary,
+                            unselectedIconColor = RestockColors.Muted,
+                            unselectedTextColor = RestockColors.Muted,
+                            indicatorColor = RestockColors.Surface,
+                        ),
                 )
             }
         }
@@ -141,13 +142,14 @@ fun RowScope.RestockNavigationBarItem(
         icon = icon,
         label = label,
         modifier = modifier,
-        colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = RestockColors.Primary,
-            selectedTextColor = RestockColors.Primary,
-            unselectedIconColor = RestockColors.Muted,
-            unselectedTextColor = RestockColors.Muted,
-            indicatorColor = RestockColors.Surface,
-        ),
+        colors =
+            NavigationBarItemDefaults.colors(
+                selectedIconColor = RestockColors.Primary,
+                selectedTextColor = RestockColors.Primary,
+                unselectedIconColor = RestockColors.Muted,
+                unselectedTextColor = RestockColors.Muted,
+                indicatorColor = RestockColors.Surface,
+            ),
     )
 }
 
@@ -155,29 +157,32 @@ fun RowScope.RestockNavigationBarItem(
  * Default navigation items for the Restock app.
  */
 object RestockNavItems {
-    val List = RestockNavItem(
-        route = "list",
-        label = "List",
-        selectedIcon = Icons.Filled.List,
-        unselectedIcon = Icons.Outlined.List,
-        contentDescription = "Grocery list",
-    )
+    val List =
+        RestockNavItem(
+            route = "list",
+            label = "List",
+            selectedIcon = Icons.Filled.List,
+            unselectedIcon = Icons.Outlined.List,
+            contentDescription = "Grocery list",
+        )
 
-    val Meals = RestockNavItem(
-        route = "meals",
-        label = "Meals",
-        selectedIcon = Icons.Filled.DateRange,
-        unselectedIcon = Icons.Outlined.DateRange,
-        contentDescription = "Meals view",
-    )
+    val Meals =
+        RestockNavItem(
+            route = "meals",
+            label = "Meals",
+            selectedIcon = Icons.Filled.DateRange,
+            unselectedIcon = Icons.Outlined.DateRange,
+            contentDescription = "Meals view",
+        )
 
-    val History = RestockNavItem(
-        route = "history",
-        label = "History",
-        selectedIcon = Icons.Filled.Home,
-        unselectedIcon = Icons.Outlined.Home,
-        contentDescription = "Purchase history",
-    )
+    val History =
+        RestockNavItem(
+            route = "history",
+            label = "History",
+            selectedIcon = Icons.Filled.Home,
+            unselectedIcon = Icons.Outlined.Home,
+            contentDescription = "Purchase history",
+        )
 
     val defaults = listOf(List, Meals, History)
 }

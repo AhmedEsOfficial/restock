@@ -78,6 +78,7 @@ private fun ComponentLabel(label: String) {
     )
 }
 
+@Suppress("LongMethod")
 @Preview(
     showBackground = true,
     backgroundColor = 0xFFFFFBF5,
@@ -88,11 +89,12 @@ private fun ComponentLabel(label: String) {
 fun ComponentGalleryPreview() {
     RestockTheme {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(RestockColors.Background)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(RestockColors.Background)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
         ) {
             // Header
             Text(
@@ -311,10 +313,11 @@ private fun ColorSwatch(
 ) {
     Column {
         Box(
-            modifier = Modifier
-                .width(60.dp)
-                .height(40.dp)
-                .background(color, MaterialTheme.shapes.small),
+            modifier =
+                Modifier
+                    .width(60.dp)
+                    .height(40.dp)
+                    .background(color, MaterialTheme.shapes.small),
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -337,9 +340,10 @@ private fun ColorSwatch(
 fun TypographyPreview() {
     RestockTheme {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .background(RestockColors.Background),
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .background(RestockColors.Background),
         ) {
             Text(
                 text = "Display Large",

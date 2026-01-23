@@ -5,7 +5,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarData
-import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -14,14 +13,13 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.restock.core.ui.theme.RestockColors
 import com.restock.core.ui.theme.RestockTheme
-import kotlinx.coroutines.launch
 
 /**
  * Restock snackbar component following the design specification.
@@ -62,6 +60,7 @@ fun RestockSnackbar(
  * @param onActionClick Optional action button click handler.
  * @param dismissOnAction Whether to dismiss the snackbar when action is clicked.
  */
+@Suppress("UnusedParameter")
 @Composable
 fun RestockSnackbar(
     message: String,
@@ -75,20 +74,22 @@ fun RestockSnackbar(
         shape = RoundedCornerShape(8.dp),
         containerColor = RestockColors.Primary,
         contentColor = RestockColors.OnPrimary,
-        action = if (actionLabel != null && onActionClick != null) {
-            {
-                TextButton(
-                    onClick = onActionClick,
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = RestockColors.Accent,
-                    ),
-                ) {
-                    Text(text = actionLabel)
+        action =
+            if (actionLabel != null && onActionClick != null) {
+                {
+                    TextButton(
+                        onClick = onActionClick,
+                        colors =
+                            ButtonDefaults.textButtonColors(
+                                contentColor = RestockColors.Accent,
+                            ),
+                    ) {
+                        Text(text = actionLabel)
+                    }
                 }
-            }
-        } else {
-            null
-        },
+            } else {
+                null
+            },
     ) {
         Text(text = message)
     }
@@ -194,14 +195,13 @@ private fun RestockSnackbarWithActionPreview() {
 private fun RestockSnackbarHostPreview() {
     RestockTheme {
         val snackbarHostState = remember { SnackbarHostState() }
-        val scope = rememberCoroutineScope()
 
         RestockSnackbarHost(
             hostState = snackbarHostState,
         )
 
-        // Trigger snackbar for preview
-        scope.launch {
+        // Trigger snackbar for preview using LaunchedEffect
+        LaunchedEffect(Unit) {
             snackbarHostState.showSnackbar(
                 message = "Preview snackbar",
                 actionLabel = "Action",

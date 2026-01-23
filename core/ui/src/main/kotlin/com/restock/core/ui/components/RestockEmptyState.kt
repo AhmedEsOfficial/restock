@@ -42,9 +42,10 @@ fun RestockEmptyState(
     action: (@Composable () -> Unit)? = null,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(32.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -97,16 +98,17 @@ fun RestockListEmptyState(
         description = "Add items to start building your grocery list. We'll learn your patterns to make suggestions.",
         modifier = modifier,
         icon = Icons.Outlined.ShoppingCart,
-        action = if (onAddClick != null) {
-            {
-                RestockButton(
-                    text = "Add your first item",
-                    onClick = onAddClick,
-                )
-            }
-        } else {
-            null
-        },
+        action =
+            if (onAddClick != null) {
+                {
+                    RestockButton(
+                        text = "Add your first item",
+                        onClick = onAddClick,
+                    )
+                }
+            } else {
+                null
+            },
     )
 }
 
@@ -194,9 +196,10 @@ fun RestockErrorState(
     onRetry: (() -> Unit)? = null,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(32.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
