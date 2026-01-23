@@ -2,17 +2,15 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>BracesOnIfStatements:RestockTextField.kt$else</ID>
+    <ID>ImportOrdering:BaseViewModelTest.kt$import app.cash.turbine.test import com.google.common.truth.Truth.assertThat import org.junit.jupiter.api.DisplayName import org.junit.jupiter.api.Nested import org.junit.jupiter.api.Test import org.junit.jupiter.api.extension.RegisterExtension import kotlinx.coroutines.ExperimentalCoroutinesApi import kotlinx.coroutines.test.advanceUntilIdle import kotlinx.coroutines.test.runTest</ID>
+    <ID>ImportOrdering:MainDispatcherRule.kt$import org.junit.jupiter.api.extension.AfterEachCallback import org.junit.jupiter.api.extension.BeforeEachCallback import org.junit.jupiter.api.extension.ExtensionContext import kotlinx.coroutines.Dispatchers import kotlinx.coroutines.ExperimentalCoroutinesApi import kotlinx.coroutines.test.TestDispatcher import kotlinx.coroutines.test.UnconfinedTestDispatcher import kotlinx.coroutines.test.resetMain import kotlinx.coroutines.test.setMain</ID>
+    <ID>Indentation:RestockCard.kt$ </ID>
+    <ID>Indentation:RestockCheckbox.kt$ </ID>
+    <ID>Indentation:RestockChip.kt$ </ID>
+    <ID>Indentation:RestockTextField.kt$ </ID>
+    <ID>Indentation:Type.kt$ </ID>
     <ID>MagicNumber:RestockCheckbox.kt$0.7f</ID>
-    <ID>UnusedImports:RestockButton.kt$import androidx.compose.material3.ButtonDefaults</ID>
-    <ID>UnusedImports:RestockButton.kt$import androidx.compose.material3.MaterialTheme</ID>
-    <ID>UnusedImports:RestockCard.kt$import androidx.compose.ui.graphics.Color</ID>
-    <ID>UnusedImports:RestockCard.kt$import androidx.compose.ui.unit.Dp</ID>
-    <ID>UnusedImports:RestockCard.kt$import com.restock.core.ui.theme.RestockShapeTokens</ID>
-    <ID>UnusedImports:RestockTextField.kt$import androidx.compose.material3.MaterialTheme</ID>
-    <ID>UnusedImports:RestockTextField.kt$import androidx.compose.runtime.mutableStateOf</ID>
-    <ID>UnusedImports:RestockTextField.kt$import androidx.compose.runtime.remember</ID>
-    <ID>UnusedImports:RestockTextField.kt$import androidx.compose.ui.text.input.KeyboardType</ID>
-    <ID>UnusedImports:Type.kt$import androidx.compose.ui.text.font.Font</ID>
+    <ID>Wrapping:RestockTextField.kt${ Text(text = it) }</ID>
+    <ID>Wrapping:RestockTextField.kt${ Text(text = it, color = RestockColors.Muted) }</ID>
   </CurrentIssues>
 </SmellBaseline>

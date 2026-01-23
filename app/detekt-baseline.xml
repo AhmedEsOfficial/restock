@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>ImportOrdering:AppModule.kt$import com.restock.core.data.di.ApplicationScope import com.restock.core.data.di.DefaultDispatcher import com.restock.core.data.di.IoDispatcher import com.restock.core.data.di.MainDispatcher import dagger.Module import dagger.Provides import dagger.hilt.InstallIn import dagger.hilt.components.SingletonComponent import javax.inject.Singleton import kotlinx.coroutines.CoroutineDispatcher import kotlinx.coroutines.CoroutineScope import kotlinx.coroutines.Dispatchers import kotlinx.coroutines.SupervisorJob</ID>
+  </CurrentIssues>
+</SmellBaseline>

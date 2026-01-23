@@ -6,14 +6,20 @@
     <ID>ComplexInterface:ItemDao.kt$ItemDao</ID>
     <ID>ComplexInterface:MealTagDao.kt$MealTagDao</ID>
     <ID>ComplexInterface:PurchaseDao.kt$PurchaseDao</ID>
-    <ID>MaxLineLength:MealTagDao.kt$MealTagDao$@Query("UPDATE meal_tags SET frequency_count = frequency_count + 1 WHERE item_id = :itemId AND meal_type = :mealType")</ID>
+    <ID>ImportOrdering:CurrentListRepositoryImpl.kt$import com.restock.core.data.database.dao.CurrentListDao import com.restock.core.data.database.dao.ItemDao import com.restock.core.data.database.entity.CurrentListEntity import com.restock.core.data.di.IoDispatcher import com.restock.core.data.mapper.toDomain import com.restock.core.domain.model.CurrentListItem import com.restock.core.domain.repository.CurrentListRepository import java.time.Instant import java.util.UUID import javax.inject.Inject import javax.inject.Singleton import kotlinx.coroutines.CoroutineDispatcher import kotlinx.coroutines.flow.Flow import kotlinx.coroutines.flow.flowOn import kotlinx.coroutines.flow.map import kotlinx.coroutines.withContext</ID>
+    <ID>ImportOrdering:ItemRepositoryImpl.kt$import com.restock.core.data.database.dao.ItemDao import com.restock.core.data.di.IoDispatcher import com.restock.core.data.mapper.toDomain import com.restock.core.data.mapper.toEntity import com.restock.core.domain.model.GroceryItem import com.restock.core.domain.repository.ItemRepository import javax.inject.Inject import javax.inject.Singleton import kotlinx.coroutines.CoroutineDispatcher import kotlinx.coroutines.flow.Flow import kotlinx.coroutines.flow.flowOn import kotlinx.coroutines.flow.map import kotlinx.coroutines.withContext</ID>
+    <ID>ImportOrdering:MealTagRepositoryImpl.kt$import com.restock.core.data.database.dao.ItemDao import com.restock.core.data.database.dao.MealTagDao import com.restock.core.data.database.entity.MealTagEntity import com.restock.core.data.di.IoDispatcher import com.restock.core.data.mapper.toDomain import com.restock.core.data.mapper.toGroceryItems import com.restock.core.domain.model.GroceryItem import com.restock.core.domain.model.MealTag import com.restock.core.domain.model.MealType import com.restock.core.domain.repository.MealTagRepository import java.util.UUID import javax.inject.Inject import javax.inject.Singleton import kotlinx.coroutines.CoroutineDispatcher import kotlinx.coroutines.flow.Flow import kotlinx.coroutines.flow.flowOn import kotlinx.coroutines.flow.map import kotlinx.coroutines.withContext</ID>
+    <ID>ImportOrdering:PatternRepositoryImpl.kt$import com.restock.core.data.database.dao.PatternDao import com.restock.core.data.di.IoDispatcher import com.restock.core.data.mapper.toDomain import com.restock.core.data.mapper.toEntity import com.restock.core.domain.model.Pattern import com.restock.core.domain.model.PatternWithItem import com.restock.core.domain.repository.PatternRepository import java.time.Instant import javax.inject.Inject import javax.inject.Singleton import kotlinx.coroutines.CoroutineDispatcher import kotlinx.coroutines.flow.Flow import kotlinx.coroutines.flow.flowOn import kotlinx.coroutines.flow.map import kotlinx.coroutines.withContext</ID>
+    <ID>ImportOrdering:PurchaseRepositoryImpl.kt$import com.restock.core.data.database.dao.PurchaseDao import com.restock.core.data.di.IoDispatcher import com.restock.core.data.mapper.toDomain import com.restock.core.data.mapper.toEntity import com.restock.core.domain.model.Purchase import com.restock.core.domain.repository.PurchaseRepository import java.time.Instant import javax.inject.Inject import javax.inject.Singleton import kotlinx.coroutines.CoroutineDispatcher import kotlinx.coroutines.flow.Flow import kotlinx.coroutines.flow.flowOn import kotlinx.coroutines.flow.map import kotlinx.coroutines.withContext</ID>
+    <ID>Indentation:CurrentListRepositoryImpl.kt$CurrentListRepositoryImpl$ </ID>
+    <ID>Indentation:ItemRepositoryImpl.kt$ItemRepositoryImpl$ </ID>
+    <ID>Indentation:MealTagRepositoryImpl.kt$MealTagRepositoryImpl$ </ID>
+    <ID>Indentation:PatternRepositoryImpl.kt$PatternRepositoryImpl$ </ID>
+    <ID>Indentation:PurchaseRepositoryImpl.kt$PurchaseRepositoryImpl$ </ID>
     <ID>TooManyFunctions:CurrentListDao.kt$CurrentListDao</ID>
     <ID>TooManyFunctions:ItemDao.kt$ItemDao</ID>
     <ID>TooManyFunctions:MealTagDao.kt$MealTagDao</ID>
     <ID>TooManyFunctions:PurchaseDao.kt$PurchaseDao</ID>
-    <ID>UnusedImports:CurrentListDao.kt$import androidx.room.Transaction</ID>
-    <ID>UnusedImports:CurrentListDao.kt$import com.restock.core.data.database.entity.ItemEntity</ID>
-    <ID>UnusedImports:PatternDao.kt$import androidx.room.Update</ID>
     <ID>UnusedPrivateProperty:MealTagRepositoryImpl.kt$MealTagRepositoryImpl$private val itemDao: ItemDao</ID>
   </CurrentIssues>
 </SmellBaseline>

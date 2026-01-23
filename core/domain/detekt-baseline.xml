@@ -6,10 +6,9 @@
     <ID>ComplexInterface:CurrentListRepository.kt$CurrentListRepository</ID>
     <ID>ComplexInterface:ItemRepository.kt$ItemRepository</ID>
     <ID>ComplexInterface:PurchaseRepository.kt$PurchaseRepository</ID>
+    <ID>ImportOrdering:PurchaseRepository.kt$import com.restock.core.domain.model.Purchase import java.time.Instant import kotlinx.coroutines.flow.Flow</ID>
     <ID>TooManyFunctions:CurrentListRepository.kt$CurrentListRepository</ID>
     <ID>TooManyFunctions:ItemRepository.kt$ItemRepository</ID>
     <ID>TooManyFunctions:PurchaseRepository.kt$PurchaseRepository</ID>
-    <ID>UnusedImports:MealTagRepository.kt$import com.restock.core.domain.model.ItemWithMealTags</ID>
-    <ID>UnusedImports:Suggestion.kt$import java.time.Instant</ID>
   </CurrentIssues>
 </SmellBaseline>

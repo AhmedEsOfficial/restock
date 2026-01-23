@@ -39,6 +39,11 @@ subprojects {
         }
     }
 
+    // Add Detekt formatting rules plugin
+    dependencies {
+        "detektPlugins"(rootProject.libs.detekt.formatting)
+    }
+
     // Configure Ktlint
     ktlint {
         android.set(true)

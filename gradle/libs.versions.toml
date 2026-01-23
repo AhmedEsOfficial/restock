@@ -201,6 +201,9 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
 # SQLCipher
 sqlcipher-android = { module = "net.zetetic:sqlcipher-android", version.ref = "sqlcipher" }
 
+# Code Quality - Detekt Formatting Rules
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+
 [bundles]
 # Compose UI bundle
 compose = [
