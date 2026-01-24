@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -17,35 +19,42 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.restock.core.ui.preview.LightDarkPreview
+import com.restock.core.ui.preview.LightPreview
+import com.restock.core.ui.preview.RestockPreviewTheme
 import com.restock.core.ui.theme.RestockColors
-import com.restock.core.ui.theme.RestockTheme
+import com.restock.core.ui.theme.RestockSpacing
 
 /**
  * Empty state component for screens with no content.
  *
- * Displays a centered icon, title, description, and optional action button.
+ * Displays a centered icon, title, optional description, and optional action button.
+ * Following the design spec:
+ * - Icon size: 64dp
+ * - Icon color: Muted @ 50% opacity (MutedVariant)
+ * - Title: TitleMedium
+ * - Description: BodyMedium, Muted
+ * - Padding: 32dp (xl)
  *
  * @param title The main title text.
- * @param description The descriptive text explaining the empty state.
  * @param modifier Modifier to be applied to the container.
+ * @param description Optional descriptive text explaining the empty state.
  * @param icon Optional icon to display above the title.
  * @param action Optional action button content.
  */
 @Composable
 fun RestockEmptyState(
     title: String,
-    description: String,
     modifier: Modifier = Modifier,
+    description: String? = null,
     icon: ImageVector? = null,
     action: (@Composable () -> Unit)? = null,
 ) {
     Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .padding(32.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(RestockSpacing.xl),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -54,32 +63,61 @@ fun RestockEmptyState(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(64.dp),
-                tint = RestockColors.MutedVariant,
+                tint = RestockColors.Muted.copy(alpha = 0.5f),
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(RestockSpacing.lg))
         }
 
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
-            color = RestockColors.OnBackground,
+            style = MaterialTheme.typography.titleMedium,
+            color = RestockColors.Primary,
             textAlign = TextAlign.Center,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = description,
-            style = MaterialTheme.typography.bodyMedium,
-            color = RestockColors.Muted,
-            textAlign = TextAlign.Center,
-        )
+        if (description != null) {
+            Spacer(modifier = Modifier.height(RestockSpacing.sm))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = RestockColors.Muted,
+                textAlign = TextAlign.Center,
+            )
+        }
 
         if (action != null) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(RestockSpacing.lg))
             action()
         }
     }
+}
+
+/**
+ * Empty state component - alias matching task specification API.
+ *
+ * Wrapper for [RestockEmptyState] with slightly different parameter names.
+ *
+ * @param title The main title text.
+ * @param modifier Modifier to be applied to the container.
+ * @param description Optional descriptive text explaining the empty state.
+ * @param icon Optional icon to display above the title.
+ * @param action Optional action button content.
+ */
+@Composable
+fun EmptyState(
+    title: String,
+    modifier: Modifier = Modifier,
+    description: String? = null,
+    icon: ImageVector? = null,
+    action: (@Composable () -> Unit)? = null,
+) {
+    RestockEmptyState(
+        title = title,
+        modifier = modifier,
+        description = description,
+        icon = icon,
+        action = action,
+    )
 }
 
 /**
@@ -95,20 +133,32 @@ fun RestockListEmptyState(
 ) {
     RestockEmptyState(
         title = "Your list is empty",
-        description = "Add items to start building your grocery list. We'll learn your patterns to make suggestions.",
+        description = "Add items by typing above",
         modifier = modifier,
         icon = Icons.Outlined.ShoppingCart,
-        action =
-            if (onAddClick != null) {
-                {
-                    RestockButton(
-                        text = "Add your first item",
-                        onClick = onAddClick,
-                    )
-                }
-            } else {
-                null
-            },
+        action = if (onAddClick != null) {
+            {
+                RestockButton(
+                    text = "Add First Item",
+                    onClick = onAddClick,
+                )
+            }
+        } else {
+            null
+        },
+    )
+}
+
+/**
+ * Alias for [RestockListEmptyState] matching task specification API.
+ */
+@Composable
+fun EmptyListState(modifier: Modifier = Modifier) {
+    RestockEmptyState(
+        title = "Your list is empty",
+        description = "Add items by typing above",
+        icon = Icons.Outlined.ShoppingCart,
+        modifier = modifier,
     )
 }
 
@@ -122,7 +172,7 @@ fun RestockListEmptyState(
 @Composable
 fun RestockSuggestionsEmptyState(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(RestockSpacing.md),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -132,6 +182,68 @@ fun RestockSuggestionsEmptyState(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center,
         )
     }
+}
+
+/**
+ * Empty state for suggestions section with trip count awareness.
+ *
+ * Displays different messages based on how many shopping trips the user has completed,
+ * providing appropriate context and encouragement:
+ * - 0 trips: "Learning your patterns..." with explanation
+ * - 1-2 trips: "Almost ready!" with countdown to suggestions
+ * - 3+ trips: "No suggestions right now" with reassurance
+ *
+ * @param modifier Modifier to be applied to the container.
+ * @param tripCount The number of shopping trips completed.
+ */
+@Composable
+fun NoSuggestionsState(
+    modifier: Modifier = Modifier,
+    tripCount: Int = 0,
+) {
+    val (title, description) = when {
+        tripCount < 1 -> Pair(
+            "Learning your patterns...",
+            "Add items and shop normally. Suggestions will appear soon.",
+        )
+        tripCount < 3 -> {
+            val remaining = 3 - tripCount
+            val suffix = if (remaining == 1) "" else "s"
+            Pair(
+                "Almost ready!",
+                "After $remaining more shopping trip$suffix, suggestions will appear.",
+            )
+        }
+        else -> Pair(
+            "No suggestions right now",
+            "You're all stocked up! Suggestions will appear when items are due.",
+        )
+    }
+
+    RestockEmptyState(
+        title = title,
+        description = description,
+        modifier = modifier,
+    )
+}
+
+/**
+ * Empty state for search results when no items match the query.
+ *
+ * @param query The search query that returned no results.
+ * @param modifier Modifier to be applied to the container.
+ */
+@Composable
+fun NoSearchResultsState(
+    query: String,
+    modifier: Modifier = Modifier,
+) {
+    RestockEmptyState(
+        title = "No results for \"$query\"",
+        description = "Try a different search term",
+        icon = Icons.Outlined.Search,
+        modifier = modifier,
+    )
 }
 
 /**
@@ -146,7 +258,7 @@ fun RestockMealEmptyState(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(RestockSpacing.md),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -155,7 +267,7 @@ fun RestockMealEmptyState(
             color = RestockColors.Muted,
             textAlign = TextAlign.Center,
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(RestockSpacing.xs))
         Text(
             text = "Tag items from your list",
             style = MaterialTheme.typography.bodySmall,
@@ -176,12 +288,14 @@ fun RestockHistoryEmptyState(modifier: Modifier = Modifier) {
         title = "No purchase history",
         description = "Check off items from your list to start tracking your shopping patterns.",
         modifier = modifier,
-        icon = null,
     )
 }
 
 /**
  * Error state component for displaying errors with retry option.
+ *
+ * Uses a red title color to indicate error state, with muted description
+ * text and an optional retry action button.
  *
  * @param title The error title.
  * @param description The error description.
@@ -196,21 +310,20 @@ fun RestockErrorState(
     onRetry: (() -> Unit)? = null,
 ) {
     Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .padding(32.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(RestockSpacing.xl),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             color = RestockColors.Error,
             textAlign = TextAlign.Center,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(RestockSpacing.sm))
 
         Text(
             text = description,
@@ -220,7 +333,7 @@ fun RestockErrorState(
         )
 
         if (onRetry != null) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(RestockSpacing.lg))
             RestockButton(
                 text = "Try again",
                 onClick = onRetry,
@@ -229,11 +342,12 @@ fun RestockErrorState(
     }
 }
 
-// Previews
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+// ==================== PREVIEWS ====================
+
+@LightPreview
 @Composable
 private fun RestockEmptyStatePreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockEmptyState(
             title = "Nothing here yet",
             description = "This is a generic empty state that can be customized.",
@@ -242,44 +356,102 @@ private fun RestockEmptyStatePreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightPreview
+@Composable
+private fun EmptyListStatePreview() {
+    RestockPreviewTheme {
+        EmptyListState()
+    }
+}
+
+@LightPreview
 @Composable
 private fun RestockListEmptyStatePreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockListEmptyState(
             onAddClick = {},
         )
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightDarkPreview
+@Composable
+private fun EmptyStateWithActionPreview() {
+    RestockPreviewTheme {
+        RestockEmptyState(
+            title = "Your list is empty",
+            description = "Start adding items to get started",
+            icon = Icons.Outlined.ShoppingCart,
+            action = {
+                RestockButton(
+                    text = "Add First Item",
+                    onClick = {},
+                )
+            },
+        )
+    }
+}
+
+@LightPreview
 @Composable
 private fun RestockSuggestionsEmptyStatePreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockSuggestionsEmptyState()
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightPreview
+@Composable
+private fun NoSuggestionsStateLearningPreview() {
+    RestockPreviewTheme {
+        NoSuggestionsState(tripCount = 0)
+    }
+}
+
+@LightPreview
+@Composable
+private fun NoSuggestionsStateAlmostReadyPreview() {
+    RestockPreviewTheme {
+        NoSuggestionsState(tripCount = 2)
+    }
+}
+
+@LightPreview
+@Composable
+private fun NoSuggestionsStateStockedUpPreview() {
+    RestockPreviewTheme {
+        NoSuggestionsState(tripCount = 5)
+    }
+}
+
+@LightPreview
+@Composable
+private fun NoSearchResultsStatePreview() {
+    RestockPreviewTheme {
+        NoSearchResultsState(query = "chocolate")
+    }
+}
+
+@LightPreview
 @Composable
 private fun RestockMealEmptyStatePreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockMealEmptyState(mealName = "breakfast")
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightPreview
 @Composable
 private fun RestockHistoryEmptyStatePreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockHistoryEmptyState()
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightDarkPreview
 @Composable
 private fun RestockErrorStatePreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockErrorState(
             title = "Something went wrong",
             description = "We couldn't load your items. Please try again.",

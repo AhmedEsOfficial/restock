@@ -3,6 +3,7 @@ package com.restock.core.ui.components
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDuration
@@ -16,20 +17,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.restock.core.ui.preview.LightDarkPreview
+import com.restock.core.ui.preview.LightPreview
+import com.restock.core.ui.preview.RestockPreviewTheme
 import com.restock.core.ui.theme.RestockColors
-import com.restock.core.ui.theme.RestockTheme
+import com.restock.core.ui.theme.RestockCornerRadius
+import com.restock.core.ui.theme.RestockSpacing
 
 /**
  * Restock snackbar component following the design specification.
  *
  * Design specs:
- * - Corner radius: 8dp
+ * - Corner radius: 8dp (small)
  * - Background: Primary (#1F1F1F)
  * - Text color: White
  * - Action color: Accent (#F59E0B)
- * - Max width: Screen - 32dp (handled by parent)
+ * - Margin: 16dp
  *
  * @param snackbarData The data for the snackbar to display.
  * @param modifier Modifier to be applied to the snackbar.
@@ -41,8 +45,8 @@ fun RestockSnackbar(
 ) {
     Snackbar(
         snackbarData = snackbarData,
-        modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
+        modifier = modifier.padding(RestockSpacing.md),
+        shape = MaterialTheme.shapes.small,
         containerColor = RestockColors.Primary,
         contentColor = RestockColors.OnPrimary,
         actionColor = RestockColors.Accent,
@@ -53,6 +57,10 @@ fun RestockSnackbar(
 
 /**
  * Custom snackbar with explicit parameters for more control.
+ *
+ * This variant allows direct control over the snackbar content without
+ * going through SnackbarHostState. Use this for preview purposes or
+ * when you need manual control.
  *
  * @param message The message to display.
  * @param modifier Modifier to be applied to the snackbar.
@@ -70,28 +78,33 @@ fun RestockSnackbar(
     dismissOnAction: Boolean = true,
 ) {
     Snackbar(
-        modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
+        modifier = modifier.padding(RestockSpacing.md),
+        shape = MaterialTheme.shapes.small,
         containerColor = RestockColors.Primary,
         contentColor = RestockColors.OnPrimary,
-        action =
-            if (actionLabel != null && onActionClick != null) {
-                {
-                    TextButton(
-                        onClick = onActionClick,
-                        colors =
-                            ButtonDefaults.textButtonColors(
-                                contentColor = RestockColors.Accent,
-                            ),
-                    ) {
-                        Text(text = actionLabel)
-                    }
+        action = if (actionLabel != null && onActionClick != null) {
+            {
+                TextButton(
+                    onClick = onActionClick,
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = RestockColors.Accent,
+                    ),
+                ) {
+                    Text(
+                        text = actionLabel,
+                        color = RestockColors.Accent,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
                 }
-            } else {
-                null
-            },
+            }
+        } else {
+            null
+        },
     ) {
-        Text(text = message)
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 
@@ -126,7 +139,7 @@ fun RestockSnackbarHost(
 ) {
     SnackbarHost(
         hostState = hostState,
-        modifier = modifier.padding(horizontal = 16.dp),
+        modifier = modifier,
         snackbar = { snackbarData ->
             RestockSnackbar(snackbarData = snackbarData)
         },
@@ -165,35 +178,70 @@ suspend fun SnackbarHostState.showUndoSnackbar(
     )
 }
 
-// Previews
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+// ==================== PREVIEWS ====================
+
+@LightPreview
+@Composable
+private fun SnackbarPreview() {
+    RestockPreviewTheme {
+        // Using the simplified visual preview as in task spec
+        Snackbar(
+            modifier = Modifier.padding(16.dp),
+            shape = MaterialTheme.shapes.small,
+            containerColor = RestockColors.Primary,
+            contentColor = RestockColors.OnPrimary,
+            action = {
+                TextButton(onClick = {}) {
+                    Text("Undo", color = RestockColors.Accent)
+                }
+            },
+        ) {
+            Text("Item deleted")
+        }
+    }
+}
+
+@LightPreview
+@Composable
+private fun SnackbarNoActionPreview() {
+    RestockPreviewTheme {
+        Snackbar(
+            modifier = Modifier.padding(16.dp),
+            shape = MaterialTheme.shapes.small,
+            containerColor = RestockColors.Primary,
+            contentColor = RestockColors.OnPrimary,
+        ) {
+            Text("Milk added to list")
+        }
+    }
+}
+
+@LightDarkPreview
 @Composable
 private fun RestockSnackbarPreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockSnackbar(
             message = "Item deleted",
-            modifier = Modifier.padding(16.dp),
         )
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightPreview
 @Composable
 private fun RestockSnackbarWithActionPreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockSnackbar(
             message = "Item deleted",
             actionLabel = "Undo",
             onActionClick = {},
-            modifier = Modifier.padding(16.dp),
         )
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightPreview
 @Composable
 private fun RestockSnackbarHostPreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         val snackbarHostState = remember { SnackbarHostState() }
 
         RestockSnackbarHost(

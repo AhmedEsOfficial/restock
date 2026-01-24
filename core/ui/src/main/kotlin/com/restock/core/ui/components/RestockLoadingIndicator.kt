@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,19 +27,63 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.restock.core.ui.preview.LightDarkPreview
+import com.restock.core.ui.preview.LightPreview
+import com.restock.core.ui.preview.RestockPreviewTheme
 import com.restock.core.ui.theme.RestockColors
-import com.restock.core.ui.theme.RestockTheme
+import com.restock.core.ui.theme.RestockSpacing
 
 /**
- * Standard circular loading indicator.
+ * Size variants for loading indicators.
+ *
+ * Design specs from the design system:
+ * - SMALL: 20dp diameter, 2dp stroke - for inline use in buttons/list items
+ * - MEDIUM: 32dp diameter, 3dp stroke - for moderate loading states
+ * - LARGE: 48dp diameter, 4dp stroke - for full-screen loading states
+ */
+enum class LoadingIndicatorSize(
+    val diameter: Dp,
+    val strokeWidth: Dp,
+) {
+    SMALL(diameter = 20.dp, strokeWidth = 2.dp),
+    MEDIUM(diameter = 32.dp, strokeWidth = 3.dp),
+    LARGE(diameter = 48.dp, strokeWidth = 4.dp),
+}
+
+/**
+ * Loading indicator with configurable size using the design system size variants.
  *
  * Uses the accent color by default for consistency with the design system.
+ * Preferred over the Dp-based variant for design system compliance.
  *
  * @param modifier Modifier to be applied to the indicator.
- * @param size The size of the indicator. Default is 48dp.
+ * @param size The size variant of the indicator. Default is MEDIUM.
+ * @param color The color of the indicator. Default is accent color.
+ */
+@Composable
+fun LoadingIndicator(
+    modifier: Modifier = Modifier,
+    size: LoadingIndicatorSize = LoadingIndicatorSize.MEDIUM,
+    color: Color = RestockColors.Accent,
+) {
+    CircularProgressIndicator(
+        modifier = modifier.size(size.diameter),
+        color = color,
+        strokeWidth = size.strokeWidth,
+        trackColor = color.copy(alpha = 0.2f),
+    )
+}
+
+/**
+ * Standard circular loading indicator with raw Dp sizing.
+ *
+ * Uses the accent color by default for consistency with the design system.
+ * For design system compliance, prefer using [LoadingIndicator] with [LoadingIndicatorSize].
+ *
+ * @param modifier Modifier to be applied to the indicator.
+ * @param size The size of the indicator. Default is 48dp (LARGE).
  * @param color The color of the indicator. Default is accent color.
  * @param strokeWidth The width of the progress stroke.
  */
@@ -76,15 +121,19 @@ fun RestockLoadingIndicatorSmall(
     )
 }
 
+private const val PULSING_DOT_ANIMATION_DURATION_MS = 600
 private const val PULSING_DOT_DELAY_MS = 150
 
 /**
  * Pulsing dot loading indicator for subtle loading states.
  *
+ * Alternative to the circular progress indicator for more subtle
+ * loading feedback. Dots pulse with a staggered animation.
+ *
  * @param modifier Modifier to be applied to the indicator.
  * @param color The color of the dots.
- * @param dotSize The size of each dot.
- * @param dotCount The number of dots to display.
+ * @param dotSize The size of each dot. Default is 8dp.
+ * @param dotCount The number of dots to display. Default is 3.
  */
 @Composable
 fun RestockPulsingDots(
@@ -110,7 +159,7 @@ fun RestockPulsingDots(
                     infiniteRepeatable(
                         animation =
                             tween(
-                                durationMillis = 600,
+                                durationMillis = PULSING_DOT_ANIMATION_DURATION_MS,
                                 delayMillis = delay,
                                 easing = LinearEasing,
                             ),
@@ -126,7 +175,7 @@ fun RestockPulsingDots(
                     infiniteRepeatable(
                         animation =
                             tween(
-                                durationMillis = 600,
+                                durationMillis = PULSING_DOT_ANIMATION_DURATION_MS,
                                 delayMillis = delay,
                                 easing = LinearEasing,
                             ),
@@ -150,7 +199,32 @@ fun RestockPulsingDots(
 }
 
 /**
+ * Pulsing dots indicator - alias for [RestockPulsingDots].
+ *
+ * Provided for API consistency with the task specification.
+ *
+ * @param modifier Modifier to be applied to the indicator.
+ * @param color The color of the dots.
+ * @param dotSize The size of each dot. Default is 8dp.
+ */
+@Composable
+fun PulsingDotsIndicator(
+    modifier: Modifier = Modifier,
+    color: Color = RestockColors.Accent,
+    dotSize: Dp = 8.dp,
+) {
+    RestockPulsingDots(
+        modifier = modifier,
+        color = color,
+        dotSize = dotSize,
+    )
+}
+
+/**
  * Full-screen loading state with optional message.
+ *
+ * Uses the LARGE loading indicator centered on screen with optional
+ * descriptive text below.
  *
  * @param modifier Modifier to be applied to the container.
  * @param message Optional loading message to display.
@@ -168,10 +242,10 @@ fun RestockLoadingState(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            RestockLoadingIndicator()
+            LoadingIndicator(size = LoadingIndicatorSize.LARGE)
 
             if (message != null) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(RestockSpacing.md))
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodyMedium,
@@ -180,6 +254,25 @@ fun RestockLoadingState(
             }
         }
     }
+}
+
+/**
+ * Full-screen loading state - alias for [RestockLoadingState].
+ *
+ * Provided for API consistency with the task specification.
+ *
+ * @param modifier Modifier to be applied to the container.
+ * @param message Optional loading message to display.
+ */
+@Composable
+fun LoadingScreen(
+    modifier: Modifier = Modifier,
+    message: String? = null,
+) {
+    RestockLoadingState(
+        modifier = modifier,
+        message = message,
+    )
 }
 
 /**
@@ -218,69 +311,96 @@ fun RestockShimmerBox(modifier: Modifier = Modifier) {
     )
 }
 
-// Previews
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+// ==================== PREVIEWS ====================
+
+@LightPreview
+@Composable
+private fun LoadingIndicatorSizesPreview() {
+    RestockPreviewTheme {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            LoadingIndicator(size = LoadingIndicatorSize.SMALL)
+            LoadingIndicator(size = LoadingIndicatorSize.MEDIUM)
+            LoadingIndicator(size = LoadingIndicatorSize.LARGE)
+        }
+    }
+}
+
+@LightPreview
 @Composable
 private fun RestockLoadingIndicatorPreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockLoadingIndicator(
             modifier = Modifier.padding(16.dp),
         )
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightPreview
 @Composable
 private fun RestockLoadingIndicatorSmallPreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockLoadingIndicatorSmall(
             modifier = Modifier.padding(16.dp),
         )
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightDarkPreview
 @Composable
 private fun RestockPulsingDotsPreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockPulsingDots(
             modifier = Modifier.padding(16.dp),
         )
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightPreview
 @Composable
 private fun RestockLoadingStatePreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         RestockLoadingState(
             message = "Loading your groceries...",
         )
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFBF5)
+@LightPreview
+@Composable
+private fun LoadingScreenPreview() {
+    RestockPreviewTheme {
+        LoadingScreen(
+            message = "Loading your list...",
+        )
+    }
+}
+
+@LightPreview
 @Composable
 private fun RestockShimmerBoxPreview() {
-    RestockTheme {
+    RestockPreviewTheme {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             RestockShimmerBox(
-                modifier =
-                    Modifier
-                        .size(width = 200.dp, height = 24.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp),
             )
             RestockShimmerBox(
-                modifier =
-                    Modifier
-                        .size(width = 150.dp, height = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(16.dp),
             )
             RestockShimmerBox(
-                modifier =
-                    Modifier
-                        .size(width = 180.dp, height = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth(0.85f)
+                    .height(16.dp),
             )
         }
     }
