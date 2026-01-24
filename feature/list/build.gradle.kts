@@ -64,6 +64,9 @@ dependencies {
     // Coroutines
     implementation(libs.bundles.coroutines)
 
+    // Immutable Collections (for Compose stability)
+    implementation(libs.kotlinx.collections.immutable)
+
     // Testing
     testImplementation(libs.bundles.testing)
     androidTestImplementation(libs.bundles.testing.android)
