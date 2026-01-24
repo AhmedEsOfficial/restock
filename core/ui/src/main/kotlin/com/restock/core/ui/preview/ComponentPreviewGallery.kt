@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.restock.core.ui.components.MealTagChip
 import com.restock.core.ui.components.MealType
 import com.restock.core.ui.components.RestockBottomNavigation
 import com.restock.core.ui.components.RestockButton
@@ -32,16 +33,18 @@ import com.restock.core.ui.components.RestockCard
 import com.restock.core.ui.components.RestockCheckbox
 import com.restock.core.ui.components.RestockChip
 import com.restock.core.ui.components.RestockElevatedCard
+import com.restock.core.ui.components.RestockInfoChip
 import com.restock.core.ui.components.RestockLabeledCheckbox
 import com.restock.core.ui.components.RestockLoadingIndicator
 import com.restock.core.ui.components.RestockLoadingIndicatorSmall
 import com.restock.core.ui.components.RestockMealChip
 import com.restock.core.ui.components.RestockNavItems
 import com.restock.core.ui.components.RestockOutlinedButton
+import com.restock.core.ui.components.RestockOutlinedTextField
 import com.restock.core.ui.components.RestockPulsingDots
+import com.restock.core.ui.components.RestockSmartBadge
 import com.restock.core.ui.components.RestockSnackbar
 import com.restock.core.ui.components.RestockTextButton
-import com.restock.core.ui.components.RestockOutlinedTextField
 import com.restock.core.ui.components.RestockTextField
 import com.restock.core.ui.theme.RestockColors
 import com.restock.core.ui.theme.RestockTheme
@@ -203,6 +206,14 @@ fun ComponentGalleryPreview() {
                     ComponentLabel("Checked")
                     RestockCheckbox(checked = true, onCheckedChange = {})
                 }
+                Column {
+                    ComponentLabel("Disabled")
+                    RestockCheckbox(checked = false, onCheckedChange = {}, enabled = false)
+                }
+                Column {
+                    ComponentLabel("Dis+Check")
+                    RestockCheckbox(checked = true, onCheckedChange = {}, enabled = false)
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -217,20 +228,53 @@ fun ComponentGalleryPreview() {
             // Chips Section
             SectionHeader("Chips")
 
-            ComponentLabel("Meal Tag Chips")
+            ComponentLabel("Meal Tag Chips (with emoji)")
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
             ) {
-                RestockMealChip(mealType = MealType.BREAKFAST)
-                RestockMealChip(mealType = MealType.LUNCH)
-                RestockMealChip(mealType = MealType.DINNER)
-                RestockMealChip(mealType = MealType.SNACK)
+                MealTagChip(mealType = MealType.BREAKFAST)
+                MealTagChip(mealType = MealType.LUNCH)
+                MealTagChip(mealType = MealType.DINNER)
+                MealTagChip(mealType = MealType.SNACK)
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Meal Tag Chips (with remove)")
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+            ) {
+                MealTagChip(mealType = MealType.BREAKFAST, onRemove = {})
+                MealTagChip(mealType = MealType.LUNCH, onRemove = {})
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Meal Tag Chips (no emoji)")
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+            ) {
+                MealTagChip(mealType = MealType.DINNER, showEmoji = false)
+                MealTagChip(mealType = MealType.SNACK, showEmoji = false)
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Info Chip")
+            RestockInfoChip(text = "Usually every 7 days")
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Smart Badge")
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text("Milk", style = MaterialTheme.typography.bodyLarge)
+                RestockSmartBadge()
             }
 
             Spacer(modifier = Modifier.height(12.dp))
             ComponentLabel("Generic Chip")
-            RestockChip(text = "Usually every 7 days")
+            RestockChip(text = "Custom Chip", color = RestockColors.Info)
 
             // Loading Indicators Section
             SectionHeader("Loading Indicators")
