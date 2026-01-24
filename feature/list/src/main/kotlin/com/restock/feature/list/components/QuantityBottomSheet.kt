@@ -33,6 +33,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -102,6 +104,7 @@ fun QuantityBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
+    val hapticFeedback = LocalHapticFeedback.current
 
     var quantity by remember { mutableIntStateOf(item.quantity) }
     var selectedUnit by remember { mutableStateOf(item.unit) }
@@ -132,8 +135,12 @@ fun QuantityBottomSheet(
             quantityText = quantityText,
             selectedUnit = selectedUnit,
             onQuantityChange = { newQuantity ->
-                quantity = newQuantity.coerceIn(MIN_QUANTITY, MAX_QUANTITY)
-                quantityText = quantity.toString()
+                val coercedQuantity = newQuantity.coerceIn(MIN_QUANTITY, MAX_QUANTITY)
+                if (coercedQuantity != quantity) {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    quantity = coercedQuantity
+                    quantityText = quantity.toString()
+                }
             },
             onQuantityTextChange = { text ->
                 quantityText = text
@@ -141,7 +148,12 @@ fun QuantityBottomSheet(
                     quantity = parsed.coerceIn(MIN_QUANTITY, MAX_QUANTITY)
                 }
             },
-            onUnitChange = { selectedUnit = it },
+            onUnitChange = { newUnit ->
+                if (newUnit != selectedUnit) {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    selectedUnit = newUnit
+                }
+            },
             onCancel = {
                 scope.launch {
                     sheetState.hide()

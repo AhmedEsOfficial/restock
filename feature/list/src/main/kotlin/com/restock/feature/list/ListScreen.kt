@@ -14,8 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,10 +33,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.restock.core.domain.model.CurrentListItem
@@ -46,6 +61,7 @@ import com.restock.core.ui.theme.RestockSpacing
 import com.restock.feature.list.components.AutoCompleteDropdown
 import com.restock.feature.list.components.GroceryItemCard
 import com.restock.feature.list.components.QuantityBottomSheet
+import com.restock.feature.list.components.ReorderableGroceryList
 import com.restock.feature.list.ui.ListAction
 import com.restock.feature.list.ui.ListEvent
 import com.restock.feature.list.ui.ListUiState
@@ -231,6 +247,9 @@ private fun ListScreenContent(
                         onQuantityClick = { item ->
                             onAction(ListAction.SelectItemForQuantity(item))
                         },
+                        onReorder = { fromIndex, toIndex ->
+                            onAction(ListAction.ReorderItems(fromIndex, toIndex))
+                        },
                         modifier = Modifier.weight(1f),
                     )
                 }
@@ -289,6 +308,9 @@ private fun AddItemSection(
 
 /**
  * Main grocery list with unchecked and checked sections.
+ *
+ * - Unchecked items support drag-and-drop reordering
+ * - Checked items are displayed in an "In Cart" section without drag-drop
  */
 @Composable
 private fun GroceryList(
@@ -297,6 +319,7 @@ private fun GroceryList(
     onToggleItem: (String, Boolean) -> Unit,
     onDeleteItem: (String) -> Unit,
     onQuantityClick: (CurrentListItem) -> Unit,
+    onReorder: (Int, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -307,17 +330,19 @@ private fun GroceryList(
         ),
         verticalArrangement = Arrangement.spacedBy(RestockSpacing.listItemGap),
     ) {
-        // Unchecked items (main shopping list)
-        items(
+        // Unchecked items (main shopping list) - with drag-drop via ReorderableItem
+        itemsIndexed(
             items = uncheckedItems,
-            key = { it.id },
-        ) { item ->
-            GroceryItemCard(
+            key = { _, item -> item.id },
+        ) { index, item ->
+            ReorderableItem(
                 item = item,
+                index = index,
+                totalItems = uncheckedItems.size,
+                onReorder = onReorder,
                 onCheckedChange = { checked -> onToggleItem(item.id, checked) },
                 onDelete = { onDeleteItem(item.id) },
                 onQuantityClick = { onQuantityClick(item) },
-                modifier = Modifier.animateItem(),
             )
         }
 
@@ -387,6 +412,116 @@ private fun InCartHeader(
         HorizontalDivider(
             modifier = Modifier.weight(1f),
             color = RestockColors.Muted.copy(alpha = 0.3f),
+        )
+    }
+}
+
+/**
+ * A draggable wrapper for grocery items that enables drag-and-drop reordering.
+ *
+ * Features:
+ * - Long-press to initiate drag with haptic feedback
+ * - Visual lift effect (elevation + scale) during drag
+ * - Haptic feedback when crossing item boundaries
+ * - Smooth drop animation
+ *
+ * **Note:** This composable maintains its own drag state and coordinates with
+ * the parent list through the [onReorder] callback.
+ *
+ * @param item The grocery item to display.
+ * @param index The current index of this item in the list.
+ * @param totalItems Total number of items in the list (for bounds checking).
+ * @param onReorder Called when the item is dropped at a new position.
+ * @param onCheckedChange Called when the checkbox is toggled.
+ * @param onDelete Called when the item is swiped to delete.
+ * @param onQuantityClick Called when the item is long-pressed for quantity adjustment.
+ * @param modifier Modifier to be applied to the item container.
+ */
+@Composable
+private fun ReorderableItem(
+    item: CurrentListItem,
+    index: Int,
+    totalItems: Int,
+    onReorder: (fromIndex: Int, toIndex: Int) -> Unit,
+    onCheckedChange: (Boolean) -> Unit,
+    onDelete: () -> Unit,
+    onQuantityClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val hapticFeedback = LocalHapticFeedback.current
+
+    // Drag state
+    var isDragging by remember { mutableStateOf(false) }
+    var dragOffset by remember { mutableFloatStateOf(0f) }
+    var currentTargetIndex by remember { mutableIntStateOf(index) }
+    var lastHapticIndex by remember { mutableIntStateOf(-1) }
+
+    // Animated values for visual feedback
+    val elevation = if (isDragging) 8f else 0f
+    val scale = if (isDragging) 1.02f else 1f
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .zIndex(if (isDragging) 1f else 0f)
+            .graphicsLayer {
+                if (isDragging) {
+                    translationY = dragOffset
+                    shadowElevation = elevation
+                    scaleX = scale
+                    scaleY = scale
+                }
+            }
+            .pointerInput(index, totalItems) {
+                detectDragGesturesAfterLongPress(
+                    onDragStart = {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                        isDragging = true
+                        dragOffset = 0f
+                        currentTargetIndex = index
+                        lastHapticIndex = index
+                    },
+                    onDrag = { change, dragAmount ->
+                        change.consume()
+                        dragOffset += dragAmount.y
+
+                        // Estimate target index based on drag offset
+                        // Each item is roughly 70dp tall with 8dp gap
+                        val itemHeightWithGap = 78.dp.toPx()
+                        val indexDelta = (dragOffset / itemHeightWithGap).toInt()
+                        val newTargetIndex = (index + indexDelta).coerceIn(0, totalItems - 1)
+
+                        if (newTargetIndex != currentTargetIndex) {
+                            currentTargetIndex = newTargetIndex
+                            // Haptic feedback when crossing item boundaries
+                            if (newTargetIndex != lastHapticIndex) {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                lastHapticIndex = newTargetIndex
+                            }
+                        }
+                    },
+                    onDragEnd = {
+                        if (currentTargetIndex != index) {
+                            onReorder(index, currentTargetIndex)
+                        }
+                        isDragging = false
+                        dragOffset = 0f
+                        lastHapticIndex = -1
+                    },
+                    onDragCancel = {
+                        isDragging = false
+                        dragOffset = 0f
+                        lastHapticIndex = -1
+                    },
+                )
+            }
+            .animateItem(),
+    ) {
+        GroceryItemCard(
+            item = item,
+            onCheckedChange = onCheckedChange,
+            onDelete = onDelete,
+            onQuantityClick = onQuantityClick,
         )
     }
 }
