@@ -2,12 +2,14 @@ package com.restock.feature.list.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,11 +36,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.restock.core.domain.model.CurrentListItem
+import com.restock.core.ui.components.MealTagChip
+import com.restock.core.ui.components.MealType
 import com.restock.core.ui.components.RestockCheckbox
 import com.restock.core.ui.preview.LightDarkPreview
 import com.restock.core.ui.preview.RestockPreviewTheme
@@ -59,21 +66,31 @@ private const val ELEVATION_ANIMATION_DURATION_MS = 150
 private const val COLOR_ANIMATION_DURATION_MS = 200
 
 /**
+ * Swipe threshold percentage for triggering delete action.
+ */
+private const val SWIPE_THRESHOLD_PERCENT = 0.4f
+
+/**
  * Card component for displaying a grocery list item.
  *
  * Features:
  * - Checkbox for marking items as checked/unchecked
- * - Swipe-to-delete with animated background
- * - Long-press for quantity adjustment
+ * - Swipe-to-delete with animated background and haptic feedback
+ * - Long-press for quantity adjustment with haptic feedback
  * - Quantity badge display when quantity > 1
  * - Visual distinction for checked items (muted, strikethrough)
+ * - Meal tag chips display (max 2 shown)
  *
  * **Design Specifications:**
- * - Corner radius: 14dp (medium)
- * - Elevation: 1dp (default), 2dp (swiping)
+ * - Padding: 12dp horizontal, 14dp vertical
+ * - Min height: 56dp (touch target compliance)
+ * - Corner radius: 14dp
+ * - Elevation: 1dp (default), 4dp (swiping)
  * - Background: White (#FFFFFF)
- * - Checked item: Muted text with strikethrough
- * - Delete background: Error color
+ * - Checked item: 60% opacity, muted text with strikethrough
+ * - Delete background: Error color with white delete icon
+ * - Swipe threshold: 40% of card width
+ * - Haptic feedback on threshold reached and long-press
  *
  * @param item The list item to display.
  * @param onCheckedChange Called when the checkbox is toggled.
@@ -81,6 +98,7 @@ private const val COLOR_ANIMATION_DURATION_MS = 200
  * @param onQuantityClick Called when the user long-presses for quantity adjustment.
  * @param modifier Modifier to be applied to the card.
  * @param isCheckedSection Whether this item is displayed in the checked/In Cart section.
+ * @param mealTags List of meal types to display as chips below the item name.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,12 +109,16 @@ fun GroceryItemCard(
     onQuantityClick: () -> Unit,
     modifier: Modifier = Modifier,
     isCheckedSection: Boolean = false,
+    mealTags: List<MealType> = emptyList(),
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
     var isBeingDismissed by remember { mutableStateOf(false) }
+    var hasTriggeredHaptic by remember { mutableStateOf(false) }
 
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = { value ->
             if (value == SwipeToDismissBoxValue.EndToStart) {
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                 isBeingDismissed = true
                 onDelete()
                 true
@@ -104,12 +126,23 @@ fun GroceryItemCard(
                 false
             }
         },
-        positionalThreshold = { totalDistance -> totalDistance * 0.4f },
+        positionalThreshold = { totalDistance -> totalDistance * SWIPE_THRESHOLD_PERCENT },
     )
+
+    // Trigger haptic feedback when crossing the threshold
+    LaunchedEffect(dismissState.targetValue) {
+        if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart && !hasTriggeredHaptic) {
+            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+            hasTriggeredHaptic = true
+        } else if (dismissState.targetValue == SwipeToDismissBoxValue.Settled) {
+            hasTriggeredHaptic = false
+        }
+    }
 
     // Reset dismiss state when item changes
     LaunchedEffect(item.id) {
         isBeingDismissed = false
+        hasTriggeredHaptic = false
     }
 
     // Animate elevation based on swipe progress
@@ -129,7 +162,7 @@ fun GroceryItemCard(
         enableDismissFromEndToStart = true,
         backgroundContent = {
             DeleteSwipeBackground(
-                progress = dismissState.progress,
+                dismissState = dismissState,
                 modifier = Modifier.fillMaxSize(),
             )
         },
@@ -137,9 +170,13 @@ fun GroceryItemCard(
         GroceryItemCardContent(
             item = item,
             onCheckedChange = onCheckedChange,
-            onQuantityClick = onQuantityClick,
+            onQuantityClick = {
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                onQuantityClick()
+            },
             isCheckedSection = isCheckedSection,
             elevation = elevation,
+            mealTags = mealTags,
         )
     }
 }
@@ -157,8 +194,16 @@ private fun GroceryItemCardContent(
     onQuantityClick: () -> Unit,
     isCheckedSection: Boolean,
     elevation: androidx.compose.ui.unit.Dp,
+    mealTags: List<MealType>,
     modifier: Modifier = Modifier,
 ) {
+    // Animate card appearance when checked/unchecked
+    val contentAlpha by animateFloatAsState(
+        targetValue = if (isCheckedSection) 0.6f else 1f,
+        animationSpec = tween(durationMillis = COLOR_ANIMATION_DURATION_MS),
+        label = "contentAlpha",
+    )
+
     // Animate text color based on checked state
     val textColor by animateColorAsState(
         targetValue = if (item.isChecked || isCheckedSection) {
@@ -200,28 +245,48 @@ private fun GroceryItemCardContent(
                 },
             )
 
-            Spacer(modifier = Modifier.width(RestockSpacing.sm))
+            Spacer(modifier = Modifier.width(RestockSpacing.xs))
 
-            // Item name
-            Text(
-                text = item.name,
-                style = MaterialTheme.typography.bodyLarge,
-                color = textColor,
-                textDecoration = if (item.isChecked || isCheckedSection) {
-                    TextDecoration.LineThrough
-                } else {
-                    null
-                },
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            // Item name and meal tags
+            Column(
                 modifier = Modifier.weight(1f),
-            )
+            ) {
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = textColor,
+                    textDecoration = if (item.isChecked || isCheckedSection) {
+                        TextDecoration.LineThrough
+                    } else {
+                        null
+                    },
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                // Meal tags (show max 2)
+                if (mealTags.isNotEmpty()) {
+                    Spacer(Modifier.height(RestockSpacing.xs))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(RestockSpacing.xs),
+                    ) {
+                        mealTags.take(2).forEach { mealType ->
+                            MealTagChip(
+                                mealType = mealType,
+                                showEmoji = false,
+                            )
+                        }
+                    }
+                }
+            }
 
             // Quantity badge (if > 1)
-            item.quantityDisplay?.let { display ->
+            if (item.quantity > 1) {
                 Spacer(modifier = Modifier.width(RestockSpacing.sm))
                 QuantityBadge(
-                    display = display,
+                    quantity = item.quantity,
+                    unit = item.unit,
+                    onClick = onQuantityClick,
                     isMuted = item.isChecked || isCheckedSection,
                 )
             }
@@ -232,15 +297,25 @@ private fun GroceryItemCardContent(
 /**
  * Badge displaying the quantity and optional unit.
  *
- * @param display The formatted quantity string (e.g., "×2" or "2 lb").
+ * **Specifications:**
+ * - Background: Accent @ 15% opacity (muted when checked)
+ * - Text: Accent color (muted when checked)
+ * - Format: "×2" (no unit) or "2 lbs" (with unit)
+ * - Clickable to open quantity adjustment
+ *
+ * @param quantity The item quantity.
+ * @param unit Optional unit string (e.g., "lb", "oz").
+ * @param onClick Called when the badge is clicked.
  * @param isMuted Whether to show the badge in muted colors (for checked items).
  * @param modifier Modifier to be applied to the badge.
  */
 @Composable
-private fun QuantityBadge(
-    display: String,
-    isMuted: Boolean,
+fun QuantityBadge(
+    quantity: Int,
+    unit: String?,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isMuted: Boolean = false,
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = if (isMuted) {
@@ -262,14 +337,18 @@ private fun QuantityBadge(
         label = "badge_text_color",
     )
 
+    // Format: "×2" or "2 lbs"
+    val displayText = if (unit != null) "$quantity $unit" else "×$quantity"
+
     Surface(
+        onClick = onClick,
         modifier = modifier,
         shape = MaterialTheme.shapes.small,
         color = backgroundColor,
     ) {
         Text(
-            text = display,
-            style = MaterialTheme.typography.labelMedium,
+            text = displayText,
+            style = MaterialTheme.typography.labelSmall,
             color = textColor,
             modifier = Modifier.padding(
                 horizontal = RestockSpacing.sm,
@@ -283,28 +362,36 @@ private fun QuantityBadge(
  * Background shown when swiping to delete.
  *
  * Shows a red background with a delete icon that animates based on swipe progress.
+ * The icon scales up when the threshold is reached.
  *
- * @param progress The current swipe progress (0 to 1).
+ * @param dismissState The swipe-to-dismiss state for tracking progress.
  * @param modifier Modifier to be applied to the background.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DeleteSwipeBackground(
-    progress: Float,
+    dismissState: androidx.compose.material3.SwipeToDismissBoxState,
     modifier: Modifier = Modifier,
 ) {
-    // Animate background color based on progress
+    // Animate background color based on target value (when threshold is crossed)
     val backgroundColor by animateColorAsState(
-        targetValue = if (progress > 0f) {
-            RestockColors.Error
-        } else {
-            Color.Transparent
+        targetValue = when (dismissState.targetValue) {
+            SwipeToDismissBoxValue.EndToStart -> RestockColors.Error
+            else -> Color.Transparent
         },
         animationSpec = tween(durationMillis = COLOR_ANIMATION_DURATION_MS),
         label = "delete_background",
     )
 
-    // Animate icon alpha based on progress
-    val iconAlpha = (progress * 2f).coerceIn(0f, 1f)
+    // Animate icon scale based on target value
+    val iconScale by animateFloatAsState(
+        targetValue = when (dismissState.targetValue) {
+            SwipeToDismissBoxValue.EndToStart -> 1f
+            else -> 0.5f
+        },
+        animationSpec = tween(durationMillis = COLOR_ANIMATION_DURATION_MS),
+        label = "delete_icon_scale",
+    )
 
     Box(
         modifier = modifier
@@ -313,14 +400,14 @@ private fun DeleteSwipeBackground(
                 color = backgroundColor,
                 shape = MaterialTheme.shapes.medium,
             )
-            .padding(end = RestockSpacing.lg),
+            .padding(horizontal = RestockSpacing.lg),
         contentAlignment = Alignment.CenterEnd,
     ) {
         Icon(
             imageVector = Icons.Default.Delete,
             contentDescription = "Delete item",
-            tint = RestockColors.OnError.copy(alpha = iconAlpha),
-            modifier = Modifier.size(RestockSpacing.iconSize),
+            tint = Color.White,
+            modifier = Modifier.scale(iconScale),
         )
     }
 }
@@ -458,10 +545,63 @@ private fun GroceryItemCardLongNamePreview() {
 
 @LightDarkPreview
 @Composable
+private fun GroceryItemCardWithTagsPreview() {
+    RestockPreviewTheme {
+        Surface(color = RestockColors.Background) {
+            GroceryItemCard(
+                item = CurrentListItem(
+                    id = "1",
+                    itemId = "item1",
+                    name = "Eggs",
+                    normalizedName = "eggs",
+                    quantity = 12,
+                    addedAt = Instant.now(),
+                    position = 0,
+                    isChecked = false,
+                ),
+                onCheckedChange = {},
+                onDelete = {},
+                onQuantityClick = {},
+                mealTags = listOf(MealType.BREAKFAST),
+                modifier = Modifier.padding(RestockSpacing.md),
+            )
+        }
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun GroceryItemCardWithMultipleTagsPreview() {
+    RestockPreviewTheme {
+        Surface(color = RestockColors.Background) {
+            GroceryItemCard(
+                item = CurrentListItem(
+                    id = "1",
+                    itemId = "item1",
+                    name = "Chicken Breast",
+                    normalizedName = "chicken breast",
+                    quantity = 2,
+                    unit = "lb",
+                    addedAt = Instant.now(),
+                    position = 0,
+                    isChecked = false,
+                ),
+                onCheckedChange = {},
+                onDelete = {},
+                onQuantityClick = {},
+                mealTags = listOf(MealType.LUNCH, MealType.DINNER),
+                modifier = Modifier.padding(RestockSpacing.md),
+            )
+        }
+    }
+}
+
+@LightDarkPreview
+@Composable
 private fun GroceryItemCardListPreview() {
     RestockPreviewTheme {
         Surface(color = RestockColors.Background) {
-            androidx.compose.foundation.layout.Column(
+            Column(
                 modifier = Modifier.padding(RestockSpacing.md),
                 verticalArrangement = Arrangement.spacedBy(RestockSpacing.sm),
             ) {
@@ -486,7 +626,7 @@ private fun GroceryItemCardListPreview() {
                         itemId = "item2",
                         name = "Eggs",
                         normalizedName = "eggs",
-                        quantity = 2,
+                        quantity = 12,
                         addedAt = Instant.now(),
                         position = 1,
                         isChecked = false,
@@ -494,6 +634,7 @@ private fun GroceryItemCardListPreview() {
                     onCheckedChange = {},
                     onDelete = {},
                     onQuantityClick = {},
+                    mealTags = listOf(MealType.BREAKFAST),
                 )
                 GroceryItemCard(
                     item = CurrentListItem(
