@@ -34,7 +34,13 @@ object RestockShapeTokens {
     val SuggestionCardRadius = 16.dp
     val InputFieldRadius = 16.dp
     val ChipRadius = 8.dp
-    val ButtonRadius = 8.dp
+    /** Button corner radius per design spec (12dp) */
+    val ButtonRadius = 12.dp
     val BottomSheetRadius = 24.dp
     val DialogRadius = 24.dp
 }
+
+/**
+ * Pre-defined button shape with 12dp corner radius.
+ */
+val RestockButtonShape = RoundedCornerShape(RestockShapeTokens.ButtonRadius)
