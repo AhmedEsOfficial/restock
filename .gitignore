@@ -136,3 +136,6 @@ signing/
 # Temporary files
 tmp/
 temp/
+CLAUDE.md
+CLAUDE_UI.md
+CLAUDE_TECH.md
