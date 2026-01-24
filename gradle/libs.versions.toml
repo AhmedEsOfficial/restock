@@ -73,6 +73,9 @@ ktlint = "12.1.2"
 # SQLCipher (for database encryption)
 sqlcipher = "4.6.1"
 
+# Dependency Injection (JSR-330)
+javax-inject = "1"
+
 [libraries]
 # AndroidX Core
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
@@ -200,6 +203,9 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
 
 # SQLCipher
 sqlcipher-android = { module = "net.zetetic:sqlcipher-android", version.ref = "sqlcipher" }
+
+# Dependency Injection (JSR-330 for pure Kotlin modules)
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javax-inject" }
 
 # Code Quality - Detekt Formatting Rules
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }

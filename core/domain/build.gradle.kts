@@ -23,6 +23,9 @@ dependencies {
     // Immutable Collections for stable state
     api(libs.kotlinx.collections.immutable)
 
+    // Dependency Injection (JSR-330 annotations for use cases)
+    api(libs.javax.inject)
+
     // Testing
     testImplementation(libs.bundles.testing)
 }
