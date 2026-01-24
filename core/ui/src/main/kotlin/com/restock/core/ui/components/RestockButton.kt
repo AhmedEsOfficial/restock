@@ -461,7 +461,7 @@ private fun TextOnlyButton(
 }
 
 @Composable
-private fun RowScope.ButtonContent(
+private fun ButtonContent(
     text: String,
     loading: Boolean,
     loadingIndicatorColor: Color,

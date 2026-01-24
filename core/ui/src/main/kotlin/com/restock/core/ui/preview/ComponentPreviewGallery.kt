@@ -41,6 +41,7 @@ import com.restock.core.ui.components.RestockOutlinedButton
 import com.restock.core.ui.components.RestockPulsingDots
 import com.restock.core.ui.components.RestockSnackbar
 import com.restock.core.ui.components.RestockTextButton
+import com.restock.core.ui.components.RestockOutlinedTextField
 import com.restock.core.ui.components.RestockTextField
 import com.restock.core.ui.theme.RestockColors
 import com.restock.core.ui.theme.RestockTheme
@@ -179,8 +180,8 @@ fun ComponentGalleryPreview() {
             )
 
             Spacer(modifier = Modifier.height(12.dp))
-            ComponentLabel("Error State")
-            RestockTextField(
+            ComponentLabel("Error State (Outlined)")
+            RestockOutlinedTextField(
                 value = "",
                 onValueChange = {},
                 isError = true,
