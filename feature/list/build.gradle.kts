@@ -54,6 +54,7 @@ dependencies {
     // Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.compose)
+    implementation(libs.compose.material.icons.extended)
     debugImplementation(libs.bundles.compose.debug)
 
     // Hilt

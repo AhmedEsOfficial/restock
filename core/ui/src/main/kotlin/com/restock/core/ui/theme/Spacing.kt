@@ -98,6 +98,12 @@ object RestockSpacing {
     val cardPadding: Dp
         @Composable @ReadOnlyComposable
         get() = LocalSpacing.current.cardPadding
+    val cardPaddingHorizontal: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.cardPaddingHorizontal
+    val cardPaddingVertical: Dp
+        @Composable @ReadOnlyComposable
+        get() = LocalSpacing.current.cardPaddingVertical
     val listItemGap: Dp
         @Composable @ReadOnlyComposable
         get() = LocalSpacing.current.listItemGap
