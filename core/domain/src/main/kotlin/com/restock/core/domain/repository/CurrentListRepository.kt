@@ -1,6 +1,7 @@
 package com.restock.core.domain.repository
 
 import com.restock.core.domain.model.CurrentListItem
+import com.restock.core.domain.model.PositionUpdate
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -40,6 +41,27 @@ interface CurrentListRepository {
     suspend fun isItemInList(itemId: String): Boolean
 
     /**
+     * Find an unchecked list item by its item ID.
+     *
+     * Used to check if an item is already on the list before adding,
+     * and to get the existing list item for quantity updates.
+     *
+     * @param itemId The ID of the grocery item to find.
+     * @return The list item if found and unchecked, null otherwise.
+     */
+    suspend fun findByItemId(itemId: String): CurrentListItem?
+
+    /**
+     * Get the IDs of all items currently in the list.
+     *
+     * Used for filtering suggestions - items already on the list
+     * should not be suggested.
+     *
+     * @return List of item IDs in the current list.
+     */
+    suspend fun getCurrentItemIds(): List<String>
+
+    /**
      * Add an item to the list.
      *
      * @param itemId The ID of the item to add.
@@ -49,6 +71,25 @@ interface CurrentListRepository {
      */
     suspend fun addItem(
         itemId: String,
+        quantity: Int = 1,
+        unit: String? = null,
+    ): Result<CurrentListItem>
+
+    /**
+     * Add an item to the list at a specific position.
+     *
+     * Primarily used for undo operations to restore an item
+     * to its original position.
+     *
+     * @param itemId The ID of the item to add.
+     * @param position The position to insert at.
+     * @param quantity Initial quantity (default 1).
+     * @param unit Optional unit of measurement.
+     * @return Result containing the new list item or an error.
+     */
+    suspend fun addItemAt(
+        itemId: String,
+        position: Int,
         quantity: Int = 1,
         unit: String? = null,
     ): Result<CurrentListItem>
@@ -69,11 +110,16 @@ interface CurrentListRepository {
     suspend fun toggleChecked(id: String): Result<Unit>
 
     /**
-     * Update the quantity of an item.
+     * Update the quantity and unit of an item.
+     *
+     * @param id The list item ID.
+     * @param quantity The new quantity (must be positive).
+     * @param unit Optional unit of measurement (null to clear).
      */
     suspend fun updateQuantity(
         id: String,
         quantity: Int,
+        unit: String? = null,
     ): Result<Unit>
 
     /**
@@ -96,6 +142,16 @@ interface CurrentListRepository {
         fromPosition: Int,
         toPosition: Int,
     ): Result<Unit>
+
+    /**
+     * Batch update positions for multiple items.
+     *
+     * Used for efficient reordering when multiple items need
+     * their positions updated simultaneously (e.g., after drag-drop).
+     *
+     * @param updates List of position updates to apply.
+     */
+    suspend fun updatePositions(updates: List<PositionUpdate>): Result<Unit>
 
     /**
      * Remove an item from the list.

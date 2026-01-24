@@ -31,3 +31,14 @@ data class CurrentListItem(
                 unit
             }
 }
+
+/**
+ * Represents a position update for batch reordering operations.
+ *
+ * Used for efficient batch updates when reordering multiple items,
+ * such as during drag-and-drop operations.
+ */
+data class PositionUpdate(
+    val id: String,
+    val newPosition: Int,
+)

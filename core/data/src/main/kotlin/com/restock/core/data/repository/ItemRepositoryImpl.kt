@@ -5,7 +5,10 @@ import com.restock.core.data.di.IoDispatcher
 import com.restock.core.data.mapper.toDomain
 import com.restock.core.data.mapper.toEntity
 import com.restock.core.domain.model.GroceryItem
+import com.restock.core.domain.model.normalizeItemName
 import com.restock.core.domain.repository.ItemRepository
+import java.time.Instant
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
@@ -61,6 +64,26 @@ class ItemRepositoryImpl
         ): List<GroceryItem> =
             withContext(ioDispatcher) {
                 itemDao.searchByName(query, limit).toDomain()
+            }
+
+        override suspend fun getOrCreate(name: String): GroceryItem =
+            withContext(ioDispatcher) {
+                val normalizedName = name.normalizeItemName()
+
+                // Try to find existing item by normalized name
+                itemDao.findByNormalizedName(normalizedName)?.toDomain()
+                    ?: run {
+                        // Create new item
+                        val newItem = GroceryItem(
+                            id = UUID.randomUUID().toString(),
+                            name = name.trim(),
+                            normalizedName = normalizedName,
+                            createdAt = Instant.now(),
+                            isActive = true,
+                        )
+                        itemDao.insert(newItem.toEntity())
+                        newItem
+                    }
             }
 
         override suspend fun insert(item: GroceryItem): Result<GroceryItem> =

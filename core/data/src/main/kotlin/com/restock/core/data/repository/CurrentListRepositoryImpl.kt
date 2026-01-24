@@ -6,6 +6,7 @@ import com.restock.core.data.database.entity.CurrentListEntity
 import com.restock.core.data.di.IoDispatcher
 import com.restock.core.data.mapper.toDomain
 import com.restock.core.domain.model.CurrentListItem
+import com.restock.core.domain.model.PositionUpdate
 import com.restock.core.domain.repository.CurrentListRepository
 import java.time.Instant
 import java.util.UUID
@@ -91,6 +92,31 @@ class CurrentListRepositoryImpl
                 currentListDao.findByItemId(itemId) != null
             }
 
+        override suspend fun findByItemId(itemId: String): CurrentListItem? =
+            withContext(ioDispatcher) {
+                currentListDao.findUncheckedByItemId(itemId)?.let { entity ->
+                    itemDao.getById(entity.itemId)?.let { item ->
+                        CurrentListItem(
+                            id = entity.id,
+                            itemId = entity.itemId,
+                            name = item.name,
+                            normalizedName = item.normalizedName,
+                            quantity = entity.quantity,
+                            unit = entity.unit,
+                            addedAt = Instant.ofEpochMilli(entity.addedAt),
+                            checkedAt = entity.checkedAt?.let { Instant.ofEpochMilli(it) },
+                            position = entity.position,
+                            isChecked = entity.isChecked,
+                        )
+                    }
+                }
+            }
+
+        override suspend fun getCurrentItemIds(): List<String> =
+            withContext(ioDispatcher) {
+                currentListDao.getCurrentItemIds()
+            }
+
         override suspend fun addItem(
             itemId: String,
             quantity: Int,
@@ -105,6 +131,50 @@ class CurrentListRepositoryImpl
                     val id = UUID.randomUUID().toString()
                     val now = Instant.now()
                     val position = currentListDao.getMaxPosition() + 1
+
+                    val entity =
+                        CurrentListEntity(
+                            id = id,
+                            itemId = itemId,
+                            quantity = quantity,
+                            unit = unit,
+                            addedAt = now.toEpochMilli(),
+                            checkedAt = null,
+                            position = position,
+                            isChecked = false,
+                        )
+
+                    currentListDao.insert(entity)
+
+                    CurrentListItem(
+                        id = id,
+                        itemId = itemId,
+                        name = item.name,
+                        normalizedName = item.normalizedName,
+                        quantity = quantity,
+                        unit = unit,
+                        addedAt = now,
+                        checkedAt = null,
+                        position = position,
+                        isChecked = false,
+                    )
+                }
+            }
+
+        override suspend fun addItemAt(
+            itemId: String,
+            position: Int,
+            quantity: Int,
+            unit: String?,
+        ): Result<CurrentListItem> =
+            withContext(ioDispatcher) {
+                runCatching {
+                    val item =
+                        itemDao.getById(itemId)
+                            ?: throw IllegalArgumentException("Item not found: $itemId")
+
+                    val id = UUID.randomUUID().toString()
+                    val now = Instant.now()
 
                     val entity =
                         CurrentListEntity(
@@ -167,11 +237,12 @@ class CurrentListRepositoryImpl
         override suspend fun updateQuantity(
             id: String,
             quantity: Int,
+            unit: String?,
         ): Result<Unit> =
             withContext(ioDispatcher) {
                 runCatching {
                     require(quantity > 0) { "Quantity must be positive" }
-                    currentListDao.updateQuantity(id, quantity)
+                    currentListDao.updateQuantityAndUnit(id, quantity, unit)
                 }
             }
 
@@ -208,6 +279,15 @@ class CurrentListRepositoryImpl
                         if (item.position != index) {
                             currentListDao.updatePosition(item.id, index)
                         }
+                    }
+                }
+            }
+
+        override suspend fun updatePositions(updates: List<PositionUpdate>): Result<Unit> =
+            withContext(ioDispatcher) {
+                runCatching {
+                    updates.forEach { update ->
+                        currentListDao.updatePosition(update.id, update.newPosition)
                     }
                 }
             }

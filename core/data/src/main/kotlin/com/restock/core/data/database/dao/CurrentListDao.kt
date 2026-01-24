@@ -119,6 +119,20 @@ interface CurrentListDao {
     suspend fun findByItemId(itemId: String): CurrentListEntity?
 
     /**
+     * Find an unchecked list item by its item ID.
+     * Used for checking duplicates before adding.
+     */
+    @Query("SELECT * FROM current_list WHERE item_id = :itemId AND is_checked = 0 LIMIT 1")
+    suspend fun findUncheckedByItemId(itemId: String): CurrentListEntity?
+
+    /**
+     * Get the IDs of all items currently in the list.
+     * Used for filtering suggestions.
+     */
+    @Query("SELECT item_id FROM current_list")
+    suspend fun getCurrentItemIds(): List<String>
+
+    /**
      * Get the maximum position in the list.
      */
     @Query("SELECT COALESCE(MAX(position), -1) FROM current_list")
@@ -164,6 +178,16 @@ interface CurrentListDao {
     suspend fun updateQuantity(
         id: String,
         quantity: Int,
+    )
+
+    /**
+     * Update the quantity and unit of an item.
+     */
+    @Query("UPDATE current_list SET quantity = :quantity, unit = :unit WHERE id = :id")
+    suspend fun updateQuantityAndUnit(
+        id: String,
+        quantity: Int,
+        unit: String?,
     )
 
     /**

@@ -47,6 +47,17 @@ interface ItemRepository {
     ): List<GroceryItem>
 
     /**
+     * Get an existing item by normalized name, or create a new one if not exists.
+     *
+     * This is the primary method for adding items from user input, ensuring
+     * deduplication by normalized name while preserving the original display name.
+     *
+     * @param name The item name (will be normalized for lookup, original preserved for display).
+     * @return The existing or newly created item.
+     */
+    suspend fun getOrCreate(name: String): GroceryItem
+
+    /**
      * Insert a new item.
      *
      * @return Result containing the inserted item or an error.
