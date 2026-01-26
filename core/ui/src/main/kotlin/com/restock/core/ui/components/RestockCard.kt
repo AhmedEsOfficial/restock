@@ -32,8 +32,10 @@ import com.restock.core.ui.theme.RestockSpacing
 enum class RestockCardVariant {
     /** Standard card for list items with subtle 1dp shadow */
     DEFAULT,
+
     /** Elevated card for suggestions with more prominent 4dp shadow */
     ELEVATED,
+
     /** Outlined card with border, no shadow - for selected states */
     OUTLINED,
 }
@@ -91,36 +93,41 @@ fun RestockCard(
     contentColor: Color = RestockColors.Primary,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val elevation = when (variant) {
-        RestockCardVariant.DEFAULT -> RestockElevation.level1
-        RestockCardVariant.ELEVATED -> RestockElevation.level2
-        RestockCardVariant.OUTLINED -> RestockElevation.level0
-    }
+    val elevation =
+        when (variant) {
+            RestockCardVariant.DEFAULT -> RestockElevation.level1
+            RestockCardVariant.ELEVATED -> RestockElevation.level2
+            RestockCardVariant.OUTLINED -> RestockElevation.level0
+        }
 
-    val border = when (variant) {
-        RestockCardVariant.OUTLINED -> BorderStroke(1.dp, RestockColors.Divider)
-        else -> null
-    }
+    val border =
+        when (variant) {
+            RestockCardVariant.OUTLINED -> BorderStroke(1.dp, RestockColors.Divider)
+            else -> null
+        }
 
-    val pressedElevation = when (variant) {
-        RestockCardVariant.DEFAULT -> RestockElevation.level2
-        RestockCardVariant.ELEVATED -> RestockElevation.level3
-        RestockCardVariant.OUTLINED -> RestockElevation.level0
-    }
+    val pressedElevation =
+        when (variant) {
+            RestockCardVariant.DEFAULT -> RestockElevation.level2
+            RestockCardVariant.ELEVATED -> RestockElevation.level3
+            RestockCardVariant.OUTLINED -> RestockElevation.level0
+        }
 
     if (onClick != null) {
         Card(
             onClick = onClick,
             modifier = modifier,
             shape = shape,
-            colors = CardDefaults.cardColors(
-                containerColor = containerColor,
-                contentColor = contentColor,
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = elevation,
-                pressedElevation = pressedElevation,
-            ),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = containerColor,
+                    contentColor = contentColor,
+                ),
+            elevation =
+                CardDefaults.cardElevation(
+                    defaultElevation = elevation,
+                    pressedElevation = pressedElevation,
+                ),
             border = border,
             content = content,
         )
@@ -128,13 +135,15 @@ fun RestockCard(
         Card(
             modifier = modifier,
             shape = shape,
-            colors = CardDefaults.cardColors(
-                containerColor = containerColor,
-                contentColor = contentColor,
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = elevation,
-            ),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = containerColor,
+                    contentColor = contentColor,
+                ),
+            elevation =
+                CardDefaults.cardElevation(
+                    defaultElevation = elevation,
+                ),
             border = border,
             content = content,
         )
@@ -203,9 +212,10 @@ fun RestockOutlinedCard(
 private fun DefaultCardPreview() {
     RestockPreviewTheme {
         RestockCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Text(
                 text = "Default Card",
@@ -221,9 +231,10 @@ private fun ElevatedCardPreview() {
     RestockPreviewTheme {
         RestockCard(
             variant = RestockCardVariant.ELEVATED,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Text(
                 text = "Elevated Card (for suggestions)",
@@ -239,9 +250,10 @@ private fun OutlinedCardPreview() {
     RestockPreviewTheme {
         RestockCard(
             variant = RestockCardVariant.OUTLINED,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Text(
                 text = "Outlined Card",
@@ -257,9 +269,10 @@ private fun ClickableCardPreview() {
     RestockPreviewTheme {
         RestockCard(
             onClick = { /* Handle click */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Text(
                 text = "Clickable Card",
@@ -317,9 +330,10 @@ private fun AllCardVariantsPreview() {
 private fun RestockElevatedCardPreview() {
     RestockPreviewTheme {
         RestockElevatedCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Text(
                 text = "Suggestion Card (RestockElevatedCard)",
@@ -335,9 +349,10 @@ private fun RestockElevatedCardPreview() {
 private fun RestockOutlinedCardPreview() {
     RestockPreviewTheme {
         RestockOutlinedCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Text(
                 text = "Selected Card (RestockOutlinedCard)",
@@ -354,9 +369,10 @@ private fun ClickableElevatedCardPreview() {
     RestockPreviewTheme {
         RestockElevatedCard(
             onClick = { /* Handle click */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Text(
                 text = "Clickable Suggestion",

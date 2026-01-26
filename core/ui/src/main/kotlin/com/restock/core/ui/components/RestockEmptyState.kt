@@ -3,7 +3,6 @@ package com.restock.core.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -52,9 +51,10 @@ fun RestockEmptyState(
     action: (@Composable () -> Unit)? = null,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(RestockSpacing.xl),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(RestockSpacing.xl),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -136,16 +136,17 @@ fun RestockListEmptyState(
         description = "Add items by typing above",
         modifier = modifier,
         icon = Icons.Outlined.ShoppingCart,
-        action = if (onAddClick != null) {
-            {
-                RestockButton(
-                    text = "Add First Item",
-                    onClick = onAddClick,
-                )
-            }
-        } else {
-            null
-        },
+        action =
+            if (onAddClick != null) {
+                {
+                    RestockButton(
+                        text = "Add First Item",
+                        onClick = onAddClick,
+                    )
+                }
+            } else {
+                null
+            },
     )
 }
 
@@ -201,24 +202,27 @@ fun NoSuggestionsState(
     modifier: Modifier = Modifier,
     tripCount: Int = 0,
 ) {
-    val (title, description) = when {
-        tripCount < 1 -> Pair(
-            "Learning your patterns...",
-            "Add items and shop normally. Suggestions will appear soon.",
-        )
-        tripCount < 3 -> {
-            val remaining = 3 - tripCount
-            val suffix = if (remaining == 1) "" else "s"
-            Pair(
-                "Almost ready!",
-                "After $remaining more shopping trip$suffix, suggestions will appear.",
-            )
+    val (title, description) =
+        when {
+            tripCount < 1 ->
+                Pair(
+                    "Learning your patterns...",
+                    "Add items and shop normally. Suggestions will appear soon.",
+                )
+            tripCount < 3 -> {
+                val remaining = 3 - tripCount
+                val suffix = if (remaining == 1) "" else "s"
+                Pair(
+                    "Almost ready!",
+                    "After $remaining more shopping trip$suffix, suggestions will appear.",
+                )
+            }
+            else ->
+                Pair(
+                    "No suggestions right now",
+                    "You're all stocked up! Suggestions will appear when items are due.",
+                )
         }
-        else -> Pair(
-            "No suggestions right now",
-            "You're all stocked up! Suggestions will appear when items are due.",
-        )
-    }
 
     RestockEmptyState(
         title = title,
@@ -310,9 +314,10 @@ fun RestockErrorState(
     onRetry: (() -> Unit)? = null,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(RestockSpacing.xl),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(RestockSpacing.xl),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

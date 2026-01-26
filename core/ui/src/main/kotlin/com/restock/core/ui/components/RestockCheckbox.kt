@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import com.restock.core.ui.preview.LightDarkPreview
 import com.restock.core.ui.preview.RestockPreviewTheme
 import com.restock.core.ui.theme.RestockColors
-import com.restock.core.ui.theme.RestockTheme
 
 /**
  * Animation duration for checkbox state changes.
@@ -121,22 +120,24 @@ fun RestockCheckbox(
 
     // Animate background color
     val backgroundColor by animateColorAsState(
-        targetValue = when {
-            !enabled -> RestockColors.Disabled
-            checked -> RestockColors.Success
-            else -> Color.Transparent
-        },
+        targetValue =
+            when {
+                !enabled -> RestockColors.Disabled
+                checked -> RestockColors.Success
+                else -> Color.Transparent
+            },
         animationSpec = tween(durationMillis = CHECKBOX_ANIMATION_DURATION_MS),
         label = "checkbox_background",
     )
 
     // Animate border color
     val borderColor by animateColorAsState(
-        targetValue = when {
-            !enabled -> RestockColors.Disabled
-            checked -> RestockColors.Success
-            else -> RestockColors.Muted
-        },
+        targetValue =
+            when {
+                !enabled -> RestockColors.Disabled
+                checked -> RestockColors.Success
+                else -> RestockColors.Muted
+            },
         animationSpec = tween(durationMillis = CHECKBOX_ANIMATION_DURATION_MS),
         label = "checkbox_border",
     )
@@ -151,35 +152,37 @@ fun RestockCheckbox(
     val checkboxShape = RoundedCornerShape(CheckboxCornerRadius)
 
     Box(
-        modifier = modifier
-            .size(CheckboxTouchTarget) // Touch target
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(
-                interactionSource = interactionSource,
-                indication = ripple(bounded = true),
-                enabled = enabled,
-                role = Role.Checkbox,
-                onClick = { onCheckedChange(!checked) },
-            )
-            .semantics {
-                contentDescription?.let {
-                    this.contentDescription = it
-                }
-                stateDescription = if (checked) "Checked" else "Unchecked"
-            },
+        modifier =
+            modifier
+                .size(CheckboxTouchTarget) // Touch target
+                .clip(RoundedCornerShape(8.dp))
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = ripple(bounded = true),
+                    enabled = enabled,
+                    role = Role.Checkbox,
+                    onClick = { onCheckedChange(!checked) },
+                )
+                .semantics {
+                    contentDescription?.let {
+                        this.contentDescription = it
+                    }
+                    stateDescription = if (checked) "Checked" else "Unchecked"
+                },
         contentAlignment = Alignment.Center,
     ) {
         // Checkbox visual (smaller than touch target)
         Box(
-            modifier = Modifier
-                .size(size)
-                .clip(checkboxShape)
-                .background(backgroundColor)
-                .border(
-                    width = CheckboxBorderWidth,
-                    color = borderColor,
-                    shape = checkboxShape,
-                ),
+            modifier =
+                Modifier
+                    .size(size)
+                    .clip(checkboxShape)
+                    .background(backgroundColor)
+                    .border(
+                        width = CheckboxBorderWidth,
+                        color = borderColor,
+                        shape = checkboxShape,
+                    ),
             contentAlignment = Alignment.Center,
         ) {
             // Checkmark icon with scale animation
@@ -187,9 +190,10 @@ fun RestockCheckbox(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
                 tint = Color.White,
-                modifier = Modifier
-                    .size(CheckmarkSize)
-                    .scale(checkmarkScale),
+                modifier =
+                    Modifier
+                        .size(CheckmarkSize)
+                        .scale(checkmarkScale),
             )
         }
     }
@@ -229,13 +233,14 @@ fun RestockLabeledCheckbox(
     contentDescription: String? = null,
 ) {
     Row(
-        modifier = modifier
-            .clickable(
-                enabled = enabled,
-                onClick = { onCheckedChange(!checked) },
-                role = Role.Checkbox,
-            )
-            .padding(vertical = 4.dp),
+        modifier =
+            modifier
+                .clickable(
+                    enabled = enabled,
+                    onClick = { onCheckedChange(!checked) },
+                    role = Role.Checkbox,
+                )
+                .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RestockCheckbox(
@@ -248,17 +253,19 @@ fun RestockLabeledCheckbox(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = when {
-                !enabled && checked -> RestockColors.Muted
-                !enabled -> RestockColors.Disabled
-                checked -> RestockColors.Muted
-                else -> RestockColors.OnSurface
-            },
-            textDecoration = if (checked) {
-                androidx.compose.ui.text.style.TextDecoration.LineThrough
-            } else {
-                null
-            },
+            color =
+                when {
+                    !enabled && checked -> RestockColors.Muted
+                    !enabled -> RestockColors.Disabled
+                    checked -> RestockColors.Muted
+                    else -> RestockColors.OnSurface
+                },
+            textDecoration =
+                if (checked) {
+                    androidx.compose.ui.text.style.TextDecoration.LineThrough
+                } else {
+                    null
+                },
         )
     }
 }

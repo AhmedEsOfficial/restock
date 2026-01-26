@@ -1,6 +1,5 @@
 package com.restock.core.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.restock.core.ui.preview.LightDarkPreview
@@ -73,30 +71,33 @@ enum class MealType(
     BREAKFAST("Breakfast", "\uD83C\uDF05"), // 🌅
     LUNCH("Lunch", "\u2600\uFE0F"), // ☀️
     DINNER("Dinner", "\uD83C\uDF19"), // 🌙
-    SNACK("Snack", "\u2728"); // ✨
+    SNACK("Snack", "\u2728"), // ✨
+    ;
 
     /**
      * The primary color for this meal type.
      */
     val color: Color
-        get() = when (this) {
-            BREAKFAST -> RestockColors.Breakfast
-            LUNCH -> RestockColors.Lunch
-            DINNER -> RestockColors.Dinner
-            SNACK -> RestockColors.Snack
-        }
+        get() =
+            when (this) {
+                BREAKFAST -> RestockColors.Breakfast
+                LUNCH -> RestockColors.Lunch
+                DINNER -> RestockColors.Dinner
+                SNACK -> RestockColors.Snack
+            }
 
     /**
      * The container (background) color for this meal type.
      * Used for chip backgrounds with 15% opacity.
      */
     val containerColor: Color
-        get() = when (this) {
-            BREAKFAST -> RestockColors.BreakfastContainer
-            LUNCH -> RestockColors.LunchContainer
-            DINNER -> RestockColors.DinnerContainer
-            SNACK -> RestockColors.SnackContainer
-        }
+        get() =
+            when (this) {
+                BREAKFAST -> RestockColors.BreakfastContainer
+                LUNCH -> RestockColors.LunchContainer
+                DINNER -> RestockColors.DinnerContainer
+                SNACK -> RestockColors.SnackContainer
+            }
 }
 
 /**
@@ -151,10 +152,11 @@ fun MealTagChip(
         color = chipColor.copy(alpha = CHIP_BACKGROUND_ALPHA),
     ) {
         Row(
-            modifier = Modifier.padding(
-                horizontal = ChipHorizontalPadding,
-                vertical = ChipVerticalPadding,
-            ),
+            modifier =
+                Modifier.padding(
+                    horizontal = ChipHorizontalPadding,
+                    vertical = ChipVerticalPadding,
+                ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (showEmoji) {
@@ -177,13 +179,14 @@ fun MealTagChip(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Remove ${mealType.displayName} tag",
                     tint = chipColor,
-                    modifier = Modifier
-                        .size(ChipRemoveIconSize)
-                        .clip(RoundedCornerShape(7.dp))
-                        .clickable(
-                            role = Role.Button,
-                            onClick = onRemoveClick,
-                        ),
+                    modifier =
+                        Modifier
+                            .size(ChipRemoveIconSize)
+                            .clip(RoundedCornerShape(7.dp))
+                            .clickable(
+                                role = Role.Button,
+                                onClick = onRemoveClick,
+                            ),
                 )
             }
         }
@@ -261,14 +264,15 @@ fun RestockChip(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
 ) {
-    val clickableModifier = if (onClick != null) {
-        Modifier.clickable(
-            role = Role.Button,
-            onClick = onClick,
-        )
-    } else {
-        Modifier
-    }
+    val clickableModifier =
+        if (onClick != null) {
+            Modifier.clickable(
+                role = Role.Button,
+                onClick = onClick,
+            )
+        } else {
+            Modifier
+        }
 
     Surface(
         modifier = modifier.then(clickableModifier),
@@ -276,10 +280,11 @@ fun RestockChip(
         color = color.copy(alpha = CHIP_BACKGROUND_ALPHA),
     ) {
         Row(
-            modifier = Modifier.padding(
-                horizontal = ChipHorizontalPadding,
-                vertical = ChipVerticalPadding,
-            ),
+            modifier =
+                Modifier.padding(
+                    horizontal = ChipHorizontalPadding,
+                    vertical = ChipVerticalPadding,
+                ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             leadingIcon?.let { icon ->
@@ -347,9 +352,7 @@ fun RestockInfoChip(
  * ```
  */
 @Composable
-fun RestockSmartBadge(
-    modifier: Modifier = Modifier,
-) {
+fun RestockSmartBadge(modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(4.dp),

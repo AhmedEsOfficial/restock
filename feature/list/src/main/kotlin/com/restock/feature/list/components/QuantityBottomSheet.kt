@@ -18,7 +18,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
@@ -41,31 +40,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.restock.core.domain.model.CurrentListItem
 import com.restock.core.ui.components.RestockButton
-import com.restock.core.ui.components.RestockButtonSize
 import com.restock.core.ui.components.RestockButtonVariant
 import com.restock.core.ui.components.RestockOutlinedTextField
 import com.restock.core.ui.preview.LightDarkPreview
 import com.restock.core.ui.preview.RestockPreviewTheme
 import com.restock.core.ui.theme.RestockColors
-import com.restock.core.ui.theme.RestockShapeTokens
 import com.restock.core.ui.theme.RestockSpacing
 import kotlinx.coroutines.launch
-import java.time.Instant
 
 /**
  * Common unit options for grocery items.
  */
-private val UNIT_OPTIONS = listOf(
-    null to "Each",
-    "lb" to "Pounds",
-    "oz" to "Ounces",
-    "kg" to "Kilograms",
-    "g" to "Grams",
-    "L" to "Liters",
-    "mL" to "Milliliters",
-    "gal" to "Gallons",
-    "ct" to "Count",
-)
+private val UNIT_OPTIONS =
+    listOf(
+        null to "Each",
+        "lb" to "Pounds",
+        "oz" to "Ounces",
+        "kg" to "Kilograms",
+        "g" to "Grams",
+        "L" to "Liters",
+        "mL" to "Milliliters",
+        "gal" to "Gallons",
+        "ct" to "Count",
+    )
 
 /**
  * Minimum quantity allowed.
@@ -116,15 +113,17 @@ fun QuantityBottomSheet(
         containerColor = RestockColors.Surface,
         dragHandle = {
             Surface(
-                modifier = Modifier
-                    .padding(vertical = RestockSpacing.sm),
+                modifier =
+                    Modifier
+                        .padding(vertical = RestockSpacing.sm),
                 color = RestockColors.MutedVariant,
                 shape = MaterialTheme.shapes.extraSmall,
             ) {
                 Spacer(
-                    modifier = Modifier
-                        .width(32.dp)
-                        .height(4.dp),
+                    modifier =
+                        Modifier
+                            .width(32.dp)
+                            .height(4.dp),
                 )
             }
         },
@@ -189,10 +188,11 @@ private fun QuantityBottomSheetContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = RestockSpacing.lg)
-            .padding(bottom = RestockSpacing.xl),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = RestockSpacing.lg)
+                .padding(bottom = RestockSpacing.xl),
     ) {
         // Title
         Text(
@@ -286,21 +286,23 @@ private fun QuantitySelector(
             onClick = onDecrement,
             modifier = Modifier.size(48.dp),
             shape = MaterialTheme.shapes.small,
-            color = if (quantity > MIN_QUANTITY) {
-                RestockColors.PrimaryContainer
-            } else {
-                RestockColors.Disabled.copy(alpha = 0.5f)
-            },
+            color =
+                if (quantity > MIN_QUANTITY) {
+                    RestockColors.PrimaryContainer
+                } else {
+                    RestockColors.Disabled.copy(alpha = 0.5f)
+                },
             enabled = quantity > MIN_QUANTITY,
         ) {
             Icon(
                 imageVector = Icons.Filled.Remove,
                 contentDescription = "Decrease quantity",
-                tint = if (quantity > MIN_QUANTITY) {
-                    RestockColors.OnPrimary
-                } else {
-                    RestockColors.Muted
-                },
+                tint =
+                    if (quantity > MIN_QUANTITY) {
+                        RestockColors.OnPrimary
+                    } else {
+                        RestockColors.Muted
+                    },
                 modifier = Modifier.padding(RestockSpacing.sm),
             )
         }
@@ -318,10 +320,11 @@ private fun QuantitySelector(
             },
             modifier = Modifier.width(80.dp),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done,
-            ),
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
             trailingIcon = null,
         )
 
@@ -332,21 +335,23 @@ private fun QuantitySelector(
             onClick = onIncrement,
             modifier = Modifier.size(48.dp),
             shape = MaterialTheme.shapes.small,
-            color = if (quantity < MAX_QUANTITY) {
-                RestockColors.Accent
-            } else {
-                RestockColors.Disabled.copy(alpha = 0.5f)
-            },
+            color =
+                if (quantity < MAX_QUANTITY) {
+                    RestockColors.Accent
+                } else {
+                    RestockColors.Disabled.copy(alpha = 0.5f)
+                },
             enabled = quantity < MAX_QUANTITY,
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Increase quantity",
-                tint = if (quantity < MAX_QUANTITY) {
-                    RestockColors.OnAccent
-                } else {
-                    RestockColors.Muted
-                },
+                tint =
+                    if (quantity < MAX_QUANTITY) {
+                        RestockColors.OnAccent
+                    } else {
+                        RestockColors.Muted
+                    },
                 modifier = Modifier.padding(RestockSpacing.sm),
             )
         }
@@ -421,18 +426,20 @@ private fun UnitChip(
             )
         },
         modifier = modifier,
-        colors = FilterChipDefaults.filterChipColors(
-            containerColor = RestockColors.Surface,
-            selectedContainerColor = RestockColors.Accent.copy(alpha = 0.15f),
-            labelColor = RestockColors.Primary,
-            selectedLabelColor = RestockColors.Accent,
-        ),
-        border = FilterChipDefaults.filterChipBorder(
-            enabled = true,
-            selected = selected,
-            borderColor = RestockColors.MutedVariant,
-            selectedBorderColor = RestockColors.Accent,
-        ),
+        colors =
+            FilterChipDefaults.filterChipColors(
+                containerColor = RestockColors.Surface,
+                selectedContainerColor = RestockColors.Accent.copy(alpha = 0.15f),
+                labelColor = RestockColors.Primary,
+                selectedLabelColor = RestockColors.Accent,
+            ),
+        border =
+            FilterChipDefaults.filterChipBorder(
+                enabled = true,
+                selected = selected,
+                borderColor = RestockColors.MutedVariant,
+                selectedBorderColor = RestockColors.Accent,
+            ),
     )
 }
 

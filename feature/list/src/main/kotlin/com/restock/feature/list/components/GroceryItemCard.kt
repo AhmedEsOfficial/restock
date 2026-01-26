@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -42,7 +41,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.restock.core.domain.model.CurrentListItem
 import com.restock.core.ui.components.MealTagChip
 import com.restock.core.ui.components.MealType
@@ -51,7 +49,6 @@ import com.restock.core.ui.preview.LightDarkPreview
 import com.restock.core.ui.preview.RestockPreviewTheme
 import com.restock.core.ui.theme.RestockColors
 import com.restock.core.ui.theme.RestockElevation
-import com.restock.core.ui.theme.RestockShapeTokens
 import com.restock.core.ui.theme.RestockSpacing
 import java.time.Instant
 
@@ -115,19 +112,20 @@ fun GroceryItemCard(
     var isBeingDismissed by remember { mutableStateOf(false) }
     var hasTriggeredHaptic by remember { mutableStateOf(false) }
 
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart) {
-                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                isBeingDismissed = true
-                onDelete()
-                true
-            } else {
-                false
-            }
-        },
-        positionalThreshold = { totalDistance -> totalDistance * SWIPE_THRESHOLD_PERCENT },
-    )
+    val dismissState =
+        rememberSwipeToDismissBoxState(
+            confirmValueChange = { value ->
+                if (value == SwipeToDismissBoxValue.EndToStart) {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    isBeingDismissed = true
+                    onDelete()
+                    true
+                } else {
+                    false
+                }
+            },
+            positionalThreshold = { totalDistance -> totalDistance * SWIPE_THRESHOLD_PERCENT },
+        )
 
     // Trigger haptic feedback when crossing the threshold
     LaunchedEffect(dismissState.targetValue) {
@@ -147,10 +145,11 @@ fun GroceryItemCard(
 
     // Animate elevation based on swipe progress
     val elevation by animateDpAsState(
-        targetValue = when {
-            dismissState.progress > 0f && dismissState.progress < 1f -> RestockElevation.level2
-            else -> RestockElevation.level1
-        },
+        targetValue =
+            when {
+                dismissState.progress > 0f && dismissState.progress < 1f -> RestockElevation.level2
+                else -> RestockElevation.level1
+            },
         animationSpec = tween(durationMillis = ELEVATION_ANIMATION_DURATION_MS),
         label = "card_elevation",
     )
@@ -206,11 +205,12 @@ private fun GroceryItemCardContent(
 
     // Animate text color based on checked state
     val textColor by animateColorAsState(
-        targetValue = if (item.isChecked || isCheckedSection) {
-            RestockColors.Muted
-        } else {
-            RestockColors.Primary
-        },
+        targetValue =
+            if (item.isChecked || isCheckedSection) {
+                RestockColors.Muted
+            } else {
+                RestockColors.Primary
+            },
         animationSpec = tween(durationMillis = COLOR_ANIMATION_DURATION_MS),
         label = "text_color",
     )
@@ -222,27 +222,29 @@ private fun GroceryItemCardContent(
         shadowElevation = elevation,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .combinedClickable(
-                    onClick = { onCheckedChange(!item.isChecked) },
-                    onLongClick = onQuantityClick,
-                )
-                .padding(
-                    horizontal = RestockSpacing.cardPaddingHorizontal,
-                    vertical = RestockSpacing.cardPaddingVertical,
-                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        onClick = { onCheckedChange(!item.isChecked) },
+                        onLongClick = onQuantityClick,
+                    )
+                    .padding(
+                        horizontal = RestockSpacing.cardPaddingHorizontal,
+                        vertical = RestockSpacing.cardPaddingVertical,
+                    ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // Checkbox
             RestockCheckbox(
                 checked = item.isChecked,
                 onCheckedChange = onCheckedChange,
-                contentDescription = if (item.isChecked) {
-                    "Uncheck ${item.name}"
-                } else {
-                    "Check ${item.name}"
-                },
+                contentDescription =
+                    if (item.isChecked) {
+                        "Uncheck ${item.name}"
+                    } else {
+                        "Check ${item.name}"
+                    },
             )
 
             Spacer(modifier = Modifier.width(RestockSpacing.xs))
@@ -255,11 +257,12 @@ private fun GroceryItemCardContent(
                     text = item.name,
                     style = MaterialTheme.typography.bodyMedium,
                     color = textColor,
-                    textDecoration = if (item.isChecked || isCheckedSection) {
-                        TextDecoration.LineThrough
-                    } else {
-                        null
-                    },
+                    textDecoration =
+                        if (item.isChecked || isCheckedSection) {
+                            TextDecoration.LineThrough
+                        } else {
+                            null
+                        },
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -318,21 +321,23 @@ fun QuantityBadge(
     isMuted: Boolean = false,
 ) {
     val backgroundColor by animateColorAsState(
-        targetValue = if (isMuted) {
-            RestockColors.Muted.copy(alpha = 0.15f)
-        } else {
-            RestockColors.Accent.copy(alpha = 0.15f)
-        },
+        targetValue =
+            if (isMuted) {
+                RestockColors.Muted.copy(alpha = 0.15f)
+            } else {
+                RestockColors.Accent.copy(alpha = 0.15f)
+            },
         animationSpec = tween(durationMillis = COLOR_ANIMATION_DURATION_MS),
         label = "badge_background",
     )
 
     val textColor by animateColorAsState(
-        targetValue = if (isMuted) {
-            RestockColors.Muted
-        } else {
-            RestockColors.Accent
-        },
+        targetValue =
+            if (isMuted) {
+                RestockColors.Muted
+            } else {
+                RestockColors.Accent
+            },
         animationSpec = tween(durationMillis = COLOR_ANIMATION_DURATION_MS),
         label = "badge_text_color",
     )
@@ -350,10 +355,11 @@ fun QuantityBadge(
             text = displayText,
             style = MaterialTheme.typography.labelSmall,
             color = textColor,
-            modifier = Modifier.padding(
-                horizontal = RestockSpacing.sm,
-                vertical = RestockSpacing.xs,
-            ),
+            modifier =
+                Modifier.padding(
+                    horizontal = RestockSpacing.sm,
+                    vertical = RestockSpacing.xs,
+                ),
         )
     }
 }
@@ -375,32 +381,35 @@ private fun DeleteSwipeBackground(
 ) {
     // Animate background color based on target value (when threshold is crossed)
     val backgroundColor by animateColorAsState(
-        targetValue = when (dismissState.targetValue) {
-            SwipeToDismissBoxValue.EndToStart -> RestockColors.Error
-            else -> Color.Transparent
-        },
+        targetValue =
+            when (dismissState.targetValue) {
+                SwipeToDismissBoxValue.EndToStart -> RestockColors.Error
+                else -> Color.Transparent
+            },
         animationSpec = tween(durationMillis = COLOR_ANIMATION_DURATION_MS),
         label = "delete_background",
     )
 
     // Animate icon scale based on target value
     val iconScale by animateFloatAsState(
-        targetValue = when (dismissState.targetValue) {
-            SwipeToDismissBoxValue.EndToStart -> 1f
-            else -> 0.5f
-        },
+        targetValue =
+            when (dismissState.targetValue) {
+                SwipeToDismissBoxValue.EndToStart -> 1f
+                else -> 0.5f
+            },
         animationSpec = tween(durationMillis = COLOR_ANIMATION_DURATION_MS),
         label = "delete_icon_scale",
     )
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                color = backgroundColor,
-                shape = MaterialTheme.shapes.medium,
-            )
-            .padding(horizontal = RestockSpacing.lg),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(
+                    color = backgroundColor,
+                    shape = MaterialTheme.shapes.medium,
+                )
+                .padding(horizontal = RestockSpacing.lg),
         contentAlignment = Alignment.CenterEnd,
     ) {
         Icon(
@@ -420,16 +429,17 @@ private fun GroceryItemCardUncheckedPreview() {
     RestockPreviewTheme {
         Surface(color = RestockColors.Background) {
             GroceryItemCard(
-                item = CurrentListItem(
-                    id = "1",
-                    itemId = "item1",
-                    name = "Milk",
-                    normalizedName = "milk",
-                    quantity = 1,
-                    addedAt = Instant.now(),
-                    position = 0,
-                    isChecked = false,
-                ),
+                item =
+                    CurrentListItem(
+                        id = "1",
+                        itemId = "item1",
+                        name = "Milk",
+                        normalizedName = "milk",
+                        quantity = 1,
+                        addedAt = Instant.now(),
+                        position = 0,
+                        isChecked = false,
+                    ),
                 onCheckedChange = {},
                 onDelete = {},
                 onQuantityClick = {},
@@ -445,17 +455,18 @@ private fun GroceryItemCardCheckedPreview() {
     RestockPreviewTheme {
         Surface(color = RestockColors.Background) {
             GroceryItemCard(
-                item = CurrentListItem(
-                    id = "1",
-                    itemId = "item1",
-                    name = "Milk",
-                    normalizedName = "milk",
-                    quantity = 1,
-                    addedAt = Instant.now(),
-                    checkedAt = Instant.now(),
-                    position = 0,
-                    isChecked = true,
-                ),
+                item =
+                    CurrentListItem(
+                        id = "1",
+                        itemId = "item1",
+                        name = "Milk",
+                        normalizedName = "milk",
+                        quantity = 1,
+                        addedAt = Instant.now(),
+                        checkedAt = Instant.now(),
+                        position = 0,
+                        isChecked = true,
+                    ),
                 onCheckedChange = {},
                 onDelete = {},
                 onQuantityClick = {},
@@ -472,16 +483,17 @@ private fun GroceryItemCardWithQuantityPreview() {
     RestockPreviewTheme {
         Surface(color = RestockColors.Background) {
             GroceryItemCard(
-                item = CurrentListItem(
-                    id = "1",
-                    itemId = "item1",
-                    name = "Eggs",
-                    normalizedName = "eggs",
-                    quantity = 2,
-                    addedAt = Instant.now(),
-                    position = 0,
-                    isChecked = false,
-                ),
+                item =
+                    CurrentListItem(
+                        id = "1",
+                        itemId = "item1",
+                        name = "Eggs",
+                        normalizedName = "eggs",
+                        quantity = 2,
+                        addedAt = Instant.now(),
+                        position = 0,
+                        isChecked = false,
+                    ),
                 onCheckedChange = {},
                 onDelete = {},
                 onQuantityClick = {},
@@ -497,17 +509,18 @@ private fun GroceryItemCardWithUnitPreview() {
     RestockPreviewTheme {
         Surface(color = RestockColors.Background) {
             GroceryItemCard(
-                item = CurrentListItem(
-                    id = "1",
-                    itemId = "item1",
-                    name = "Chicken Breast",
-                    normalizedName = "chicken breast",
-                    quantity = 2,
-                    unit = "lb",
-                    addedAt = Instant.now(),
-                    position = 0,
-                    isChecked = false,
-                ),
+                item =
+                    CurrentListItem(
+                        id = "1",
+                        itemId = "item1",
+                        name = "Chicken Breast",
+                        normalizedName = "chicken breast",
+                        quantity = 2,
+                        unit = "lb",
+                        addedAt = Instant.now(),
+                        position = 0,
+                        isChecked = false,
+                    ),
                 onCheckedChange = {},
                 onDelete = {},
                 onQuantityClick = {},
@@ -523,17 +536,18 @@ private fun GroceryItemCardLongNamePreview() {
     RestockPreviewTheme {
         Surface(color = RestockColors.Background) {
             GroceryItemCard(
-                item = CurrentListItem(
-                    id = "1",
-                    itemId = "item1",
-                    name = "Organic Free-Range Chicken Breast Boneless Skinless",
-                    normalizedName = "organic free-range chicken breast boneless skinless",
-                    quantity = 3,
-                    unit = "lb",
-                    addedAt = Instant.now(),
-                    position = 0,
-                    isChecked = false,
-                ),
+                item =
+                    CurrentListItem(
+                        id = "1",
+                        itemId = "item1",
+                        name = "Organic Free-Range Chicken Breast Boneless Skinless",
+                        normalizedName = "organic free-range chicken breast boneless skinless",
+                        quantity = 3,
+                        unit = "lb",
+                        addedAt = Instant.now(),
+                        position = 0,
+                        isChecked = false,
+                    ),
                 onCheckedChange = {},
                 onDelete = {},
                 onQuantityClick = {},
@@ -549,16 +563,17 @@ private fun GroceryItemCardWithTagsPreview() {
     RestockPreviewTheme {
         Surface(color = RestockColors.Background) {
             GroceryItemCard(
-                item = CurrentListItem(
-                    id = "1",
-                    itemId = "item1",
-                    name = "Eggs",
-                    normalizedName = "eggs",
-                    quantity = 12,
-                    addedAt = Instant.now(),
-                    position = 0,
-                    isChecked = false,
-                ),
+                item =
+                    CurrentListItem(
+                        id = "1",
+                        itemId = "item1",
+                        name = "Eggs",
+                        normalizedName = "eggs",
+                        quantity = 12,
+                        addedAt = Instant.now(),
+                        position = 0,
+                        isChecked = false,
+                    ),
                 onCheckedChange = {},
                 onDelete = {},
                 onQuantityClick = {},
@@ -575,17 +590,18 @@ private fun GroceryItemCardWithMultipleTagsPreview() {
     RestockPreviewTheme {
         Surface(color = RestockColors.Background) {
             GroceryItemCard(
-                item = CurrentListItem(
-                    id = "1",
-                    itemId = "item1",
-                    name = "Chicken Breast",
-                    normalizedName = "chicken breast",
-                    quantity = 2,
-                    unit = "lb",
-                    addedAt = Instant.now(),
-                    position = 0,
-                    isChecked = false,
-                ),
+                item =
+                    CurrentListItem(
+                        id = "1",
+                        itemId = "item1",
+                        name = "Chicken Breast",
+                        normalizedName = "chicken breast",
+                        quantity = 2,
+                        unit = "lb",
+                        addedAt = Instant.now(),
+                        position = 0,
+                        isChecked = false,
+                    ),
                 onCheckedChange = {},
                 onDelete = {},
                 onQuantityClick = {},
@@ -606,47 +622,50 @@ private fun GroceryItemCardListPreview() {
                 verticalArrangement = Arrangement.spacedBy(RestockSpacing.sm),
             ) {
                 GroceryItemCard(
-                    item = CurrentListItem(
-                        id = "1",
-                        itemId = "item1",
-                        name = "Milk",
-                        normalizedName = "milk",
-                        quantity = 1,
-                        addedAt = Instant.now(),
-                        position = 0,
-                        isChecked = false,
-                    ),
+                    item =
+                        CurrentListItem(
+                            id = "1",
+                            itemId = "item1",
+                            name = "Milk",
+                            normalizedName = "milk",
+                            quantity = 1,
+                            addedAt = Instant.now(),
+                            position = 0,
+                            isChecked = false,
+                        ),
                     onCheckedChange = {},
                     onDelete = {},
                     onQuantityClick = {},
                 )
                 GroceryItemCard(
-                    item = CurrentListItem(
-                        id = "2",
-                        itemId = "item2",
-                        name = "Eggs",
-                        normalizedName = "eggs",
-                        quantity = 12,
-                        addedAt = Instant.now(),
-                        position = 1,
-                        isChecked = false,
-                    ),
+                    item =
+                        CurrentListItem(
+                            id = "2",
+                            itemId = "item2",
+                            name = "Eggs",
+                            normalizedName = "eggs",
+                            quantity = 12,
+                            addedAt = Instant.now(),
+                            position = 1,
+                            isChecked = false,
+                        ),
                     onCheckedChange = {},
                     onDelete = {},
                     onQuantityClick = {},
                     mealTags = listOf(MealType.BREAKFAST),
                 )
                 GroceryItemCard(
-                    item = CurrentListItem(
-                        id = "3",
-                        itemId = "item3",
-                        name = "Bread",
-                        normalizedName = "bread",
-                        quantity = 1,
-                        addedAt = Instant.now(),
-                        position = 2,
-                        isChecked = false,
-                    ),
+                    item =
+                        CurrentListItem(
+                            id = "3",
+                            itemId = "item3",
+                            name = "Bread",
+                            normalizedName = "bread",
+                            quantity = 1,
+                            addedAt = Instant.now(),
+                            position = 2,
+                            isChecked = false,
+                        ),
                     onCheckedChange = {},
                     onDelete = {},
                     onQuantityClick = {},

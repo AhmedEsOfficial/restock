@@ -1,8 +1,8 @@
 package com.restock.core.ui.util
 
 import androidx.compose.ui.graphics.Color
-import com.restock.core.ui.components.MealType as UiMealType
 import com.restock.core.ui.theme.RestockColors
+import com.restock.core.ui.components.MealType as UiMealType
 
 /**
  * Data class holding color and display information for a meal type.

@@ -74,13 +74,14 @@ class ItemRepositoryImpl
                 itemDao.findByNormalizedName(normalizedName)?.toDomain()
                     ?: run {
                         // Create new item
-                        val newItem = GroceryItem(
-                            id = UUID.randomUUID().toString(),
-                            name = name.trim(),
-                            normalizedName = normalizedName,
-                            createdAt = Instant.now(),
-                            isActive = true,
-                        )
+                        val newItem =
+                            GroceryItem(
+                                id = UUID.randomUUID().toString(),
+                                name = name.trim(),
+                                normalizedName = normalizedName,
+                                createdAt = Instant.now(),
+                                isActive = true,
+                            )
                         itemDao.insert(newItem.toEntity())
                         newItem
                     }

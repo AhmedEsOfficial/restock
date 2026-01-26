@@ -97,19 +97,21 @@ fun RestockTextField(
     isError: Boolean = false,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(
-        capitalization = KeyboardCapitalization.Sentences,
-        imeAction = ImeAction.Done,
-    ),
+    keyboardOptions: KeyboardOptions =
+        KeyboardOptions(
+            capitalization = KeyboardCapitalization.Sentences,
+            imeAction = ImeAction.Done,
+        ),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(RestockSpacing.inputFieldHeight),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(RestockSpacing.inputFieldHeight),
         shape = MaterialTheme.shapes.large,
         color = RestockColors.Card,
         shadowElevation = RestockElevation.level2,
@@ -120,9 +122,10 @@ fun RestockTextField(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             readOnly = readOnly,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(
-                color = RestockColors.Primary,
-            ),
+            textStyle =
+                MaterialTheme.typography.bodyMedium.copy(
+                    color = RestockColors.Primary,
+                ),
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             singleLine = singleLine,
@@ -148,23 +151,25 @@ fun RestockTextField(
                     },
                     leadingIcon = leadingIcon,
                     trailingIcon = trailingIcon,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        errorContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        errorIndicatorColor = Color.Transparent,
-                        cursorColor = RestockColors.Accent,
-                    ),
-                    contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
-                        start = RestockSpacing.md,
-                        end = RestockSpacing.md,
-                        top = 14.dp,
-                        bottom = 14.dp,
-                    ),
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            errorContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            errorIndicatorColor = Color.Transparent,
+                            cursorColor = RestockColors.Accent,
+                        ),
+                    contentPadding =
+                        TextFieldDefaults.contentPaddingWithoutLabel(
+                            start = RestockSpacing.md,
+                            end = RestockSpacing.md,
+                            top = 14.dp,
+                            bottom = 14.dp,
+                        ),
                 )
             },
         )
@@ -218,14 +223,16 @@ fun AddItemTextField(
         onValueChange = onValueChange,
         modifier = modifier,
         placeholder = placeholder,
-        keyboardOptions = KeyboardOptions(
-            capitalization = KeyboardCapitalization.Sentences,
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Text,
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = { onSubmit() },
-        ),
+        keyboardOptions =
+            KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Text,
+            ),
+        keyboardActions =
+            KeyboardActions(
+                onDone = { onSubmit() },
+            ),
         singleLine = true,
     )
 }
@@ -276,55 +283,61 @@ fun RestockOutlinedTextField(
     errorMessage: String? = null,
     enabled: Boolean = true,
     singleLine: Boolean = true,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(
-        capitalization = KeyboardCapitalization.Sentences,
-        imeAction = ImeAction.Done,
-    ),
+    keyboardOptions: KeyboardOptions =
+        KeyboardOptions.Default.copy(
+            capitalization = KeyboardCapitalization.Sentences,
+            imeAction = ImeAction.Done,
+        ),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
-        placeholder = placeholder?.let {
-            { Text(text = it, color = RestockColors.Muted) }
-        },
-        label = label?.let {
-            { Text(text = it) }
-        },
+        placeholder =
+            placeholder?.let {
+                { Text(text = it, color = RestockColors.Muted) }
+            },
+        label =
+            label?.let {
+                { Text(text = it) }
+            },
         leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon ?: if (value.isNotEmpty()) {
-            {
-                IconButton(onClick = { onValueChange("") }) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = "Clear",
-                        tint = RestockColors.Muted,
-                    )
+        trailingIcon =
+            trailingIcon ?: if (value.isNotEmpty()) {
+                {
+                    IconButton(onClick = { onValueChange("") }) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear",
+                            tint = RestockColors.Muted,
+                        )
+                    }
                 }
-            }
-        } else {
-            null
-        },
+            } else {
+                null
+            },
         isError = isError,
-        supportingText = if (isError && errorMessage != null) {
-            { Text(text = errorMessage) }
-        } else {
-            null
-        },
+        supportingText =
+            if (isError && errorMessage != null) {
+                { Text(text = errorMessage) }
+            } else {
+                null
+            },
         enabled = enabled,
         singleLine = singleLine,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         shape = androidx.compose.foundation.shape.RoundedCornerShape(RestockShapeTokens.InputFieldRadius),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = RestockColors.Primary,
-            unfocusedBorderColor = RestockColors.MutedVariant,
-            focusedContainerColor = RestockColors.Surface,
-            unfocusedContainerColor = RestockColors.Surface,
-            cursorColor = RestockColors.Accent,
-            errorBorderColor = RestockColors.Error,
-        ),
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = RestockColors.Primary,
+                unfocusedBorderColor = RestockColors.MutedVariant,
+                focusedContainerColor = RestockColors.Surface,
+                unfocusedContainerColor = RestockColors.Surface,
+                cursorColor = RestockColors.Accent,
+                errorBorderColor = RestockColors.Error,
+            ),
     )
 }
 
@@ -476,9 +489,10 @@ private fun OutlinedTextFieldEmptyPreview() {
         RestockOutlinedTextField(
             value = "",
             onValueChange = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             placeholder = "Add an item...",
         )
     }
@@ -491,9 +505,10 @@ private fun OutlinedTextFieldFilledPreview() {
         RestockOutlinedTextField(
             value = "Milk",
             onValueChange = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             placeholder = "Add an item...",
         )
     }
@@ -506,9 +521,10 @@ private fun OutlinedTextFieldWithLabelPreview() {
         RestockOutlinedTextField(
             value = "",
             onValueChange = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             label = "Item name",
             placeholder = "Enter item name",
         )
@@ -522,9 +538,10 @@ private fun OutlinedTextFieldErrorPreview() {
         RestockOutlinedTextField(
             value = "",
             onValueChange = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             placeholder = "Add an item...",
             isError = true,
             errorMessage = "Please enter an item name",

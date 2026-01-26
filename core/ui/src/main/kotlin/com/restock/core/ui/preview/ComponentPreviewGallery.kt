@@ -37,7 +37,6 @@ import com.restock.core.ui.components.RestockInfoChip
 import com.restock.core.ui.components.RestockLabeledCheckbox
 import com.restock.core.ui.components.RestockLoadingIndicator
 import com.restock.core.ui.components.RestockLoadingIndicatorSmall
-import com.restock.core.ui.components.RestockMealChip
 import com.restock.core.ui.components.RestockNavItems
 import com.restock.core.ui.components.RestockOutlinedButton
 import com.restock.core.ui.components.RestockOutlinedTextField

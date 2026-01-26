@@ -1,11 +1,8 @@
 package com.restock.feature.list
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,14 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -61,15 +53,14 @@ import com.restock.core.ui.theme.RestockSpacing
 import com.restock.feature.list.components.AutoCompleteDropdown
 import com.restock.feature.list.components.GroceryItemCard
 import com.restock.feature.list.components.QuantityBottomSheet
-import com.restock.feature.list.components.ReorderableGroceryList
 import com.restock.feature.list.ui.ListAction
 import com.restock.feature.list.ui.ListEvent
 import com.restock.feature.list.ui.ListUiState
 import com.restock.feature.list.ui.ListViewModel
+import java.time.Instant
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import java.time.Instant
 
 /**
  * Main grocery list screen.
@@ -112,11 +103,12 @@ fun ListScreen(
 
                 is ListEvent.ItemDeleted -> {
                     if (event.canUndo) {
-                        val result = snackbarHostState.showSnackbar(
-                            message = "${event.name} deleted",
-                            actionLabel = "Undo",
-                            duration = SnackbarDuration.Long,
-                        )
+                        val result =
+                            snackbarHostState.showSnackbar(
+                                message = "${event.name} deleted",
+                                actionLabel = "Undo",
+                                duration = SnackbarDuration.Long,
+                            )
                         if (result == SnackbarResult.ActionPerformed) {
                             viewModel.onAction(ListAction.UndoDelete)
                         }
@@ -199,9 +191,10 @@ private fun ListScreenContent(
         containerColor = RestockColors.Background,
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             // Add Item Input Section
             AddItemSection(
@@ -211,10 +204,11 @@ private fun ListScreenContent(
                 onInputChange = { onAction(ListAction.UpdateInputText(it)) },
                 onSubmit = onSubmitItem,
                 onSuggestionClick = onSuggestionClick,
-                modifier = Modifier.padding(
-                    horizontal = RestockSpacing.screenPadding,
-                    vertical = RestockSpacing.md,
-                ),
+                modifier =
+                    Modifier.padding(
+                        horizontal = RestockSpacing.screenPadding,
+                        vertical = RestockSpacing.md,
+                    ),
             )
 
             // List Content
@@ -228,9 +222,10 @@ private fun ListScreenContent(
 
                 uiState.isEmpty -> {
                     EmptyListState(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
                     )
                 }
 
@@ -324,10 +319,11 @@ private fun GroceryList(
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(
-            horizontal = RestockSpacing.screenPadding,
-            vertical = RestockSpacing.sm,
-        ),
+        contentPadding =
+            PaddingValues(
+                horizontal = RestockSpacing.screenPadding,
+                vertical = RestockSpacing.sm,
+            ),
         verticalArrangement = Arrangement.spacedBy(RestockSpacing.listItemGap),
     ) {
         // Unchecked items (main shopping list) - with drag-drop via ReorderableItem
@@ -351,12 +347,13 @@ private fun GroceryList(
             item(key = "in_cart_header") {
                 InCartHeader(
                     count = checkedItems.size,
-                    modifier = Modifier
-                        .padding(
-                            top = RestockSpacing.lg,
-                            bottom = RestockSpacing.sm,
-                        )
-                        .animateItem(),
+                    modifier =
+                        Modifier
+                            .padding(
+                                top = RestockSpacing.lg,
+                                bottom = RestockSpacing.sm,
+                            )
+                            .animateItem(),
                 )
             }
 
@@ -461,61 +458,62 @@ private fun ReorderableItem(
     val scale = if (isDragging) 1.02f else 1f
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .zIndex(if (isDragging) 1f else 0f)
-            .graphicsLayer {
-                if (isDragging) {
-                    translationY = dragOffset
-                    shadowElevation = elevation
-                    scaleX = scale
-                    scaleY = scale
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .zIndex(if (isDragging) 1f else 0f)
+                .graphicsLayer {
+                    if (isDragging) {
+                        translationY = dragOffset
+                        shadowElevation = elevation
+                        scaleX = scale
+                        scaleY = scale
+                    }
                 }
-            }
-            .pointerInput(index, totalItems) {
-                detectDragGesturesAfterLongPress(
-                    onDragStart = {
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                        isDragging = true
-                        dragOffset = 0f
-                        currentTargetIndex = index
-                        lastHapticIndex = index
-                    },
-                    onDrag = { change, dragAmount ->
-                        change.consume()
-                        dragOffset += dragAmount.y
+                .pointerInput(index, totalItems) {
+                    detectDragGesturesAfterLongPress(
+                        onDragStart = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                            isDragging = true
+                            dragOffset = 0f
+                            currentTargetIndex = index
+                            lastHapticIndex = index
+                        },
+                        onDrag = { change, dragAmount ->
+                            change.consume()
+                            dragOffset += dragAmount.y
 
-                        // Estimate target index based on drag offset
-                        // Each item is roughly 70dp tall with 8dp gap
-                        val itemHeightWithGap = 78.dp.toPx()
-                        val indexDelta = (dragOffset / itemHeightWithGap).toInt()
-                        val newTargetIndex = (index + indexDelta).coerceIn(0, totalItems - 1)
+                            // Estimate target index based on drag offset
+                            // Each item is roughly 70dp tall with 8dp gap
+                            val itemHeightWithGap = 78.dp.toPx()
+                            val indexDelta = (dragOffset / itemHeightWithGap).toInt()
+                            val newTargetIndex = (index + indexDelta).coerceIn(0, totalItems - 1)
 
-                        if (newTargetIndex != currentTargetIndex) {
-                            currentTargetIndex = newTargetIndex
-                            // Haptic feedback when crossing item boundaries
-                            if (newTargetIndex != lastHapticIndex) {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                lastHapticIndex = newTargetIndex
+                            if (newTargetIndex != currentTargetIndex) {
+                                currentTargetIndex = newTargetIndex
+                                // Haptic feedback when crossing item boundaries
+                                if (newTargetIndex != lastHapticIndex) {
+                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    lastHapticIndex = newTargetIndex
+                                }
                             }
-                        }
-                    },
-                    onDragEnd = {
-                        if (currentTargetIndex != index) {
-                            onReorder(index, currentTargetIndex)
-                        }
-                        isDragging = false
-                        dragOffset = 0f
-                        lastHapticIndex = -1
-                    },
-                    onDragCancel = {
-                        isDragging = false
-                        dragOffset = 0f
-                        lastHapticIndex = -1
-                    },
-                )
-            }
-            .animateItem(),
+                        },
+                        onDragEnd = {
+                            if (currentTargetIndex != index) {
+                                onReorder(index, currentTargetIndex)
+                            }
+                            isDragging = false
+                            dragOffset = 0f
+                            lastHapticIndex = -1
+                        },
+                        onDragCancel = {
+                            isDragging = false
+                            dragOffset = 0f
+                            lastHapticIndex = -1
+                        },
+                    )
+                }
+                .animateItem(),
     ) {
         GroceryItemCard(
             item = item,
@@ -528,95 +526,99 @@ private fun ReorderableItem(
 
 // ==================== PREVIEWS ====================
 
-private val sampleUncheckedItems = listOf(
-    CurrentListItem(
-        id = "1",
-        itemId = "item1",
-        name = "Eggs",
-        normalizedName = "eggs",
-        quantity = 2,
-        addedAt = Instant.now(),
-        position = 0,
-        isChecked = false,
-    ),
-    CurrentListItem(
-        id = "2",
-        itemId = "item2",
-        name = "Bread",
-        normalizedName = "bread",
-        quantity = 1,
-        addedAt = Instant.now(),
-        position = 1,
-        isChecked = false,
-    ),
-    CurrentListItem(
-        id = "3",
-        itemId = "item3",
-        name = "Butter",
-        normalizedName = "butter",
-        quantity = 1,
-        addedAt = Instant.now(),
-        position = 2,
-        isChecked = false,
-    ),
-).toImmutableList()
+private val sampleUncheckedItems =
+    listOf(
+        CurrentListItem(
+            id = "1",
+            itemId = "item1",
+            name = "Eggs",
+            normalizedName = "eggs",
+            quantity = 2,
+            addedAt = Instant.now(),
+            position = 0,
+            isChecked = false,
+        ),
+        CurrentListItem(
+            id = "2",
+            itemId = "item2",
+            name = "Bread",
+            normalizedName = "bread",
+            quantity = 1,
+            addedAt = Instant.now(),
+            position = 1,
+            isChecked = false,
+        ),
+        CurrentListItem(
+            id = "3",
+            itemId = "item3",
+            name = "Butter",
+            normalizedName = "butter",
+            quantity = 1,
+            addedAt = Instant.now(),
+            position = 2,
+            isChecked = false,
+        ),
+    ).toImmutableList()
 
-private val sampleCheckedItems = listOf(
-    CurrentListItem(
-        id = "4",
-        itemId = "item4",
-        name = "Milk",
-        normalizedName = "milk",
-        quantity = 1,
-        addedAt = Instant.now(),
-        checkedAt = Instant.now(),
-        position = 3,
-        isChecked = true,
-    ),
-    CurrentListItem(
-        id = "5",
-        itemId = "item5",
-        name = "Cheese",
-        normalizedName = "cheese",
-        quantity = 1,
-        addedAt = Instant.now(),
-        checkedAt = Instant.now(),
-        position = 4,
-        isChecked = true,
-    ),
-).toImmutableList()
+private val sampleCheckedItems =
+    listOf(
+        CurrentListItem(
+            id = "4",
+            itemId = "item4",
+            name = "Milk",
+            normalizedName = "milk",
+            quantity = 1,
+            addedAt = Instant.now(),
+            checkedAt = Instant.now(),
+            position = 3,
+            isChecked = true,
+        ),
+        CurrentListItem(
+            id = "5",
+            itemId = "item5",
+            name = "Cheese",
+            normalizedName = "cheese",
+            quantity = 1,
+            addedAt = Instant.now(),
+            checkedAt = Instant.now(),
+            position = 4,
+            isChecked = true,
+        ),
+    ).toImmutableList()
 
-private val sampleSuggestions = listOf(
-    GroceryItem(
-        id = "s1",
-        name = "Milk",
-        normalizedName = "milk",
-        createdAt = Instant.now(),
-    ),
-    GroceryItem(
-        id = "s2",
-        name = "Milk chocolate",
-        normalizedName = "milk chocolate",
-        createdAt = Instant.now(),
-    ),
-    GroceryItem(
-        id = "s3",
-        name = "Milk alternatives",
-        normalizedName = "milk alternatives",
-        createdAt = Instant.now(),
-    ),
-).toImmutableList()
+private val sampleSuggestions =
+    listOf(
+        GroceryItem(
+            id = "s1",
+            name = "Milk",
+            normalizedName = "milk",
+            createdAt = Instant.now(),
+        ),
+        GroceryItem(
+            id = "s2",
+            name = "Milk chocolate",
+            normalizedName = "milk chocolate",
+            createdAt = Instant.now(),
+        ),
+        GroceryItem(
+            id = "s3",
+            name = "Milk alternatives",
+            normalizedName = "milk alternatives",
+            createdAt = Instant.now(),
+        ),
+    ).toImmutableList()
 
 @LightDarkPreview
 @Composable
 private fun ListScreenWithItemsPreview() {
     RestockPreviewTheme {
         ListScreenContent(
-            uiState = ListUiState(
-                uncheckedItems = sampleUncheckedItems,
-                checkedItems = sampleCheckedItems,
-                isLoading = false,
-            ),
+            uiState =
+                ListUiState(
+                    uncheckedItems = sampleUncheckedItems,
+                    checkedItems = sampleCheckedItems,
+                    isLoading = false,
+                ),
             snackbarHostState = remember { SnackbarHostState() },
             onAction = {},
             onSubmitItem = {},
@@ -630,9 +632,10 @@ private fun ListScreenWithItemsPreview() {
 private fun ListScreenEmptyPreview() {
     RestockPreviewTheme {
         ListScreenContent(
-            uiState = ListUiState(
-                isLoading = false,
-            ),
+            uiState =
+                ListUiState(
+                    isLoading = false,
+                ),
             snackbarHostState = remember { SnackbarHostState() },
             onAction = {},
             onSubmitItem = {},
@@ -646,9 +649,10 @@ private fun ListScreenEmptyPreview() {
 private fun ListScreenLoadingPreview() {
     RestockPreviewTheme {
         ListScreenContent(
-            uiState = ListUiState(
-                isLoading = true,
-            ),
+            uiState =
+                ListUiState(
+                    isLoading = true,
+                ),
             snackbarHostState = remember { SnackbarHostState() },
             onAction = {},
             onSubmitItem = {},
@@ -662,13 +666,14 @@ private fun ListScreenLoadingPreview() {
 private fun ListScreenWithAutoCompletePreview() {
     RestockPreviewTheme {
         ListScreenContent(
-            uiState = ListUiState(
-                uncheckedItems = sampleUncheckedItems,
-                checkedItems = persistentListOf(),
-                autoCompleteSuggestions = sampleSuggestions,
-                inputText = "mil",
-                isLoading = false,
-            ),
+            uiState =
+                ListUiState(
+                    uncheckedItems = sampleUncheckedItems,
+                    checkedItems = persistentListOf(),
+                    autoCompleteSuggestions = sampleSuggestions,
+                    inputText = "mil",
+                    isLoading = false,
+                ),
             snackbarHostState = remember { SnackbarHostState() },
             onAction = {},
             onSubmitItem = {},
@@ -682,11 +687,12 @@ private fun ListScreenWithAutoCompletePreview() {
 private fun ListScreenOnlyUncheckedPreview() {
     RestockPreviewTheme {
         ListScreenContent(
-            uiState = ListUiState(
-                uncheckedItems = sampleUncheckedItems,
-                checkedItems = persistentListOf(),
-                isLoading = false,
-            ),
+            uiState =
+                ListUiState(
+                    uncheckedItems = sampleUncheckedItems,
+                    checkedItems = persistentListOf(),
+                    isLoading = false,
+                ),
             snackbarHostState = remember { SnackbarHostState() },
             onAction = {},
             onSubmitItem = {},

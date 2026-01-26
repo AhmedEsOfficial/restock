@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -29,7 +28,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.restock.core.domain.model.CurrentListItem
 import com.restock.core.ui.components.MealType
@@ -37,18 +35,19 @@ import com.restock.core.ui.preview.LightDarkPreview
 import com.restock.core.ui.preview.RestockPreviewTheme
 import com.restock.core.ui.theme.RestockColors
 import com.restock.core.ui.theme.RestockSpacing
+import java.time.Instant
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
-import java.time.Instant
 
 /**
  * Animation specification for drag elevation transitions.
  */
-private val DRAG_ELEVATION_SPEC = spring<Float>(
-    stiffness = Spring.StiffnessHigh,
-)
+private val DRAG_ELEVATION_SPEC =
+    spring<Float>(
+        stiffness = Spring.StiffnessHigh,
+    )
 
 /**
  * Elevation applied to an item while being dragged.
@@ -112,10 +111,11 @@ fun ReorderableGroceryList(
     onItemDelete: (String) -> Unit,
     onItemQuantityClick: (CurrentListItem) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(
-        horizontal = RestockSpacing.screenPadding,
-        vertical = RestockSpacing.sm,
-    ),
+    contentPadding: PaddingValues =
+        PaddingValues(
+            horizontal = RestockSpacing.screenPadding,
+            vertical = RestockSpacing.sm,
+        ),
     getMealTags: (CurrentListItem) -> List<MealType> = { emptyList() },
 ) {
     val hapticFeedback = LocalHapticFeedback.current
@@ -132,9 +132,10 @@ fun ReorderableGroceryList(
     var lastHapticIndex by remember { mutableIntStateOf(-1) }
 
     // Calculate current target index during drag
-    val currentTargetIndex = remember(draggedItemIndex, draggedOverItemIndex) {
-        draggedOverItemIndex.takeIf { it >= 0 } ?: draggedItemIndex
-    }
+    val currentTargetIndex =
+        remember(draggedItemIndex, draggedOverItemIndex) {
+            draggedOverItemIndex.takeIf { it >= 0 } ?: draggedItemIndex
+        }
 
     LazyColumn(
         state = listState,
@@ -164,91 +165,94 @@ fun ReorderableGroceryList(
             }
 
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .zIndex(if (isDragging) 1f else 0f)
-                    .graphicsLayer {
-                        if (isDragging) {
-                            translationY = dragOffset
-                            shadowElevation = elevation.value
-                            scaleX = scale.value
-                            scaleY = scale.value
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .zIndex(if (isDragging) 1f else 0f)
+                        .graphicsLayer {
+                            if (isDragging) {
+                                translationY = dragOffset
+                                shadowElevation = elevation.value
+                                scaleX = scale.value
+                                scaleY = scale.value
+                            }
                         }
-                    }
-                    .pointerInput(items) {
-                        detectDragGesturesAfterLongPress(
-                            onDragStart = { offset ->
-                                // Initiate drag
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                                draggedItemIndex = index
-                                initialDragOffset = 0f
-                                dragOffset = 0f
-                                lastHapticIndex = index
-                                draggedOverItemIndex = index
-                            },
-                            onDrag = { change, dragAmount ->
-                                change.consume()
-                                dragOffset += dragAmount.y
+                        .pointerInput(items) {
+                            detectDragGesturesAfterLongPress(
+                                onDragStart = { offset ->
+                                    // Initiate drag
+                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    draggedItemIndex = index
+                                    initialDragOffset = 0f
+                                    dragOffset = 0f
+                                    lastHapticIndex = index
+                                    draggedOverItemIndex = index
+                                },
+                                onDrag = { change, dragAmount ->
+                                    change.consume()
+                                    dragOffset += dragAmount.y
 
-                                // Calculate the target index based on drag position
-                                val currentItem = listState.layoutInfo.visibleItemsInfo
-                                    .find { it.index == index }
+                                    // Calculate the target index based on drag position
+                                    val currentItem =
+                                        listState.layoutInfo.visibleItemsInfo
+                                            .find { it.index == index }
 
-                                if (currentItem != null) {
-                                    val centerY = currentItem.offset + currentItem.size / 2 + dragOffset
-                                    val targetIndex = findTargetIndex(
-                                        listState = listState,
-                                        centerY = centerY.toInt(),
-                                        currentIndex = index,
-                                        totalItems = items.size,
-                                    )
-
-                                    if (targetIndex != draggedOverItemIndex && targetIndex >= 0) {
-                                        draggedOverItemIndex = targetIndex
-
-                                        // Haptic feedback when crossing item boundaries
-                                        if (targetIndex != lastHapticIndex) {
-                                            hapticFeedback.performHapticFeedback(
-                                                HapticFeedbackType.TextHandleMove,
+                                    if (currentItem != null) {
+                                        val centerY = currentItem.offset + currentItem.size / 2 + dragOffset
+                                        val targetIndex =
+                                            findTargetIndex(
+                                                listState = listState,
+                                                centerY = centerY.toInt(),
+                                                currentIndex = index,
+                                                totalItems = items.size,
                                             )
-                                            lastHapticIndex = targetIndex
+
+                                        if (targetIndex != draggedOverItemIndex && targetIndex >= 0) {
+                                            draggedOverItemIndex = targetIndex
+
+                                            // Haptic feedback when crossing item boundaries
+                                            if (targetIndex != lastHapticIndex) {
+                                                hapticFeedback.performHapticFeedback(
+                                                    HapticFeedbackType.TextHandleMove,
+                                                )
+                                                lastHapticIndex = targetIndex
+                                            }
+                                        }
+
+                                        // Auto-scroll when dragging near edges
+                                        scope.launch {
+                                            autoScrollIfNeeded(
+                                                listState = listState,
+                                                currentY = centerY.toInt(),
+                                            )
                                         }
                                     }
+                                },
+                                onDragEnd = {
+                                    // Complete the reorder
+                                    val from = draggedItemIndex
+                                    val to = draggedOverItemIndex
 
-                                    // Auto-scroll when dragging near edges
-                                    scope.launch {
-                                        autoScrollIfNeeded(
-                                            listState = listState,
-                                            currentY = centerY.toInt(),
-                                        )
+                                    if (from != null && to >= 0 && from != to) {
+                                        onReorder(from, to)
                                     }
-                                }
-                            },
-                            onDragEnd = {
-                                // Complete the reorder
-                                val from = draggedItemIndex
-                                val to = draggedOverItemIndex
 
-                                if (from != null && to >= 0 && from != to) {
-                                    onReorder(from, to)
-                                }
-
-                                // Reset drag state
-                                draggedItemIndex = null
-                                draggedOverItemIndex = -1
-                                dragOffset = 0f
-                                lastHapticIndex = -1
-                            },
-                            onDragCancel = {
-                                // Reset drag state on cancel
-                                draggedItemIndex = null
-                                draggedOverItemIndex = -1
-                                dragOffset = 0f
-                                lastHapticIndex = -1
-                            },
-                        )
-                    }
-                    .animateItem(),
+                                    // Reset drag state
+                                    draggedItemIndex = null
+                                    draggedOverItemIndex = -1
+                                    dragOffset = 0f
+                                    lastHapticIndex = -1
+                                },
+                                onDragCancel = {
+                                    // Reset drag state on cancel
+                                    draggedItemIndex = null
+                                    draggedOverItemIndex = -1
+                                    dragOffset = 0f
+                                    lastHapticIndex = -1
+                                },
+                            )
+                        }
+                        .animateItem(),
             ) {
                 GroceryItemCard(
                     item = item,
@@ -324,19 +328,20 @@ private suspend fun autoScrollIfNeeded(
     val scrollThreshold = viewportHeight * 0.2f
 
     // Calculate scroll amount based on distance from edge
-    val scrollAmount = when {
-        currentY < viewportStart + scrollThreshold -> {
-            // Near top - scroll up
-            val distance = viewportStart + scrollThreshold - currentY
-            (-distance / scrollThreshold * 50).toInt().coerceIn(-100, 0)
+    val scrollAmount =
+        when {
+            currentY < viewportStart + scrollThreshold -> {
+                // Near top - scroll up
+                val distance = viewportStart + scrollThreshold - currentY
+                (-distance / scrollThreshold * 50).toInt().coerceIn(-100, 0)
+            }
+            currentY > viewportEnd - scrollThreshold -> {
+                // Near bottom - scroll down
+                val distance = currentY - (viewportEnd - scrollThreshold)
+                (distance / scrollThreshold * 50).toInt().coerceIn(0, 100)
+            }
+            else -> 0
         }
-        currentY > viewportEnd - scrollThreshold -> {
-            // Near bottom - scroll down
-            val distance = currentY - (viewportEnd - scrollThreshold)
-            (distance / scrollThreshold * 50).toInt().coerceIn(0, 100)
-        }
-        else -> 0
-    }
 
     if (scrollAmount != 0) {
         listState.scrollBy(scrollAmount.toFloat())
@@ -355,59 +360,60 @@ private suspend fun LazyListState.scrollBy(amount: Float) {
 
 // ==================== PREVIEWS ====================
 
-private val sampleItems = listOf(
-    CurrentListItem(
-        id = "1",
-        itemId = "item1",
-        name = "Milk",
-        normalizedName = "milk",
-        quantity = 1,
-        addedAt = Instant.now(),
-        position = 0,
-        isChecked = false,
-    ),
-    CurrentListItem(
-        id = "2",
-        itemId = "item2",
-        name = "Eggs",
-        normalizedName = "eggs",
-        quantity = 12,
-        addedAt = Instant.now(),
-        position = 1,
-        isChecked = false,
-    ),
-    CurrentListItem(
-        id = "3",
-        itemId = "item3",
-        name = "Bread",
-        normalizedName = "bread",
-        quantity = 1,
-        addedAt = Instant.now(),
-        position = 2,
-        isChecked = false,
-    ),
-    CurrentListItem(
-        id = "4",
-        itemId = "item4",
-        name = "Butter",
-        normalizedName = "butter",
-        quantity = 1,
-        addedAt = Instant.now(),
-        position = 3,
-        isChecked = false,
-    ),
-    CurrentListItem(
-        id = "5",
-        itemId = "item5",
-        name = "Cheese",
-        normalizedName = "cheese",
-        quantity = 2,
-        unit = "lb",
-        addedAt = Instant.now(),
-        position = 4,
-        isChecked = false,
-    ),
-).toImmutableList()
+private val sampleItems =
+    listOf(
+        CurrentListItem(
+            id = "1",
+            itemId = "item1",
+            name = "Milk",
+            normalizedName = "milk",
+            quantity = 1,
+            addedAt = Instant.now(),
+            position = 0,
+            isChecked = false,
+        ),
+        CurrentListItem(
+            id = "2",
+            itemId = "item2",
+            name = "Eggs",
+            normalizedName = "eggs",
+            quantity = 12,
+            addedAt = Instant.now(),
+            position = 1,
+            isChecked = false,
+        ),
+        CurrentListItem(
+            id = "3",
+            itemId = "item3",
+            name = "Bread",
+            normalizedName = "bread",
+            quantity = 1,
+            addedAt = Instant.now(),
+            position = 2,
+            isChecked = false,
+        ),
+        CurrentListItem(
+            id = "4",
+            itemId = "item4",
+            name = "Butter",
+            normalizedName = "butter",
+            quantity = 1,
+            addedAt = Instant.now(),
+            position = 3,
+            isChecked = false,
+        ),
+        CurrentListItem(
+            id = "5",
+            itemId = "item5",
+            name = "Cheese",
+            normalizedName = "cheese",
+            quantity = 2,
+            unit = "lb",
+            addedAt = Instant.now(),
+            position = 4,
+            isChecked = false,
+        ),
+    ).toImmutableList()
 
 @LightDarkPreview
 @Composable

@@ -1,9 +1,9 @@
 package com.restock.di
 
-import com.restock.core.data.di.ApplicationScope
 import com.restock.core.data.di.DefaultDispatcher
 import com.restock.core.data.di.IoDispatcher
 import com.restock.core.data.di.MainDispatcher
+import com.restock.core.domain.di.ApplicationScope
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +22,8 @@ import kotlinx.coroutines.SupervisorJob
  * - Application-scoped CoroutineScope for long-running operations
  * - Application-wide singleton dependencies
  *
- * Qualifiers are defined in [com.restock.core.data.di.DispatcherQualifiers]
+ * Dispatcher qualifiers are defined in [com.restock.core.data.di.DispatcherQualifiers]
+ * and [ApplicationScope] is defined in [com.restock.core.domain.di.CoroutineQualifiers]
  * to allow usage across all modules.
  */
 @Module

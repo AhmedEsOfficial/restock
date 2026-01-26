@@ -28,6 +28,7 @@ sealed interface ListAction {
     data object ClearInput : ListAction
 
     // Item actions
+
     /**
      * Toggle the checked state of an item.
      *
@@ -52,6 +53,7 @@ sealed interface ListAction {
     data object UndoDelete : ListAction
 
     // Reordering
+
     /**
      * Reorder an item from one position to another.
      *
@@ -64,6 +66,7 @@ sealed interface ListAction {
     ) : ListAction
 
     // Quantity
+
     /**
      * Select an item for quantity adjustment.
      * Pass null to close the quantity sheet.
@@ -80,6 +83,7 @@ sealed interface ListAction {
     ) : ListAction
 
     // Search
+
     /**
      * Search/filter the list by query.
      * This is separate from input text for autocomplete.
@@ -97,6 +101,7 @@ sealed interface ListAction {
     data class SelectAutoComplete(val item: GroceryItem) : ListAction
 
     // Bulk operations
+
     /**
      * Clear all checked items from the list.
      */

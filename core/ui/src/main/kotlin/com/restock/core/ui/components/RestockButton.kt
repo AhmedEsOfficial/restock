@@ -122,12 +122,13 @@ fun RestockButton(
     val height = getHeight(size)
     val isEnabled = enabled && !loading
 
-    val accessibilityModifier = modifier.semantics {
-        role = Role.Button
-        if (loading) {
-            stateDescription = "Loading"
+    val accessibilityModifier =
+        modifier.semantics {
+            role = Role.Button
+            if (loading) {
+                stateDescription = "Loading"
+            }
         }
-    }
 
     when (variant) {
         RestockButtonVariant.PRIMARY -> {
@@ -188,17 +189,19 @@ fun RestockButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier
-            .height(48.dp)
-            .defaultMinSize(minWidth = 48.dp),
+        modifier =
+            modifier
+                .height(48.dp)
+                .defaultMinSize(minWidth = 48.dp),
         enabled = enabled,
         shape = RestockButtonShape,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = RestockColors.Primary,
-            contentColor = RestockColors.OnPrimary,
-            disabledContainerColor = RestockColors.Disabled,
-            disabledContentColor = RestockColors.Muted,
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = RestockColors.Primary,
+                contentColor = RestockColors.OnPrimary,
+                disabledContainerColor = RestockColors.Disabled,
+                disabledContentColor = RestockColors.Muted,
+            ),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
         content = content,
     )
@@ -250,19 +253,22 @@ fun RestockOutlinedButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier
-            .height(48.dp)
-            .defaultMinSize(minWidth = 48.dp),
+        modifier =
+            modifier
+                .height(48.dp)
+                .defaultMinSize(minWidth = 48.dp),
         enabled = enabled,
         shape = RestockButtonShape,
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = RestockColors.Primary,
-            disabledContentColor = RestockColors.Muted,
-        ),
-        border = BorderStroke(
-            width = 1.dp,
-            color = if (enabled) RestockColors.Primary else RestockColors.Disabled,
-        ),
+        colors =
+            ButtonDefaults.outlinedButtonColors(
+                contentColor = RestockColors.Primary,
+                disabledContentColor = RestockColors.Muted,
+            ),
+        border =
+            BorderStroke(
+                width = 1.dp,
+                color = if (enabled) RestockColors.Primary else RestockColors.Disabled,
+            ),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
         content = content,
     )
@@ -314,15 +320,17 @@ fun RestockTextButton(
 ) {
     TextButton(
         onClick = onClick,
-        modifier = modifier
-            .height(48.dp)
-            .defaultMinSize(minWidth = 48.dp),
+        modifier =
+            modifier
+                .height(48.dp)
+                .defaultMinSize(minWidth = 48.dp),
         enabled = enabled,
         shape = RestockButtonShape,
-        colors = ButtonDefaults.textButtonColors(
-            contentColor = RestockColors.Accent,
-            disabledContentColor = RestockColors.Muted,
-        ),
+        colors =
+            ButtonDefaults.textButtonColors(
+                contentColor = RestockColors.Accent,
+                disabledContentColor = RestockColors.Muted,
+            ),
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
         content = content,
     )
@@ -373,12 +381,13 @@ private fun PrimaryButton(
         modifier = modifier.defaultMinSize(minWidth = 48.dp),
         enabled = enabled,
         shape = RestockButtonShape,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = RestockColors.Primary,
-            contentColor = RestockColors.OnPrimary,
-            disabledContainerColor = RestockColors.Disabled,
-            disabledContentColor = RestockColors.Muted,
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = RestockColors.Primary,
+                contentColor = RestockColors.OnPrimary,
+                disabledContainerColor = RestockColors.Disabled,
+                disabledContentColor = RestockColors.Muted,
+            ),
         contentPadding = contentPadding,
     ) {
         ButtonContent(
@@ -407,14 +416,16 @@ private fun SecondaryButton(
         modifier = modifier.defaultMinSize(minWidth = 48.dp),
         enabled = enabled,
         shape = RestockButtonShape,
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = RestockColors.Primary,
-            disabledContentColor = RestockColors.Muted,
-        ),
-        border = BorderStroke(
-            width = 1.dp,
-            color = if (enabled) RestockColors.Primary else RestockColors.Disabled,
-        ),
+        colors =
+            ButtonDefaults.outlinedButtonColors(
+                contentColor = RestockColors.Primary,
+                disabledContentColor = RestockColors.Muted,
+            ),
+        border =
+            BorderStroke(
+                width = 1.dp,
+                color = if (enabled) RestockColors.Primary else RestockColors.Disabled,
+            ),
         contentPadding = contentPadding,
     ) {
         ButtonContent(
@@ -443,10 +454,11 @@ private fun TextOnlyButton(
         modifier = modifier.defaultMinSize(minWidth = 48.dp),
         enabled = enabled,
         shape = RestockButtonShape,
-        colors = ButtonDefaults.textButtonColors(
-            contentColor = RestockColors.Accent,
-            disabledContentColor = RestockColors.Muted,
-        ),
+        colors =
+            ButtonDefaults.textButtonColors(
+                contentColor = RestockColors.Accent,
+                disabledContentColor = RestockColors.Muted,
+            ),
         contentPadding = contentPadding,
     ) {
         ButtonContent(
@@ -488,13 +500,14 @@ private fun ButtonContent(
         // Content row (hidden when loading)
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.then(
-                if (loading) {
-                    Modifier.padding(0.dp) // Keep layout but invisible
-                } else {
-                    Modifier
-                }
-            ),
+            modifier =
+                Modifier.then(
+                    if (loading) {
+                        Modifier.padding(0.dp) // Keep layout but invisible
+                    } else {
+                        Modifier
+                    },
+                ),
         ) {
             AnimatedVisibility(
                 visible = !loading,

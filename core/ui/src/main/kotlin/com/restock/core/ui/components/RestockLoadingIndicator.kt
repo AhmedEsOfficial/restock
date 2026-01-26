@@ -388,19 +388,22 @@ private fun RestockShimmerBoxPreview() {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             RestockShimmerBox(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(24.dp),
             )
             RestockShimmerBox(
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(16.dp),
             )
             RestockShimmerBox(
-                modifier = Modifier
-                    .fillMaxWidth(0.85f)
-                    .height(16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(0.85f)
+                        .height(16.dp),
             )
         }
     }

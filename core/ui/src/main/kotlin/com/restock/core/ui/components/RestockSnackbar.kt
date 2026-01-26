@@ -1,7 +1,6 @@
 package com.restock.core.ui.components
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
@@ -22,7 +21,6 @@ import com.restock.core.ui.preview.LightDarkPreview
 import com.restock.core.ui.preview.LightPreview
 import com.restock.core.ui.preview.RestockPreviewTheme
 import com.restock.core.ui.theme.RestockColors
-import com.restock.core.ui.theme.RestockCornerRadius
 import com.restock.core.ui.theme.RestockSpacing
 
 /**
@@ -82,24 +80,26 @@ fun RestockSnackbar(
         shape = MaterialTheme.shapes.small,
         containerColor = RestockColors.Primary,
         contentColor = RestockColors.OnPrimary,
-        action = if (actionLabel != null && onActionClick != null) {
-            {
-                TextButton(
-                    onClick = onActionClick,
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = RestockColors.Accent,
-                    ),
-                ) {
-                    Text(
-                        text = actionLabel,
-                        color = RestockColors.Accent,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
+        action =
+            if (actionLabel != null && onActionClick != null) {
+                {
+                    TextButton(
+                        onClick = onActionClick,
+                        colors =
+                            ButtonDefaults.textButtonColors(
+                                contentColor = RestockColors.Accent,
+                            ),
+                    ) {
+                        Text(
+                            text = actionLabel,
+                            color = RestockColors.Accent,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
                 }
-            }
-        } else {
-            null
-        },
+            } else {
+                null
+            },
     ) {
         Text(
             text = message,

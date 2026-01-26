@@ -76,16 +76,20 @@ fun AutoCompleteDropdown(
 ) {
     AnimatedVisibility(
         visible = visible && suggestions.isNotEmpty(),
-        enter = fadeIn(
-            animationSpec = androidx.compose.animation.core.tween(ANIMATION_DURATION_MS),
-        ) + expandVertically(
-            animationSpec = androidx.compose.animation.core.tween(ANIMATION_DURATION_MS),
-        ),
-        exit = fadeOut(
-            animationSpec = androidx.compose.animation.core.tween(ANIMATION_DURATION_MS),
-        ) + shrinkVertically(
-            animationSpec = androidx.compose.animation.core.tween(ANIMATION_DURATION_MS),
-        ),
+        enter =
+            fadeIn(
+                animationSpec = androidx.compose.animation.core.tween(ANIMATION_DURATION_MS),
+            ) +
+                expandVertically(
+                    animationSpec = androidx.compose.animation.core.tween(ANIMATION_DURATION_MS),
+                ),
+        exit =
+            fadeOut(
+                animationSpec = androidx.compose.animation.core.tween(ANIMATION_DURATION_MS),
+            ) +
+                shrinkVertically(
+                    animationSpec = androidx.compose.animation.core.tween(ANIMATION_DURATION_MS),
+                ),
         modifier = modifier,
     ) {
         Surface(
@@ -95,9 +99,10 @@ fun AutoCompleteDropdown(
             shadowElevation = RestockElevation.level2,
         ) {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = MAX_DROPDOWN_HEIGHT),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = MAX_DROPDOWN_HEIGHT),
             ) {
                 val displaySuggestions = suggestions.take(MAX_SUGGESTIONS)
                 items(
@@ -138,82 +143,86 @@ private fun AutoCompleteSuggestionItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val annotatedString = buildAnnotatedString {
-        val name = item.name
-        val normalizedQuery = searchQuery.lowercase().trim()
-        val normalizedName = name.lowercase()
+    val annotatedString =
+        buildAnnotatedString {
+            val name = item.name
+            val normalizedQuery = searchQuery.lowercase().trim()
+            val normalizedName = name.lowercase()
 
-        val startIndex = normalizedName.indexOf(normalizedQuery)
-        if (startIndex >= 0 && normalizedQuery.isNotEmpty()) {
-            // Text before match
-            append(name.substring(0, startIndex))
+            val startIndex = normalizedName.indexOf(normalizedQuery)
+            if (startIndex >= 0 && normalizedQuery.isNotEmpty()) {
+                // Text before match
+                append(name.substring(0, startIndex))
 
-            // Highlighted match
-            withStyle(
-                style = SpanStyle(
-                    color = RestockColors.Accent,
-                    fontWeight = FontWeight.SemiBold,
-                ),
-            ) {
-                append(name.substring(startIndex, startIndex + normalizedQuery.length))
+                // Highlighted match
+                withStyle(
+                    style =
+                        SpanStyle(
+                            color = RestockColors.Accent,
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                ) {
+                    append(name.substring(startIndex, startIndex + normalizedQuery.length))
+                }
+
+                // Text after match
+                append(name.substring(startIndex + normalizedQuery.length))
+            } else {
+                // No match found, show plain text
+                append(name)
             }
-
-            // Text after match
-            append(name.substring(startIndex + normalizedQuery.length))
-        } else {
-            // No match found, show plain text
-            append(name)
         }
-    }
 
     Text(
         text = annotatedString,
         style = MaterialTheme.typography.bodyLarge,
         color = RestockColors.Primary,
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(
-                horizontal = RestockSpacing.md,
-                vertical = RestockSpacing.cardPaddingVertical,
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(
+                    horizontal = RestockSpacing.md,
+                    vertical = RestockSpacing.cardPaddingVertical,
+                ),
     )
 }
 
 // ==================== PREVIEWS ====================
 
-private val sampleSuggestions = listOf(
-    GroceryItem(
-        id = "1",
-        name = "Milk",
-        normalizedName = "milk",
-        createdAt = Instant.now(),
-    ),
-    GroceryItem(
-        id = "2",
-        name = "Milk chocolate",
-        normalizedName = "milk chocolate",
-        createdAt = Instant.now(),
-    ),
-    GroceryItem(
-        id = "3",
-        name = "Milk alternatives",
-        normalizedName = "milk alternatives",
-        createdAt = Instant.now(),
-    ),
-    GroceryItem(
-        id = "4",
-        name = "Almond milk",
-        normalizedName = "almond milk",
-        createdAt = Instant.now(),
-    ),
-    GroceryItem(
-        id = "5",
-        name = "Oat milk",
-        normalizedName = "oat milk",
-        createdAt = Instant.now(),
-    ),
-)
+private val sampleSuggestions =
+    listOf(
+        GroceryItem(
+            id = "1",
+            name = "Milk",
+            normalizedName = "milk",
+            createdAt = Instant.now(),
+        ),
+        GroceryItem(
+            id = "2",
+            name = "Milk chocolate",
+            normalizedName = "milk chocolate",
+            createdAt = Instant.now(),
+        ),
+        GroceryItem(
+            id = "3",
+            name = "Milk alternatives",
+            normalizedName = "milk alternatives",
+            createdAt = Instant.now(),
+        ),
+        GroceryItem(
+            id = "4",
+            name = "Almond milk",
+            normalizedName = "almond milk",
+            createdAt = Instant.now(),
+        ),
+        GroceryItem(
+            id = "5",
+            name = "Oat milk",
+            normalizedName = "oat milk",
+            createdAt = Instant.now(),
+        ),
+    )
 
 @LightDarkPreview
 @Composable

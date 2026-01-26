@@ -34,6 +34,7 @@ object RestockShapeTokens {
     val SuggestionCardRadius = 16.dp
     val InputFieldRadius = 16.dp
     val ChipRadius = 8.dp
+
     /** Button corner radius per design spec (12dp) */
     val ButtonRadius = 12.dp
     val BottomSheetRadius = 24.dp
@@ -61,12 +62,16 @@ val RestockButtonShape = RoundedCornerShape(RestockShapeTokens.ButtonRadius)
 object RestockCornerRadius {
     /** Extra small radius for badges and small elements (4dp) */
     val extraSmall = 4.dp
+
     /** Small radius for chips and compact elements (8dp) */
     val small = 8.dp
+
     /** Medium radius for list item cards (14dp) */
     val medium = 14.dp
+
     /** Large radius for suggestion cards, text fields (16dp) */
     val large = 16.dp
+
     /** Extra large radius for bottom sheets and dialogs (24dp) */
     val extraLarge = 24.dp
 }
