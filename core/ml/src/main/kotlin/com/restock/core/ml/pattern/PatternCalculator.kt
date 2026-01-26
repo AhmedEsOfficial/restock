@@ -2,6 +2,7 @@ package com.restock.core.ml.pattern
 
 import com.restock.core.domain.model.Pattern
 import com.restock.core.domain.model.Purchase
+import com.restock.core.domain.port.PatternCalculatorPort
 import java.time.Duration
 import java.time.Instant
 import javax.inject.Inject
@@ -20,7 +21,7 @@ import kotlin.math.sqrt
 @Singleton
 class PatternCalculator
     @Inject
-    constructor() {
+    constructor() : PatternCalculatorPort {
         /**
          * Calculate a pattern from purchase history.
          *
@@ -28,7 +29,7 @@ class PatternCalculator
          * @param itemId The item ID for the pattern.
          * @return Pattern if calculable, null if insufficient data.
          */
-        fun calculatePattern(
+        override fun calculate(
             purchases: List<Purchase>,
             itemId: String,
         ): Pattern? {
@@ -74,7 +75,7 @@ class PatternCalculator
          * - Days since last purchase >= avg_interval - SUGGESTION_BUFFER_DAYS
          * - Sample count >= MIN_PURCHASES
          */
-        fun shouldSuggest(
+        override fun shouldSuggest(
             pattern: Pattern,
             lastPurchase: Purchase?,
         ): Boolean {
@@ -104,7 +105,7 @@ class PatternCalculator
          * Priority = confidence × urgency
          * where urgency = (days_since_last - avg_interval + buffer) / avg_interval
          */
-        fun calculatePriority(
+        override fun calculatePriority(
             pattern: Pattern,
             daysSinceLastPurchase: Long,
         ): Double {
