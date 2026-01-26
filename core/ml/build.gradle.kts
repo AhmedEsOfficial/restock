@@ -66,6 +66,9 @@ dependencies {
     // DateTime for pattern calculations
     implementation(libs.kotlinx.datetime)
 
+    // DataStore for model versioning
+    implementation(libs.datastore.preferences)
+
     // Testing
     testImplementation(libs.bundles.testing)
     androidTestImplementation(libs.bundles.testing.android)
