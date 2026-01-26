@@ -2,7 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>Indentation:PatternCalculator.kt$PatternCalculator$ </ID>
-    <ID>Indentation:PatternCalculator.kt$PatternCalculator.Companion$ </ID>
+    <ID>ImportOrdering:PatternCalculationWorkerTest.kt$import android.content.Context import androidx.work.ListenableWorker import androidx.work.WorkerParameters import com.google.common.truth.Truth.assertThat import com.restock.core.domain.usecase.CalculatePatternsUseCase import com.restock.core.domain.usecase.CalculationResult import io.mockk.coEvery import io.mockk.mockk import org.junit.jupiter.api.BeforeEach import org.junit.jupiter.api.DisplayName import org.junit.jupiter.api.Nested import org.junit.jupiter.api.Test import kotlinx.coroutines.test.runTest</ID>
   </CurrentIssues>
 </SmellBaseline>

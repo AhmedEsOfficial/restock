@@ -1,6 +1,7 @@
 package com.restock.feature.list
 
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -423,7 +425,8 @@ private fun InCartHeader(
  * - Smooth drop animation
  *
  * **Note:** This composable maintains its own drag state and coordinates with
- * the parent list through the [onReorder] callback.
+ * the parent list through the [onReorder] callback. This function is scoped to
+ * [LazyItemScope] to enable the [animateItem] modifier for smooth animations.
  *
  * @param item The grocery item to display.
  * @param index The current index of this item in the list.
@@ -435,7 +438,7 @@ private fun InCartHeader(
  * @param modifier Modifier to be applied to the item container.
  */
 @Composable
-private fun ReorderableItem(
+private fun LazyItemScope.ReorderableItem(
     item: CurrentListItem,
     index: Int,
     totalItems: Int,
