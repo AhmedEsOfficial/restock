@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -25,6 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.restock.core.ui.components.LearningCheckbox
+import com.restock.core.ui.components.LearningFeedbackOverlay
+import com.restock.core.ui.components.LearningGlow
+import com.restock.core.ui.components.LearningLabeledCheckbox
+import com.restock.core.ui.components.LearningNotedBadge
+import com.restock.core.ui.components.LearningSparkle
+import com.restock.core.ui.components.LearningStatusBanner
 import com.restock.core.ui.components.MealTagChip
 import com.restock.core.ui.components.MealType
 import com.restock.core.ui.components.RestockBottomNavigation
@@ -86,7 +95,7 @@ private fun ComponentLabel(label: String) {
     showBackground = true,
     backgroundColor = 0xFFFFFBF5,
     widthDp = 400,
-    heightDp = 2000,
+    heightDp = 2600,
 )
 @Composable
 fun ComponentGalleryPreview() {
@@ -223,6 +232,113 @@ fun ComponentGalleryPreview() {
                 onCheckedChange = { labeledChecked = it },
                 label = "Organic Milk",
             )
+
+            // Learning Feedback Section
+            SectionHeader("Learning Feedback")
+
+            ComponentLabel("Learning Checkbox (with sparkle/glow)")
+            var learningChecked1 by remember { mutableStateOf(false) }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                LearningCheckbox(
+                    checked = learningChecked1,
+                    onCheckedChange = { learningChecked1 = it },
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    "Tap to see sparkle effect",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Learning Labeled Checkbox")
+            var learningChecked2 by remember { mutableStateOf(false) }
+            LearningLabeledCheckbox(
+                checked = learningChecked2,
+                onCheckedChange = { learningChecked2 = it },
+                label = "Milk with learning feedback",
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Learning Status Banners")
+            LearningStatusBanner(shoppingTripCount = 0)
+            Spacer(modifier = Modifier.height(4.dp))
+            LearningStatusBanner(shoppingTripCount = 1)
+            Spacer(modifier = Modifier.height(4.dp))
+            LearningStatusBanner(shoppingTripCount = 2)
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Noted Badge")
+            var notedTrigger by remember { mutableStateOf(false) }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RestockCheckbox(
+                    checked = notedTrigger,
+                    onCheckedChange = { notedTrigger = it },
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Eggs", style = MaterialTheme.typography.bodyLarge)
+                Spacer(Modifier.width(8.dp))
+                LearningNotedBadge(trigger = notedTrigger)
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Sparkle Animation")
+            var sparkleTrigger by remember { mutableStateOf(false) }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.size(64.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    RestockCheckbox(
+                        checked = sparkleTrigger,
+                        onCheckedChange = { sparkleTrigger = it },
+                    )
+                    LearningSparkle(trigger = sparkleTrigger)
+                }
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    "Standalone sparkle",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Glow Effect")
+            var glowTrigger by remember { mutableStateOf(false) }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.size(64.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    LearningGlow(trigger = glowTrigger, size = 48.dp)
+                    RestockCheckbox(
+                        checked = glowTrigger,
+                        onCheckedChange = { glowTrigger = it },
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    "Standalone glow",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Combined Overlay")
+            var overlayTrigger by remember { mutableStateOf(false) }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                LearningFeedbackOverlay(trigger = overlayTrigger) {
+                    RestockCheckbox(
+                        checked = overlayTrigger,
+                        onCheckedChange = { overlayTrigger = it },
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    "Sparkle + Glow overlay",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
 
             // Chips Section
             SectionHeader("Chips")
