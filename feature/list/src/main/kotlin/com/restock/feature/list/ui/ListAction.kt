@@ -118,4 +118,11 @@ sealed interface ListAction {
      * Toggle whether to show learning feedback animations.
      */
     data class SetLearningFeedback(val enabled: Boolean) : ListAction
+
+    // Celebration
+
+    /**
+     * Dismiss the list completion celebration.
+     */
+    data object DismissCelebration : ListAction
 }

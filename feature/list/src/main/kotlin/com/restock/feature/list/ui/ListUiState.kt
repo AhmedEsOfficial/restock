@@ -22,6 +22,8 @@ import kotlinx.collections.immutable.persistentListOf
  * @property selectedItemForQuantity Item currently being edited for quantity.
  * @property learningStatus Current learning status for feedback UI.
  * @property showLearningFeedback Whether to show learning animations on checkbox.
+ * @property showCelebration Whether to show the list completion celebration.
+ * @property isPatternProcessing Whether pattern calculation is in progress.
  */
 data class ListUiState(
     val uncheckedItems: ImmutableList<CurrentListItem> = persistentListOf(),
@@ -34,6 +36,8 @@ data class ListUiState(
     val selectedItemForQuantity: CurrentListItem? = null,
     val learningStatus: LearningStatus = LearningStatus.EMPTY,
     val showLearningFeedback: Boolean = true,
+    val showCelebration: Boolean = false,
+    val isPatternProcessing: Boolean = false,
 ) {
     /**
      * Whether the list is empty (no items at all).
@@ -88,4 +92,11 @@ data class ListUiState(
      */
     val hasSuggestions: Boolean
         get() = learningStatus.hasSuggestions
+
+    /**
+     * Whether all items are checked (list is complete).
+     * Only true when there are checked items and no unchecked items.
+     */
+    val isListComplete: Boolean
+        get() = checkedItems.isNotEmpty() && uncheckedItems.isEmpty()
 }

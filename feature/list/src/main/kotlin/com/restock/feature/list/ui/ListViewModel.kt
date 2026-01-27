@@ -72,6 +72,7 @@ class ListViewModel
          *
          * Unchecked items are sorted by position (drag-drop order).
          * Checked items are sorted by checkedAt descending (most recently checked first).
+         * Also detects list completion to trigger celebration.
          */
         private fun observeCurrentList() {
             viewModelScope.launch {
@@ -80,21 +81,37 @@ class ListViewModel
                         updateState { copy(error = e.message, isLoading = false) }
                     }
                     .collect { items ->
+                        val previousState = uiState.value
+                        val hadUncheckedItems = previousState.uncheckedItems.isNotEmpty()
+                        val wasLoading = previousState.isLoading
+
+                        val newUncheckedItems = items
+                            .filter { !it.isChecked }
+                            .sortedBy { it.position }
+                            .toImmutableList()
+
+                        val newCheckedItems = items
+                            .filter { it.isChecked }
+                            .sortedByDescending { it.checkedAt }
+                            .toImmutableList()
+
                         updateState {
                             copy(
-                                uncheckedItems =
-                                    items
-                                        .filter { !it.isChecked }
-                                        .sortedBy { it.position }
-                                        .toImmutableList(),
-                                checkedItems =
-                                    items
-                                        .filter { it.isChecked }
-                                        .sortedByDescending { it.checkedAt }
-                                        .toImmutableList(),
+                                uncheckedItems = newUncheckedItems,
+                                checkedItems = newCheckedItems,
                                 isLoading = false,
                                 error = null,
                             )
+                        }
+
+                        // Trigger celebration when list goes from having unchecked items
+                        // to having none (all items checked off), but not on initial load
+                        if (!wasLoading &&
+                            hadUncheckedItems &&
+                            newUncheckedItems.isEmpty() &&
+                            newCheckedItems.isNotEmpty()
+                        ) {
+                            triggerCelebration()
                         }
                     }
             }
@@ -148,6 +165,7 @@ class ListViewModel
                 is ListAction.ClearCheckedItems -> clearCheckedItems()
                 is ListAction.DismissError -> dismissError()
                 is ListAction.SetLearningFeedback -> setLearningFeedback(action.enabled)
+                is ListAction.DismissCelebration -> dismissCelebration()
             }
         }
 
@@ -381,6 +399,29 @@ class ListViewModel
          */
         private fun setLearningFeedback(enabled: Boolean) {
             updateState { copy(showLearningFeedback = enabled) }
+        }
+
+        /**
+         * Dismisses the list completion celebration.
+         */
+        private fun dismissCelebration() {
+            updateState { copy(showCelebration = false) }
+        }
+
+        /**
+         * Triggers the celebration when the list is complete.
+         *
+         * Only triggers if there are checked items and no unchecked items.
+         * Sends a ListCompleted event for any additional handling.
+         */
+        private fun triggerCelebration() {
+            val currentState = uiState.value
+            if (currentState.checkedItems.isNotEmpty() && currentState.uncheckedItems.isEmpty()) {
+                updateState { copy(showCelebration = true) }
+                viewModelScope.launch {
+                    sendEvent(ListEvent.ListCompleted)
+                }
+            }
         }
 
         companion object {

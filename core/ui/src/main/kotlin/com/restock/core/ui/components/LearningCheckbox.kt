@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.restock.core.ui.preview.LightDarkPreview
 import com.restock.core.ui.preview.RestockPreviewTheme
 import com.restock.core.ui.theme.RestockColors
+import com.restock.core.ui.util.rememberReducedMotion
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -219,6 +220,12 @@ fun LearningCheckbox(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
+    // Check if reduced motion is preferred
+    val reduceMotion = rememberReducedMotion()
+
+    // Disable learning feedback if reduced motion is enabled
+    val effectiveLearningFeedback = showLearningFeedback && !reduceMotion
+
     // Track when checked becomes true to trigger animations
     var animationTriggerKey by remember { mutableIntStateOf(0) }
     var previousChecked by remember { mutableStateOf(checked) }
@@ -239,7 +246,7 @@ fun LearningCheckbox(
     val sparkleProgress = remember { Animatable(0f) }
 
     LaunchedEffect(animationTriggerKey) {
-        if (animationTriggerKey > 0 && showLearningFeedback) {
+        if (animationTriggerKey > 0 && effectiveLearningFeedback) {
             sparkleProgress.snapTo(0f)
             sparkleProgress.animateTo(
                 targetValue = 1f,
@@ -255,7 +262,7 @@ fun LearningCheckbox(
     val glowAlpha = remember { Animatable(0f) }
 
     LaunchedEffect(animationTriggerKey) {
-        if (animationTriggerKey > 0 && showLearningFeedback) {
+        if (animationTriggerKey > 0 && effectiveLearningFeedback) {
             glowAlpha.snapTo(0f)
             glowAlpha.animateTo(
                 targetValue = 0.35f,
@@ -323,7 +330,7 @@ fun LearningCheckbox(
         contentAlignment = Alignment.Center,
     ) {
         // Glow effect behind checkbox
-        if (showLearningFeedback && glowAlpha.value > 0f) {
+        if (effectiveLearningFeedback && glowAlpha.value > 0f) {
             Box(
                 modifier = Modifier
                     .size(size + 16.dp)
@@ -366,7 +373,7 @@ fun LearningCheckbox(
         }
 
         // Sparkle effect on top
-        if (showLearningFeedback && sparkles.isNotEmpty() && sparkleProgress.value < 1f) {
+        if (effectiveLearningFeedback && sparkles.isNotEmpty() && sparkleProgress.value < 1f) {
             Canvas(modifier = Modifier.size(CheckboxTouchTarget)) {
                 val maxRadius = this.size.minDimension / 2
                 sparkles.forEach { sparkle ->

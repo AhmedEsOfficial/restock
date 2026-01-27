@@ -53,4 +53,10 @@ sealed interface ListEvent {
      * The item quantity was updated successfully.
      */
     data object QuantityUpdated : ListEvent
+
+    /**
+     * All items have been checked off - trigger celebration.
+     * This is emitted when the last unchecked item is checked.
+     */
+    data object ListCompleted : ListEvent
 }

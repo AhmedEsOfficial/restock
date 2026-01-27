@@ -53,6 +53,7 @@ import com.restock.core.ui.preview.LightDarkPreview
 import com.restock.core.ui.preview.RestockPreviewTheme
 import com.restock.core.ui.theme.RestockColors
 import com.restock.core.ui.theme.RestockSpacing
+import com.restock.core.ui.util.rememberReducedMotion
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -207,6 +208,10 @@ fun LearningSparkle(
     color: Color = RestockColors.Accent,
     size: Dp = SparkleCanvasSize,
 ) {
+    // Respect reduced motion preference
+    val reduceMotion = rememberReducedMotion()
+    if (reduceMotion) return
+
     var animationKey by remember { mutableIntStateOf(0) }
 
     // Track trigger changes to restart animation
@@ -294,6 +299,10 @@ fun LearningGlow(
     color: Color = RestockColors.Accent,
     size: Dp = GlowSize,
 ) {
+    // Respect reduced motion preference
+    val reduceMotion = rememberReducedMotion()
+    if (reduceMotion) return
+
     var animationKey by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(trigger) {
@@ -434,11 +443,24 @@ fun LearningStatusBanner(
  *
  * Creates a gentle pulsing animation to draw attention without being
  * distracting, conveying that the app is actively "thinking" and learning.
+ * Respects reduced motion preferences by showing a static icon.
  */
 @Composable
 private fun LearningBrainIcon(
     modifier: Modifier = Modifier,
 ) {
+    val reduceMotion = rememberReducedMotion()
+
+    if (reduceMotion) {
+        // Static brain icon for reduced motion
+        Text(
+            text = "\uD83E\uDDE0", // 🧠 brain emoji
+            style = MaterialTheme.typography.bodySmall,
+            modifier = modifier,
+        )
+        return
+    }
+
     val infiniteTransition = rememberInfiniteTransition(label = "brain_pulse")
 
     val scale by infiniteTransition.animateFloat(

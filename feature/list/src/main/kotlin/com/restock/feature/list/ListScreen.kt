@@ -47,7 +47,9 @@ import com.restock.core.domain.model.GroceryItem
 import com.restock.core.ui.components.AddItemTextField
 import com.restock.core.ui.components.EmptyListState
 import com.restock.core.ui.components.LearningStatusBanner
+import com.restock.core.ui.components.ListCompleteCelebration
 import com.restock.core.ui.components.LoadingScreen
+import com.restock.core.ui.components.PatternProcessingIndicator
 import com.restock.core.ui.components.RestockSnackbarHost
 import com.restock.core.ui.preview.LightDarkPreview
 import com.restock.core.ui.preview.RestockPreviewTheme
@@ -154,6 +156,10 @@ fun ListScreen(
                         duration = SnackbarDuration.Short,
                     )
                 }
+
+                is ListEvent.ListCompleted -> {
+                    // Celebration is shown via state, no snackbar needed
+                }
             }
         }
     }
@@ -188,91 +194,103 @@ private fun ListScreenContent(
     onSuggestionClick: (GroceryItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = { RestockSnackbarHost(snackbarHostState) },
-        containerColor = RestockColors.Background,
-    ) { paddingValues ->
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-        ) {
-            // Learning Status Banner (shows during onboarding period)
-            LearningStatusBanner(
-                shoppingTripCount = uiState.shoppingTripCount,
-                visible = uiState.showLearningBanner,
-            )
-
-            // Add Item Input Section
-            AddItemSection(
-                inputText = uiState.inputText,
-                suggestions = uiState.autoCompleteSuggestions,
-                showAutoComplete = uiState.showAutoComplete,
-                onInputChange = { onAction(ListAction.UpdateInputText(it)) },
-                onSubmit = onSubmitItem,
-                onSuggestionClick = onSuggestionClick,
+    Box(modifier = modifier) {
+        Scaffold(
+            snackbarHost = { RestockSnackbarHost(snackbarHostState) },
+            containerColor = RestockColors.Background,
+        ) { paddingValues ->
+            Column(
                 modifier =
-                    Modifier.padding(
-                        horizontal = RestockSpacing.screenPadding,
-                        vertical = RestockSpacing.md,
-                    ),
-            )
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+            ) {
+                // Pattern Processing Indicator (shows during background learning)
+                PatternProcessingIndicator(
+                    isProcessing = uiState.isPatternProcessing,
+                )
 
-            // List Content
-            when {
-                uiState.isLoading -> {
-                    LoadingScreen(
-                        message = "Loading your list...",
-                        modifier = Modifier.weight(1f),
-                    )
-                }
+                // Learning Status Banner (shows during onboarding period)
+                LearningStatusBanner(
+                    shoppingTripCount = uiState.shoppingTripCount,
+                    visible = uiState.showLearningBanner,
+                )
 
-                uiState.isEmpty -> {
-                    EmptyListState(
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .fillMaxWidth(),
-                    )
-                }
+                // Add Item Input Section
+                AddItemSection(
+                    inputText = uiState.inputText,
+                    suggestions = uiState.autoCompleteSuggestions,
+                    showAutoComplete = uiState.showAutoComplete,
+                    onInputChange = { onAction(ListAction.UpdateInputText(it)) },
+                    onSubmit = onSubmitItem,
+                    onSuggestionClick = onSuggestionClick,
+                    modifier =
+                        Modifier.padding(
+                            horizontal = RestockSpacing.screenPadding,
+                            vertical = RestockSpacing.md,
+                        ),
+                )
 
-                else -> {
-                    GroceryList(
-                        uncheckedItems = uiState.uncheckedItems,
-                        checkedItems = uiState.checkedItems,
-                        showLearningFeedback = uiState.showLearningFeedback,
-                        onToggleItem = { id, checked ->
-                            onAction(ListAction.ToggleItem(id, checked))
-                        },
-                        onDeleteItem = { id ->
-                            onAction(ListAction.DeleteItem(id))
-                        },
-                        onQuantityClick = { item ->
-                            onAction(ListAction.SelectItemForQuantity(item))
-                        },
-                        onReorder = { fromIndex, toIndex ->
-                            onAction(ListAction.ReorderItems(fromIndex, toIndex))
-                        },
-                        modifier = Modifier.weight(1f),
-                    )
+                // List Content
+                when {
+                    uiState.isLoading -> {
+                        LoadingScreen(
+                            message = "Loading your list...",
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+
+                    uiState.isEmpty -> {
+                        EmptyListState(
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                        )
+                    }
+
+                    else -> {
+                        GroceryList(
+                            uncheckedItems = uiState.uncheckedItems,
+                            checkedItems = uiState.checkedItems,
+                            showLearningFeedback = uiState.showLearningFeedback,
+                            onToggleItem = { id, checked ->
+                                onAction(ListAction.ToggleItem(id, checked))
+                            },
+                            onDeleteItem = { id ->
+                                onAction(ListAction.DeleteItem(id))
+                            },
+                            onQuantityClick = { item ->
+                                onAction(ListAction.SelectItemForQuantity(item))
+                            },
+                            onReorder = { fromIndex, toIndex ->
+                                onAction(ListAction.ReorderItems(fromIndex, toIndex))
+                            },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
                 }
+            }
+
+            // Quantity Bottom Sheet
+            uiState.selectedItemForQuantity?.let { item ->
+                QuantityBottomSheet(
+                    item = item,
+                    onDismiss = {
+                        onAction(ListAction.SelectItemForQuantity(null))
+                    },
+                    onConfirm = { quantity, unit ->
+                        onAction(ListAction.UpdateQuantity(item.id, quantity, unit))
+                    },
+                )
             }
         }
 
-        // Quantity Bottom Sheet
-        uiState.selectedItemForQuantity?.let { item ->
-            QuantityBottomSheet(
-                item = item,
-                onDismiss = {
-                    onAction(ListAction.SelectItemForQuantity(null))
-                },
-                onConfirm = { quantity, unit ->
-                    onAction(ListAction.UpdateQuantity(item.id, quantity, unit))
-                },
-            )
-        }
+        // Celebration overlay when list is complete
+        ListCompleteCelebration(
+            show = uiState.showCelebration,
+            onDismiss = { onAction(ListAction.DismissCelebration) },
+        )
     }
 }
 
