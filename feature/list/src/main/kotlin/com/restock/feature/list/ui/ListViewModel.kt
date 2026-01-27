@@ -7,6 +7,7 @@ import com.restock.core.domain.usecase.ClearCheckedItemsUseCase
 import com.restock.core.domain.usecase.DeleteItemUseCase
 import com.restock.core.domain.usecase.DeletedItem
 import com.restock.core.domain.usecase.GetCurrentListUseCase
+import com.restock.core.domain.usecase.GetLearningStatusUseCase
 import com.restock.core.domain.usecase.ReorderItemsUseCase
 import com.restock.core.domain.usecase.SearchItemsUseCase
 import com.restock.core.domain.usecase.UpdateQuantityUseCase
@@ -47,6 +48,7 @@ class ListViewModel
         private val updateQuantityUseCase: UpdateQuantityUseCase,
         private val searchItemsUseCase: SearchItemsUseCase,
         private val clearCheckedItemsUseCase: ClearCheckedItemsUseCase,
+        private val getLearningStatusUseCase: GetLearningStatusUseCase,
     ) : BaseViewModel<ListUiState, ListAction, ListEvent>(
             initialState = ListUiState(),
         ) {
@@ -62,6 +64,7 @@ class ListViewModel
         init {
             observeCurrentList()
             observeSearchResults()
+            observeLearningStatus()
         }
 
         /**
@@ -112,6 +115,22 @@ class ListViewModel
             }
         }
 
+        /**
+         * Observes the learning status for UI feedback components.
+         *
+         * Updates the state with shopping trip count and pattern information,
+         * which is used by [LearningStatusBanner] and [LearningCheckbox].
+         */
+        private fun observeLearningStatus() {
+            viewModelScope.launch {
+                getLearningStatusUseCase()
+                    .catch { /* Silently ignore learning status errors - non-critical */ }
+                    .collect { status ->
+                        updateState { copy(learningStatus = status) }
+                    }
+            }
+        }
+
         override fun onAction(action: ListAction) {
             when (action) {
                 is ListAction.UpdateInputText -> updateInputText(action.text)
@@ -128,6 +147,7 @@ class ListViewModel
                 is ListAction.SelectAutoComplete -> selectAutoComplete(action.item)
                 is ListAction.ClearCheckedItems -> clearCheckedItems()
                 is ListAction.DismissError -> dismissError()
+                is ListAction.SetLearningFeedback -> setLearningFeedback(action.enabled)
             }
         }
 
@@ -351,6 +371,16 @@ class ListViewModel
          */
         private fun dismissError() {
             updateState { copy(error = null) }
+        }
+
+        /**
+         * Sets whether to show learning feedback animations.
+         *
+         * When disabled, checkboxes will use standard animations without
+         * sparkle/glow effects. This setting can be controlled from user preferences.
+         */
+        private fun setLearningFeedback(enabled: Boolean) {
+            updateState { copy(showLearningFeedback = enabled) }
         }
 
         companion object {

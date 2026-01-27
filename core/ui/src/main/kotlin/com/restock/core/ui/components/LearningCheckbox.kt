@@ -106,12 +106,12 @@ private val CheckmarkSize = 16.dp
  */
 private const val PARTICLE_COUNT = 6
 
-// ==================== SPARKLE PARTICLE ====================
+// ==================== CHECKBOX SPARKLE ====================
 
 /**
- * Data class for sparkle particle properties.
+ * Data class for checkbox sparkle particle properties.
  */
-private data class SparkleParticle(
+private data class CheckboxSparkle(
     val angle: Float,
     val distance: Float,
     val size: Float,
@@ -119,11 +119,11 @@ private data class SparkleParticle(
 )
 
 /**
- * Generates sparkle particles with randomized properties.
+ * Generates checkbox sparkle particles with randomized properties.
  */
-private fun generateParticles(): List<SparkleParticle> {
+private fun generateCheckboxSparkles(): List<CheckboxSparkle> {
     return List(PARTICLE_COUNT) {
-        SparkleParticle(
+        CheckboxSparkle(
             angle = Random.nextFloat() * 360f,
             distance = Random.nextFloat() * 0.35f + 0.55f,
             size = Random.nextFloat() * 1.5f + 1.5f,
@@ -133,25 +133,25 @@ private fun generateParticles(): List<SparkleParticle> {
 }
 
 /**
- * Draws a sparkle particle.
+ * Draws a checkbox sparkle particle.
  */
-private fun DrawScope.drawParticle(
-    particle: SparkleParticle,
+private fun DrawScope.drawCheckboxSparkle(
+    sparkle: CheckboxSparkle,
     progress: Float,
     color: Color,
     maxRadius: Float,
 ) {
-    val animatedDistance = particle.distance * progress
+    val animatedDistance = sparkle.distance * progress
     val radius = maxRadius * animatedDistance
-    val fadeAlpha = (1f - progress) * particle.alpha
+    val fadeAlpha = (1f - progress) * sparkle.alpha
 
-    val angleRad = Math.toRadians(particle.angle.toDouble())
+    val angleRad = Math.toRadians(sparkle.angle.toDouble())
     val x = center.x + cos(angleRad).toFloat() * radius
     val y = center.y + sin(angleRad).toFloat() * radius
 
     drawCircle(
         color = color.copy(alpha = fadeAlpha),
-        radius = particle.size * (1f - progress * 0.4f),
+        radius = sparkle.size * (1f - progress * 0.4f),
         center = Offset(x, y),
     )
 }
@@ -231,8 +231,8 @@ fun LearningCheckbox(
     }
 
     // Generate sparkle particles when triggered
-    val particles = remember(animationTriggerKey) {
-        if (animationTriggerKey > 0) generateParticles() else emptyList()
+    val sparkles = remember(animationTriggerKey) {
+        if (animationTriggerKey > 0) generateCheckboxSparkles() else emptyList()
     }
 
     // Sparkle animation progress
@@ -366,12 +366,12 @@ fun LearningCheckbox(
         }
 
         // Sparkle effect on top
-        if (showLearningFeedback && particles.isNotEmpty() && sparkleProgress.value < 1f) {
+        if (showLearningFeedback && sparkles.isNotEmpty() && sparkleProgress.value < 1f) {
             Canvas(modifier = Modifier.size(CheckboxTouchTarget)) {
                 val maxRadius = this.size.minDimension / 2
-                particles.forEach { particle ->
-                    drawParticle(
-                        particle = particle,
+                sparkles.forEach { sparkle ->
+                    drawCheckboxSparkle(
+                        sparkle = sparkle,
                         progress = sparkleProgress.value,
                         color = feedbackColor,
                         maxRadius = maxRadius,

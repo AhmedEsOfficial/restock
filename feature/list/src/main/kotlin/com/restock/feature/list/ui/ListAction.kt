@@ -111,4 +111,11 @@ sealed interface ListAction {
      * Dismiss the current error.
      */
     data object DismissError : ListAction
+
+    // Learning feedback
+
+    /**
+     * Toggle whether to show learning feedback animations.
+     */
+    data class SetLearningFeedback(val enabled: Boolean) : ListAction
 }

@@ -2,6 +2,7 @@ package com.restock.feature.list.ui
 
 import com.restock.core.domain.model.CurrentListItem
 import com.restock.core.domain.model.GroceryItem
+import com.restock.core.domain.usecase.LearningStatus
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -19,6 +20,8 @@ import kotlinx.collections.immutable.persistentListOf
  * @property isLoading Whether the list is currently loading.
  * @property error Error message to display, null if no error.
  * @property selectedItemForQuantity Item currently being edited for quantity.
+ * @property learningStatus Current learning status for feedback UI.
+ * @property showLearningFeedback Whether to show learning animations on checkbox.
  */
 data class ListUiState(
     val uncheckedItems: ImmutableList<CurrentListItem> = persistentListOf(),
@@ -29,6 +32,8 @@ data class ListUiState(
     val isLoading: Boolean = true,
     val error: String? = null,
     val selectedItemForQuantity: CurrentListItem? = null,
+    val learningStatus: LearningStatus = LearningStatus.EMPTY,
+    val showLearningFeedback: Boolean = true,
 ) {
     /**
      * Whether the list is empty (no items at all).
@@ -65,4 +70,22 @@ data class ListUiState(
      */
     val showAutoComplete: Boolean
         get() = inputText.isNotBlank() && autoCompleteSuggestions.isNotEmpty()
+
+    /**
+     * Number of completed shopping trips.
+     */
+    val shoppingTripCount: Int
+        get() = learningStatus.shoppingTripCount
+
+    /**
+     * Whether to show the learning status banner during onboarding.
+     */
+    val showLearningBanner: Boolean
+        get() = learningStatus.showLearningBanner
+
+    /**
+     * Whether there are learned patterns ready for suggestions.
+     */
+    val hasSuggestions: Boolean
+        get() = learningStatus.hasSuggestions
 }

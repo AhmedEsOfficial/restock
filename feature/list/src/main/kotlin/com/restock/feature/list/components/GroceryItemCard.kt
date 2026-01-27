@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import com.restock.core.domain.model.CurrentListItem
+import com.restock.core.ui.components.LearningCheckbox
 import com.restock.core.ui.components.MealTagChip
 import com.restock.core.ui.components.MealType
 import com.restock.core.ui.components.RestockCheckbox
@@ -96,6 +97,7 @@ private const val SWIPE_THRESHOLD_PERCENT = 0.4f
  * @param modifier Modifier to be applied to the card.
  * @param isCheckedSection Whether this item is displayed in the checked/In Cart section.
  * @param mealTags List of meal types to display as chips below the item name.
+ * @param showLearningFeedback Whether to show sparkle/glow learning animations on check.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,6 +109,7 @@ fun GroceryItemCard(
     modifier: Modifier = Modifier,
     isCheckedSection: Boolean = false,
     mealTags: List<MealType> = emptyList(),
+    showLearningFeedback: Boolean = true,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
     var isBeingDismissed by remember { mutableStateOf(false) }
@@ -176,6 +179,7 @@ fun GroceryItemCard(
             isCheckedSection = isCheckedSection,
             elevation = elevation,
             mealTags = mealTags,
+            showLearningFeedback = showLearningFeedback,
         )
     }
 }
@@ -195,6 +199,7 @@ private fun GroceryItemCardContent(
     elevation: androidx.compose.ui.unit.Dp,
     mealTags: List<MealType>,
     modifier: Modifier = Modifier,
+    showLearningFeedback: Boolean = true,
 ) {
     // Animate card appearance when checked/unchecked
     val contentAlpha by animateFloatAsState(
@@ -235,17 +240,31 @@ private fun GroceryItemCardContent(
                     ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Checkbox
-            RestockCheckbox(
-                checked = item.isChecked,
-                onCheckedChange = onCheckedChange,
-                contentDescription =
-                    if (item.isChecked) {
-                        "Uncheck ${item.name}"
-                    } else {
-                        "Check ${item.name}"
-                    },
-            )
+            // Checkbox - use LearningCheckbox for unchecked items with feedback enabled
+            if (showLearningFeedback && !isCheckedSection) {
+                LearningCheckbox(
+                    checked = item.isChecked,
+                    onCheckedChange = onCheckedChange,
+                    showLearningFeedback = true,
+                    contentDescription =
+                        if (item.isChecked) {
+                            "Uncheck ${item.name}"
+                        } else {
+                            "Check ${item.name}"
+                        },
+                )
+            } else {
+                RestockCheckbox(
+                    checked = item.isChecked,
+                    onCheckedChange = onCheckedChange,
+                    contentDescription =
+                        if (item.isChecked) {
+                            "Uncheck ${item.name}"
+                        } else {
+                            "Check ${item.name}"
+                        },
+                )
+            }
 
             Spacer(modifier = Modifier.width(RestockSpacing.xs))
 

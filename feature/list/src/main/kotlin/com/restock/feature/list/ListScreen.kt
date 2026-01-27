@@ -46,6 +46,7 @@ import com.restock.core.domain.model.CurrentListItem
 import com.restock.core.domain.model.GroceryItem
 import com.restock.core.ui.components.AddItemTextField
 import com.restock.core.ui.components.EmptyListState
+import com.restock.core.ui.components.LearningStatusBanner
 import com.restock.core.ui.components.LoadingScreen
 import com.restock.core.ui.components.RestockSnackbarHost
 import com.restock.core.ui.preview.LightDarkPreview
@@ -198,6 +199,12 @@ private fun ListScreenContent(
                     .fillMaxSize()
                     .padding(paddingValues),
         ) {
+            // Learning Status Banner (shows during onboarding period)
+            LearningStatusBanner(
+                shoppingTripCount = uiState.shoppingTripCount,
+                visible = uiState.showLearningBanner,
+            )
+
             // Add Item Input Section
             AddItemSection(
                 inputText = uiState.inputText,
@@ -235,6 +242,7 @@ private fun ListScreenContent(
                     GroceryList(
                         uncheckedItems = uiState.uncheckedItems,
                         checkedItems = uiState.checkedItems,
+                        showLearningFeedback = uiState.showLearningFeedback,
                         onToggleItem = { id, checked ->
                             onAction(ListAction.ToggleItem(id, checked))
                         },
@@ -313,6 +321,7 @@ private fun AddItemSection(
 private fun GroceryList(
     uncheckedItems: ImmutableList<CurrentListItem>,
     checkedItems: ImmutableList<CurrentListItem>,
+    showLearningFeedback: Boolean,
     onToggleItem: (String, Boolean) -> Unit,
     onDeleteItem: (String) -> Unit,
     onQuantityClick: (CurrentListItem) -> Unit,
@@ -337,6 +346,7 @@ private fun GroceryList(
                 item = item,
                 index = index,
                 totalItems = uncheckedItems.size,
+                showLearningFeedback = showLearningFeedback,
                 onReorder = onReorder,
                 onCheckedChange = { checked -> onToggleItem(item.id, checked) },
                 onDelete = { onDeleteItem(item.id) },
@@ -442,6 +452,7 @@ private fun LazyItemScope.ReorderableItem(
     item: CurrentListItem,
     index: Int,
     totalItems: Int,
+    showLearningFeedback: Boolean,
     onReorder: (fromIndex: Int, toIndex: Int) -> Unit,
     onCheckedChange: (Boolean) -> Unit,
     onDelete: () -> Unit,
@@ -523,6 +534,7 @@ private fun LazyItemScope.ReorderableItem(
             onCheckedChange = onCheckedChange,
             onDelete = onDelete,
             onQuantityClick = onQuantityClick,
+            showLearningFeedback = showLearningFeedback,
         )
     }
 }
