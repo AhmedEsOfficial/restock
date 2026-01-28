@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.restock.core.domain.model.Purchase
 import com.restock.core.domain.model.PurchaseEvent
 import com.restock.core.domain.repository.PurchaseRepository
+import com.restock.core.domain.repository.SuggestionRepository
 import com.restock.core.domain.scheduler.PatternWorkScheduler
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -29,6 +30,7 @@ class RecordPurchaseUseCaseTest {
     private val testDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
     private val purchaseRepository: PurchaseRepository = mockk()
+    private val suggestionRepository: SuggestionRepository = mockk(relaxed = true)
     private val patternWorkScheduler: PatternWorkScheduler = mockk(relaxed = true)
     private lateinit var useCase: RecordPurchaseUseCase
 
@@ -37,6 +39,7 @@ class RecordPurchaseUseCaseTest {
         useCase =
             RecordPurchaseUseCase(
                 purchaseRepository = purchaseRepository,
+                suggestionRepository = suggestionRepository,
                 patternWorkScheduler = patternWorkScheduler,
                 scope = testScope,
             )
@@ -132,6 +135,66 @@ class RecordPurchaseUseCaseTest {
                 advanceUntilIdle()
 
                 verify(exactly = 0) { patternWorkScheduler.triggerImmediateCalculation() }
+            }
+    }
+
+    @Nested
+    @DisplayName("Dismissal clearing")
+    inner class DismissalClearingTests {
+        @Test
+        fun `clears dismissal on purchase success`() =
+            testScope.runTest {
+                val purchase = createTestPurchase(itemId = "item-1")
+                coEvery { purchaseRepository.recordPurchaseEvent(any()) } returns
+                    Result.success(purchase)
+
+                useCase(itemId = "item-1", quantity = 1)
+                advanceUntilIdle()
+
+                coVerify { suggestionRepository.clearDismissalOnPurchase("item-1") }
+            }
+
+        @Test
+        fun `does not clear dismissal on purchase failure`() =
+            testScope.runTest {
+                coEvery { purchaseRepository.recordPurchaseEvent(any()) } returns
+                    Result.failure(RuntimeException("DB error"))
+
+                useCase(itemId = "item-1", quantity = 1)
+                advanceUntilIdle()
+
+                coVerify(exactly = 0) { suggestionRepository.clearDismissalOnPurchase(any()) }
+            }
+
+        @Test
+        fun `clears correct item dismissal when custom timestamp used`() =
+            testScope.runTest {
+                val customTimestamp = Instant.parse("2024-01-15T10:30:00Z")
+                val purchase = createTestPurchase(itemId = "item-xyz", purchasedAt = customTimestamp)
+                coEvery { purchaseRepository.recordPurchaseEvent(any()) } returns
+                    Result.success(purchase)
+
+                useCase(itemId = "item-xyz", quantity = 2, purchasedAt = customTimestamp)
+                advanceUntilIdle()
+
+                coVerify { suggestionRepository.clearDismissalOnPurchase("item-xyz") }
+            }
+
+        @Test
+        fun `clears dismissals for multiple rapid purchases`() =
+            testScope.runTest {
+                val purchase = createTestPurchase(itemId = "item-1")
+                coEvery { purchaseRepository.recordPurchaseEvent(any()) } returns
+                    Result.success(purchase)
+
+                repeat(3) { index ->
+                    useCase(itemId = "item-$index", quantity = 1)
+                }
+                advanceUntilIdle()
+
+                coVerify { suggestionRepository.clearDismissalOnPurchase("item-0") }
+                coVerify { suggestionRepository.clearDismissalOnPurchase("item-1") }
+                coVerify { suggestionRepository.clearDismissalOnPurchase("item-2") }
             }
     }
 

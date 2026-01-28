@@ -3,6 +3,7 @@ package com.restock.core.domain.usecase
 import com.restock.core.domain.di.ApplicationScope
 import com.restock.core.domain.model.PurchaseEvent
 import com.restock.core.domain.repository.PurchaseRepository
+import com.restock.core.domain.repository.SuggestionRepository
 import com.restock.core.domain.scheduler.PatternWorkScheduler
 import java.time.Instant
 import javax.inject.Inject
@@ -20,9 +21,11 @@ import kotlinx.coroutines.launch
  * - **Fire-and-forget**: Recording happens asynchronously using [ApplicationScope]
  * - **Debounce**: Purchases within 4 hours for the same item aggregate quantities
  * - **Pattern trigger**: On success, triggers pattern recalculation
+ * - **Dismissal reset**: On success, clears any dismissal state for the item
  * - **Non-blocking**: Never slows down the main UI thread
  *
  * @property purchaseRepository Repository for persisting purchase events.
+ * @property suggestionRepository Repository for managing suggestion dismissals.
  * @property patternWorkScheduler Scheduler for triggering pattern calculations.
  * @property scope Application-scoped coroutine scope that outlives ViewModels.
  */
@@ -30,6 +33,7 @@ class RecordPurchaseUseCase
     @Inject
     constructor(
         private val purchaseRepository: PurchaseRepository,
+        private val suggestionRepository: SuggestionRepository,
         private val patternWorkScheduler: PatternWorkScheduler,
         @ApplicationScope private val scope: CoroutineScope,
     ) {
@@ -58,6 +62,10 @@ class RecordPurchaseUseCase
 
                 purchaseRepository.recordPurchaseEvent(event)
                     .onSuccess {
+                        // Clear any dismissal state for this item
+                        // (allows dismissed items to be suggested again after purchase)
+                        suggestionRepository.clearDismissalOnPurchase(itemId)
+
                         // Trigger pattern recalculation
                         patternWorkScheduler.triggerImmediateCalculation()
                     }
@@ -90,6 +98,9 @@ class RecordPurchaseUseCase
 
                 purchaseRepository.recordPurchaseEvent(event)
                     .onSuccess {
+                        // Clear any dismissal state for this item
+                        suggestionRepository.clearDismissalOnPurchase(itemId)
+
                         patternWorkScheduler.triggerImmediateCalculation()
                     }
                 // Errors are silently handled

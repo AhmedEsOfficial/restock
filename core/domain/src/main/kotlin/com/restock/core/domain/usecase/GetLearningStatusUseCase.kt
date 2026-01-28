@@ -2,7 +2,6 @@ package com.restock.core.domain.usecase
 
 import com.restock.core.domain.repository.PatternRepository
 import com.restock.core.domain.repository.PurchaseRepository
-import java.time.LocalDate
 import java.time.ZoneId
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -41,8 +40,13 @@ data class LearningStatus(
      * Progress percentage toward suggestions being available (0-100).
      */
     val progressPercent: Int
-        get() = ((shoppingTripCount.coerceAtMost(TRIPS_NEEDED_FOR_SUGGESTIONS).toFloat() /
-            TRIPS_NEEDED_FOR_SUGGESTIONS) * 100).toInt()
+        get() =
+            (
+                (
+                    shoppingTripCount.coerceAtMost(TRIPS_NEEDED_FOR_SUGGESTIONS).toFloat() /
+                        TRIPS_NEEDED_FOR_SUGGESTIONS
+                ) * 100
+            ).toInt()
 
     companion object {
         /**
@@ -53,13 +57,14 @@ data class LearningStatus(
         /**
          * Empty learning status for initial state.
          */
-        val EMPTY = LearningStatus(
-            shoppingTripCount = 0,
-            totalPurchaseCount = 0,
-            patternCount = 0,
-            hasSuggestions = false,
-            isLearningComplete = false,
-        )
+        val EMPTY =
+            LearningStatus(
+                shoppingTripCount = 0,
+                totalPurchaseCount = 0,
+                patternCount = 0,
+                hasSuggestions = false,
+                isLearningComplete = false,
+            )
     }
 }
 
@@ -89,93 +94,99 @@ data class LearningStatus(
  * }
  * ```
  */
-class GetLearningStatusUseCase @Inject constructor(
-    private val purchaseRepository: PurchaseRepository,
-    private val patternRepository: PatternRepository,
-) {
-    /**
-     * Observe the learning status as a Flow.
-     *
-     * Updates automatically when purchases or patterns change.
-     */
-    operator fun invoke(): Flow<LearningStatus> {
-        return combine(
-            purchaseRepository.observeAllPurchases(),
-            patternRepository.observePatternsWithItems(),
-        ) { purchases, patterns ->
-            // Count unique shopping days (trips)
-            val uniqueDays = purchases
-                .map { purchase ->
-                    purchase.purchasedAt
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate()
-                }
-                .distinct()
-                .size
+class GetLearningStatusUseCase
+    @Inject
+    constructor(
+        private val purchaseRepository: PurchaseRepository,
+        private val patternRepository: PatternRepository,
+    ) {
+        /**
+         * Observe the learning status as a Flow.
+         *
+         * Updates automatically when purchases or patterns change.
+         */
+        operator fun invoke(): Flow<LearningStatus> {
+            return combine(
+                purchaseRepository.observeAllPurchases(),
+                patternRepository.observePatternsWithItems(),
+            ) { purchases, patterns ->
+                // Count unique shopping days (trips)
+                val uniqueDays =
+                    purchases
+                        .map { purchase ->
+                            purchase.purchasedAt
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                        }
+                        .distinct()
+                        .size
 
-            // Check if there are suggestion-ready patterns
-            val hasSuggestions = patterns.any { pattern ->
-                pattern.confidenceScore >= MIN_CONFIDENCE_FOR_SUGGESTIONS &&
-                    pattern.sampleCount >= MIN_SAMPLES_FOR_SUGGESTIONS
+                // Check if there are suggestion-ready patterns
+                val hasSuggestions =
+                    patterns.any { pattern ->
+                        pattern.confidenceScore >= MIN_CONFIDENCE_FOR_SUGGESTIONS &&
+                            pattern.sampleCount >= MIN_SAMPLES_FOR_SUGGESTIONS
+                    }
+
+                LearningStatus(
+                    shoppingTripCount = uniqueDays,
+                    totalPurchaseCount = purchases.size,
+                    patternCount = patterns.size,
+                    hasSuggestions = hasSuggestions,
+                    isLearningComplete = uniqueDays >= LearningStatus.TRIPS_NEEDED_FOR_SUGGESTIONS,
+                )
+            }
+        }
+
+        /**
+         * Get the current learning status as a snapshot.
+         *
+         * Use this for one-time checks, prefer the Flow version for reactive UI.
+         */
+        suspend fun getSnapshot(): LearningStatus {
+            val purchases = purchaseRepository.getItemIdsWithPurchases()
+            val patterns = patternRepository.getAllPatterns()
+
+            // For snapshot, we need to get all purchases to count unique days
+            val allPurchases = mutableListOf<java.time.Instant>()
+            purchases.forEach { itemId ->
+                purchaseRepository.getPurchasesForItem(itemId).forEach { purchase ->
+                    allPurchases.add(purchase.purchasedAt)
+                }
             }
 
-            LearningStatus(
+            val uniqueDays =
+                allPurchases
+                    .map { instant ->
+                        instant.atZone(ZoneId.systemDefault()).toLocalDate()
+                    }
+                    .distinct()
+                    .size
+
+            val hasSuggestions =
+                patterns.any { pattern ->
+                    pattern.confidenceScore >= MIN_CONFIDENCE_FOR_SUGGESTIONS &&
+                        pattern.sampleCount >= MIN_SAMPLES_FOR_SUGGESTIONS
+                }
+
+            return LearningStatus(
                 shoppingTripCount = uniqueDays,
-                totalPurchaseCount = purchases.size,
+                totalPurchaseCount = allPurchases.size,
                 patternCount = patterns.size,
                 hasSuggestions = hasSuggestions,
                 isLearningComplete = uniqueDays >= LearningStatus.TRIPS_NEEDED_FOR_SUGGESTIONS,
             )
         }
-    }
 
-    /**
-     * Get the current learning status as a snapshot.
-     *
-     * Use this for one-time checks, prefer the Flow version for reactive UI.
-     */
-    suspend fun getSnapshot(): LearningStatus {
-        val purchases = purchaseRepository.getItemIdsWithPurchases()
-        val patterns = patternRepository.getAllPatterns()
+        companion object {
+            /**
+             * Minimum confidence score for a pattern to be suggested.
+             */
+            private const val MIN_CONFIDENCE_FOR_SUGGESTIONS = 0.6
 
-        // For snapshot, we need to get all purchases to count unique days
-        val allPurchases = mutableListOf<java.time.Instant>()
-        purchases.forEach { itemId ->
-            purchaseRepository.getPurchasesForItem(itemId).forEach { purchase ->
-                allPurchases.add(purchase.purchasedAt)
-            }
+            /**
+             * Minimum sample count for a pattern to be suggested.
+             */
+            private const val MIN_SAMPLES_FOR_SUGGESTIONS = 3
         }
-
-        val uniqueDays = allPurchases
-            .map { instant ->
-                instant.atZone(ZoneId.systemDefault()).toLocalDate()
-            }
-            .distinct()
-            .size
-
-        val hasSuggestions = patterns.any { pattern ->
-            pattern.confidenceScore >= MIN_CONFIDENCE_FOR_SUGGESTIONS &&
-                pattern.sampleCount >= MIN_SAMPLES_FOR_SUGGESTIONS
-        }
-
-        return LearningStatus(
-            shoppingTripCount = uniqueDays,
-            totalPurchaseCount = allPurchases.size,
-            patternCount = patterns.size,
-            hasSuggestions = hasSuggestions,
-            isLearningComplete = uniqueDays >= LearningStatus.TRIPS_NEEDED_FOR_SUGGESTIONS,
-        )
     }
-
-    companion object {
-        /**
-         * Minimum confidence score for a pattern to be suggested.
-         */
-        private const val MIN_CONFIDENCE_FOR_SUGGESTIONS = 0.6
-
-        /**
-         * Minimum sample count for a pattern to be suggested.
-         */
-        private const val MIN_SAMPLES_FOR_SUGGESTIONS = 3
-    }
-}
