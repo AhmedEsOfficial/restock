@@ -3,6 +3,7 @@ package com.restock.feature.suggestions.ui
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.restock.core.domain.model.CurrentListItem
+import com.restock.core.domain.model.LearningState
 import com.restock.core.domain.model.Suggestion
 import com.restock.core.domain.usecase.AcceptSuggestionUseCase
 import com.restock.core.domain.usecase.DismissSuggestionUseCase

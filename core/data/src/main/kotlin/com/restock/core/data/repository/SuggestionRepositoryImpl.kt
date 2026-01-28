@@ -12,8 +12,11 @@ import com.restock.core.domain.model.Suggestion
 import com.restock.core.domain.repository.SuggestionRepository
 import com.restock.core.data.suggestion.SuggestionScorer
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -30,7 +33,12 @@ import javax.inject.Singleton
  * 4. Filtering items not yet due (daysSince < avgInterval - 1)
  * 5. Scoring and sorting by combined confidence × urgency
  * 6. Limiting to MAX_SUGGESTIONS
+ *
+ * Performance optimizations:
+ * - Debounces rapid changes (100ms) to prevent excessive recalculation
+ * - Uses conflate to skip intermediate values when consumer is slow
  */
+@OptIn(FlowPreview::class)
 @Singleton
 class SuggestionRepositoryImpl
     @Inject
@@ -55,7 +63,12 @@ class SuggestionRepositoryImpl
                     currentItemIds = currentItemIds.toSet(),
                     dismissals = dismissals.associateBy { it.itemId },
                 )
-            }.flowOn(dispatcher)
+            }
+                // Debounce rapid changes to prevent excessive recalculation
+                .debounce(DEBOUNCE_MS)
+                // Use conflate to skip intermediate values when consumer is slow
+                .conflate()
+                .flowOn(dispatcher)
 
         override suspend fun getSuggestions(limit: Int): List<Suggestion> =
             withContext(dispatcher) {
@@ -191,5 +204,11 @@ class SuggestionRepositoryImpl
              * Milliseconds per day.
              */
             private const val MS_PER_DAY = 24.0 * 60.0 * 60.0 * 1000.0
+
+            /**
+             * Debounce delay for suggestion updates.
+             * Prevents excessive recalculation during rapid changes.
+             */
+            private const val DEBOUNCE_MS = 100L
         }
     }

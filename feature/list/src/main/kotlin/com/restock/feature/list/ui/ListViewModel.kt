@@ -1,13 +1,19 @@
 package com.restock.feature.list.ui
 
 import androidx.lifecycle.viewModelScope
+import com.restock.core.domain.model.LearningState
+import com.restock.core.domain.model.Suggestion
+import com.restock.core.domain.usecase.AcceptSuggestionUseCase
 import com.restock.core.domain.usecase.AddItemUseCase
 import com.restock.core.domain.usecase.CheckItemUseCase
 import com.restock.core.domain.usecase.ClearCheckedItemsUseCase
 import com.restock.core.domain.usecase.DeleteItemUseCase
 import com.restock.core.domain.usecase.DeletedItem
+import com.restock.core.domain.usecase.DismissSuggestionUseCase
 import com.restock.core.domain.usecase.GetCurrentListUseCase
 import com.restock.core.domain.usecase.GetLearningStatusUseCase
+import com.restock.core.domain.usecase.GetShoppingTripCountUseCase
+import com.restock.core.domain.usecase.GetSuggestionsUseCase
 import com.restock.core.domain.usecase.ReorderItemsUseCase
 import com.restock.core.domain.usecase.SearchItemsUseCase
 import com.restock.core.domain.usecase.UpdateQuantityUseCase
@@ -49,6 +55,11 @@ class ListViewModel
         private val searchItemsUseCase: SearchItemsUseCase,
         private val clearCheckedItemsUseCase: ClearCheckedItemsUseCase,
         private val getLearningStatusUseCase: GetLearningStatusUseCase,
+        // Suggestions use cases
+        private val getSuggestionsUseCase: GetSuggestionsUseCase,
+        private val acceptSuggestionUseCase: AcceptSuggestionUseCase,
+        private val dismissSuggestionUseCase: DismissSuggestionUseCase,
+        private val getShoppingTripCountUseCase: GetShoppingTripCountUseCase,
     ) : BaseViewModel<ListUiState, ListAction, ListEvent>(
             initialState = ListUiState(),
         ) {
@@ -63,8 +74,10 @@ class ListViewModel
 
         init {
             observeCurrentList()
+            observeSuggestions()
             observeSearchResults()
             observeLearningStatus()
+            loadLearningState()
         }
 
         /**
@@ -118,6 +131,30 @@ class ListViewModel
         }
 
         /**
+         * Observes smart suggestions and updates the UI state.
+         *
+         * The suggestions flow automatically updates when:
+         * - Patterns change (e.g., after pattern calculation)
+         * - Items are added to/removed from current list
+         * - Suggestions are dismissed
+         *
+         * Errors are logged but don't show to the user since suggestions
+         * are secondary to the core list functionality.
+         */
+        private fun observeSuggestions() {
+            viewModelScope.launch {
+                getSuggestionsUseCase()
+                    .catch {
+                        // Silently ignore suggestions errors - they are secondary
+                        // to the core list functionality
+                    }
+                    .collect { suggestions ->
+                        updateState { copy(suggestions = suggestions.toImmutableList()) }
+                    }
+            }
+        }
+
+        /**
          * Observes the search query flow and emits debounced suggestions.
          */
         private fun observeSearchResults() {
@@ -148,6 +185,28 @@ class ListViewModel
             }
         }
 
+        /**
+         * Loads the learning state based on shopping trip count.
+         *
+         * Determines what to show in the suggestions section:
+         * - 0 trips: NOT_STARTED - hide suggestions section
+         * - 1 trip: LEARNING - show "Learning your patterns..."
+         * - 2 trips: ALMOST_READY - show "Almost ready..."
+         * - 3+ trips: READY - suggestions can appear
+         */
+        private fun loadLearningState() {
+            viewModelScope.launch {
+                try {
+                    val tripCount = getShoppingTripCountUseCase()
+                    val learningState = LearningState.fromTripCount(tripCount)
+                    updateState { copy(learningState = learningState) }
+                } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+                    // Non-critical error - don't show to user, just default to NOT_STARTED
+                    // Learning state failure should not affect core functionality
+                }
+            }
+        }
+
         override fun onAction(action: ListAction) {
             when (action) {
                 is ListAction.UpdateInputText -> updateInputText(action.text)
@@ -166,6 +225,8 @@ class ListViewModel
                 is ListAction.DismissError -> dismissError()
                 is ListAction.SetLearningFeedback -> setLearningFeedback(action.enabled)
                 is ListAction.DismissCelebration -> dismissCelebration()
+                is ListAction.AcceptSuggestion -> acceptSuggestion(action.suggestion)
+                is ListAction.DismissSuggestion -> dismissSuggestion(action.itemId)
             }
         }
 
@@ -424,6 +485,68 @@ class ListViewModel
             }
         }
 
+        /**
+         * Accepts a smart suggestion by adding the item to the list.
+         *
+         * Uses optimistic UI updates for instant feedback:
+         * 1. Immediately removes suggestion from UI
+         * 2. Calls use case to add item to list
+         * 3. On failure: restores state and shows error
+         *
+         * @param suggestion The suggestion to accept.
+         */
+        private fun acceptSuggestion(suggestion: Suggestion) {
+            viewModelScope.launch {
+                // Optimistically remove from UI for instant feedback
+                updateState {
+                    copy(
+                        suggestions = suggestions
+                            .filter { it.itemId != suggestion.itemId }
+                            .toImmutableList(),
+                    )
+                }
+
+                acceptSuggestionUseCase(suggestion)
+                    .onSuccess {
+                        sendEvent(ListEvent.SuggestionAccepted(suggestion.itemName))
+                    }
+                    .onFailure { e ->
+                        sendEvent(ListEvent.Error(e.message ?: ERROR_ADD_SUGGESTION))
+                    }
+            }
+        }
+
+        /**
+         * Dismisses a smart suggestion.
+         *
+         * Uses optimistic UI updates for instant feedback:
+         * 1. Immediately removes suggestion from UI
+         * 2. Calls use case to record dismissal
+         *
+         * The repository handles:
+         * - Reducing pattern confidence (by 0.05 per dismissal)
+         * - Marking as persistently dismissed after 3 consecutive dismissals
+         *
+         * Note: We don't restore on failure since dismissals are fire-and-forget.
+         *
+         * @param itemId The item ID of the suggestion to dismiss.
+         */
+        private fun dismissSuggestion(itemId: String) {
+            viewModelScope.launch {
+                // Optimistically remove from UI for instant feedback
+                updateState {
+                    copy(
+                        suggestions = suggestions
+                            .filter { it.itemId != itemId }
+                            .toImmutableList(),
+                    )
+                }
+
+                // Record dismissal (fire-and-forget)
+                dismissSuggestionUseCase(itemId)
+            }
+        }
+
         companion object {
             /** Undo window duration in milliseconds */
             const val UNDO_TIMEOUT_MS = 5000L
@@ -436,5 +559,6 @@ class ListViewModel
             private const val ERROR_REORDER = "Failed to reorder"
             private const val ERROR_UPDATE_QUANTITY = "Failed to update quantity"
             private const val ERROR_CLEAR_CHECKED = "Failed to clear items"
+            private const val ERROR_ADD_SUGGESTION = "Failed to add suggested item"
         }
     }

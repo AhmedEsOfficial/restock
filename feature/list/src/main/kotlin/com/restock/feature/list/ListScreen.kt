@@ -160,6 +160,13 @@ fun ListScreen(
                 is ListEvent.ListCompleted -> {
                     // Celebration is shown via state, no snackbar needed
                 }
+
+                is ListEvent.SuggestionAccepted -> {
+                    snackbarHostState.showSnackbar(
+                        message = "${event.itemName} added to list",
+                        duration = SnackbarDuration.Short,
+                    )
+                }
             }
         }
     }

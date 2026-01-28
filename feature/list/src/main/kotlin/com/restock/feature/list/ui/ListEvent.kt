@@ -59,4 +59,11 @@ sealed interface ListEvent {
      * This is emitted when the last unchecked item is checked.
      */
     data object ListCompleted : ListEvent
+
+    /**
+     * A suggestion was accepted and added to the list.
+     *
+     * @param itemName The name of the item that was added.
+     */
+    data class SuggestionAccepted(val itemName: String) : ListEvent
 }

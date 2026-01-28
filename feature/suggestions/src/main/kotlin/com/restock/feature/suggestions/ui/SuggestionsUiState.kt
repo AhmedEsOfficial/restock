@@ -1,5 +1,6 @@
 package com.restock.feature.suggestions.ui
 
+import com.restock.core.domain.model.LearningState
 import com.restock.core.domain.model.Suggestion
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -52,35 +53,4 @@ data class SuggestionsUiState(
         get() =
             !hasSuggestions && learningState != LearningState.READY &&
                 learningState != LearningState.NOT_STARTED
-}
-
-/**
- * Learning state for the suggestions feature.
- *
- * Determines what UI to show when there are no suggestions available.
- */
-enum class LearningState {
-    /**
-     * No shopping history yet.
-     * Don't show any learning UI - just hide the suggestions section.
-     */
-    NOT_STARTED,
-
-    /**
-     * 1 shopping trip completed.
-     * Show: "Learning your patterns..."
-     */
-    LEARNING,
-
-    /**
-     * 2 shopping trips completed.
-     * Show: "Almost ready to suggest..."
-     */
-    ALMOST_READY,
-
-    /**
-     * 3+ shopping trips completed.
-     * Suggestions can appear (but may be empty if none are due).
-     */
-    READY,
 }

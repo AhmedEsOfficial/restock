@@ -2,6 +2,7 @@ package com.restock.feature.list.ui
 
 import com.restock.core.domain.model.CurrentListItem
 import com.restock.core.domain.model.GroceryItem
+import com.restock.core.domain.model.Suggestion
 
 /**
  * User actions for the list screen.
@@ -125,4 +126,21 @@ sealed interface ListAction {
      * Dismiss the list completion celebration.
      */
     data object DismissCelebration : ListAction
+
+    // Suggestions
+
+    /**
+     * Accept a smart suggestion, adding it to the list.
+     *
+     * @param suggestion The suggestion to accept.
+     */
+    data class AcceptSuggestion(val suggestion: Suggestion) : ListAction
+
+    /**
+     * Dismiss a smart suggestion.
+     * Reduces pattern confidence and may permanently hide after 3 dismissals.
+     *
+     * @param itemId The item ID of the suggestion to dismiss.
+     */
+    data class DismissSuggestion(val itemId: String) : ListAction
 }

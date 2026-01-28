@@ -4,12 +4,20 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.restock.core.domain.model.CurrentListItem
 import com.restock.core.domain.model.GroceryItem
+import com.restock.core.domain.model.LearningState
+import com.restock.core.domain.model.Suggestion
+import com.restock.core.domain.usecase.AcceptSuggestionUseCase
 import com.restock.core.domain.usecase.AddItemUseCase
 import com.restock.core.domain.usecase.CheckItemUseCase
 import com.restock.core.domain.usecase.ClearCheckedItemsUseCase
 import com.restock.core.domain.usecase.DeleteItemUseCase
 import com.restock.core.domain.usecase.DeletedItem
+import com.restock.core.domain.usecase.DismissSuggestionUseCase
 import com.restock.core.domain.usecase.GetCurrentListUseCase
+import com.restock.core.domain.usecase.GetLearningStatusUseCase
+import com.restock.core.domain.usecase.GetShoppingTripCountUseCase
+import com.restock.core.domain.usecase.GetSuggestionsUseCase
+import com.restock.core.domain.usecase.LearningStatus
 import com.restock.core.domain.usecase.ReorderItemsUseCase
 import com.restock.core.domain.usecase.SearchItemsUseCase
 import com.restock.core.domain.usecase.UpdateQuantityUseCase
@@ -47,6 +55,11 @@ class ListViewModelTest {
     private val updateQuantityUseCase: UpdateQuantityUseCase = mockk()
     private val searchItemsUseCase: SearchItemsUseCase = mockk()
     private val clearCheckedItemsUseCase: ClearCheckedItemsUseCase = mockk()
+    private val getLearningStatusUseCase: GetLearningStatusUseCase = mockk()
+    private val getSuggestionsUseCase: GetSuggestionsUseCase = mockk()
+    private val acceptSuggestionUseCase: AcceptSuggestionUseCase = mockk()
+    private val dismissSuggestionUseCase: DismissSuggestionUseCase = mockk()
+    private val getShoppingTripCountUseCase: GetShoppingTripCountUseCase = mockk()
 
     private lateinit var viewModel: ListViewModel
 
@@ -89,11 +102,25 @@ class ListViewModelTest {
             position = 0,
         )
 
+    private val testSuggestion =
+        Suggestion(
+            itemId = "item-1",
+            itemName = "Milk",
+            reason = "Usually every 7 days",
+            score = 1.2,
+            confidence = 0.8,
+            daysSinceLastPurchase = 8,
+            avgIntervalDays = 7,
+        )
+
     @BeforeEach
     fun setup() {
         // Default behavior for use cases
         every { getCurrentListUseCase() } returns flowOf(emptyList())
         every { searchItemsUseCase.searchWithDebounce(any(), any()) } returns flowOf(emptyList())
+        every { getLearningStatusUseCase() } returns flowOf(LearningStatus.EMPTY)
+        every { getSuggestionsUseCase() } returns flowOf(emptyList())
+        coEvery { getShoppingTripCountUseCase() } returns 0
 
         viewModel = createViewModel()
     }
@@ -108,6 +135,11 @@ class ListViewModelTest {
             updateQuantityUseCase = updateQuantityUseCase,
             searchItemsUseCase = searchItemsUseCase,
             clearCheckedItemsUseCase = clearCheckedItemsUseCase,
+            getLearningStatusUseCase = getLearningStatusUseCase,
+            getSuggestionsUseCase = getSuggestionsUseCase,
+            acceptSuggestionUseCase = acceptSuggestionUseCase,
+            dismissSuggestionUseCase = dismissSuggestionUseCase,
+            getShoppingTripCountUseCase = getShoppingTripCountUseCase,
         )
 
     @Nested
@@ -686,5 +718,237 @@ class ListViewModelTest {
                 )
             assertThat(state.showAutoComplete).isFalse()
         }
+
+        @Test
+        fun `hasSuggestions returns true when suggestions exist`() {
+            val state = ListUiState(suggestions = persistentListOf(testSuggestion))
+            assertThat(state.hasSuggestions).isTrue()
+        }
+
+        @Test
+        fun `hasSuggestions returns false when no suggestions`() {
+            val state = ListUiState()
+            assertThat(state.hasSuggestions).isFalse()
+        }
+
+        @Test
+        fun `suggestionCount returns correct count`() {
+            val state =
+                ListUiState(
+                    suggestions =
+                        persistentListOf(
+                            testSuggestion,
+                            testSuggestion.copy(itemId = "2"),
+                        ),
+                )
+            assertThat(state.suggestionCount).isEqualTo(2)
+        }
+
+        @Test
+        fun `showSuggestionsSection returns true when suggestions exist`() {
+            val state =
+                ListUiState(
+                    suggestions = persistentListOf(testSuggestion),
+                    learningState = LearningState.READY,
+                )
+            assertThat(state.showSuggestionsSection).isTrue()
+        }
+
+        @Test
+        fun `showSuggestionsSection returns true when learning state is not READY`() {
+            val state =
+                ListUiState(
+                    suggestions = persistentListOf(),
+                    learningState = LearningState.LEARNING,
+                )
+            assertThat(state.showSuggestionsSection).isTrue()
+        }
+
+        @Test
+        fun `showSuggestionsSection returns false when no suggestions and state is READY`() {
+            val state =
+                ListUiState(
+                    suggestions = persistentListOf(),
+                    learningState = LearningState.READY,
+                )
+            assertThat(state.showSuggestionsSection).isFalse()
+        }
+
+        @Test
+        fun `showLearningProgress returns true when learning but no suggestions`() {
+            val state =
+                ListUiState(
+                    suggestions = persistentListOf(),
+                    learningState = LearningState.LEARNING,
+                )
+            assertThat(state.showLearningProgress).isTrue()
+        }
+
+        @Test
+        fun `showLearningProgress returns false when NOT_STARTED`() {
+            val state =
+                ListUiState(
+                    suggestions = persistentListOf(),
+                    learningState = LearningState.NOT_STARTED,
+                )
+            assertThat(state.showLearningProgress).isFalse()
+        }
+
+        @Test
+        fun `showLearningProgress returns false when READY`() {
+            val state =
+                ListUiState(
+                    suggestions = persistentListOf(),
+                    learningState = LearningState.READY,
+                )
+            assertThat(state.showLearningProgress).isFalse()
+        }
+    }
+
+    @Nested
+    @DisplayName("Smart suggestions")
+    inner class SmartSuggestionsTests {
+        @Test
+        fun `observes suggestions from use case`() =
+            runTest {
+                val suggestions = listOf(testSuggestion)
+                every { getSuggestionsUseCase() } returns flowOf(suggestions)
+
+                val vm = createViewModel()
+
+                vm.uiState.test {
+                    val state = awaitItem()
+                    assertThat(state.suggestions).containsExactly(testSuggestion)
+                    cancelAndIgnoreRemainingEvents()
+                }
+            }
+
+        @Test
+        fun `loads learning state from trip count`() =
+            runTest {
+                coEvery { getShoppingTripCountUseCase() } returns 3
+
+                val vm = createViewModel()
+
+                vm.uiState.test {
+                    val state = awaitItem()
+                    assertThat(state.learningState).isEqualTo(LearningState.READY)
+                    cancelAndIgnoreRemainingEvents()
+                }
+            }
+
+        @Test
+        fun `learning state LEARNING when 1 trip`() =
+            runTest {
+                coEvery { getShoppingTripCountUseCase() } returns 1
+
+                val vm = createViewModel()
+
+                vm.uiState.test {
+                    val state = awaitItem()
+                    assertThat(state.learningState).isEqualTo(LearningState.LEARNING)
+                    cancelAndIgnoreRemainingEvents()
+                }
+            }
+
+        @Test
+        fun `learning state ALMOST_READY when 2 trips`() =
+            runTest {
+                coEvery { getShoppingTripCountUseCase() } returns 2
+
+                val vm = createViewModel()
+
+                vm.uiState.test {
+                    val state = awaitItem()
+                    assertThat(state.learningState).isEqualTo(LearningState.ALMOST_READY)
+                    cancelAndIgnoreRemainingEvents()
+                }
+            }
+
+        @Test
+        fun `learning state NOT_STARTED when 0 trips`() =
+            runTest {
+                coEvery { getShoppingTripCountUseCase() } returns 0
+
+                val vm = createViewModel()
+
+                vm.uiState.test {
+                    val state = awaitItem()
+                    assertThat(state.learningState).isEqualTo(LearningState.NOT_STARTED)
+                    cancelAndIgnoreRemainingEvents()
+                }
+            }
+
+        @Test
+        fun `acceptSuggestion removes suggestion optimistically`() =
+            runTest {
+                every { getSuggestionsUseCase() } returns flowOf(listOf(testSuggestion))
+                coEvery { acceptSuggestionUseCase(testSuggestion) } returns Result.success(testItem)
+
+                val vm = createViewModel()
+
+                vm.uiState.test {
+                    awaitItem() // Initial state with suggestion
+                    vm.onAction(ListAction.AcceptSuggestion(testSuggestion))
+                    val state = awaitItem()
+                    assertThat(state.suggestions).isEmpty()
+                    cancelAndIgnoreRemainingEvents()
+                }
+            }
+
+        @Test
+        fun `acceptSuggestion emits SuggestionAccepted event on success`() =
+            runTest {
+                coEvery { acceptSuggestionUseCase(testSuggestion) } returns Result.success(testItem)
+
+                viewModel.events.test {
+                    viewModel.onAction(ListAction.AcceptSuggestion(testSuggestion))
+                    val event = awaitItem()
+                    assertThat(event).isInstanceOf(ListEvent.SuggestionAccepted::class.java)
+                    assertThat((event as ListEvent.SuggestionAccepted).itemName).isEqualTo("Milk")
+                    cancelAndIgnoreRemainingEvents()
+                }
+            }
+
+        @Test
+        fun `acceptSuggestion emits Error event on failure`() =
+            runTest {
+                coEvery { acceptSuggestionUseCase(testSuggestion) } returns
+                    Result.failure(RuntimeException("Add failed"))
+
+                viewModel.events.test {
+                    viewModel.onAction(ListAction.AcceptSuggestion(testSuggestion))
+                    val event = awaitItem()
+                    assertThat(event).isInstanceOf(ListEvent.Error::class.java)
+                    cancelAndIgnoreRemainingEvents()
+                }
+            }
+
+        @Test
+        fun `dismissSuggestion removes suggestion optimistically`() =
+            runTest {
+                every { getSuggestionsUseCase() } returns flowOf(listOf(testSuggestion))
+                coEvery { dismissSuggestionUseCase("item-1") } returns Unit
+
+                val vm = createViewModel()
+
+                vm.uiState.test {
+                    awaitItem() // Initial state with suggestion
+                    vm.onAction(ListAction.DismissSuggestion("item-1"))
+                    val state = awaitItem()
+                    assertThat(state.suggestions).isEmpty()
+                    cancelAndIgnoreRemainingEvents()
+                }
+            }
+
+        @Test
+        fun `dismissSuggestion calls dismiss use case`() =
+            runTest {
+                coEvery { dismissSuggestionUseCase("item-1") } returns Unit
+
+                viewModel.onAction(ListAction.DismissSuggestion("item-1"))
+
+                coVerify { dismissSuggestionUseCase("item-1") }
+            }
     }
 }

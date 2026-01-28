@@ -1,6 +1,7 @@
 package com.restock.feature.suggestions.ui
 
 import androidx.lifecycle.viewModelScope
+import com.restock.core.domain.model.LearningState
 import com.restock.core.domain.model.Suggestion
 import com.restock.core.domain.usecase.AcceptSuggestionUseCase
 import com.restock.core.domain.usecase.DismissSuggestionUseCase
@@ -87,13 +88,7 @@ class SuggestionsViewModel
             viewModelScope.launch {
                 try {
                     val tripCount = getShoppingTripCountUseCase()
-                    val learningState =
-                        when {
-                            tripCount >= TRIPS_FOR_READY -> LearningState.READY
-                            tripCount >= TRIPS_FOR_ALMOST_READY -> LearningState.ALMOST_READY
-                            tripCount >= TRIPS_FOR_LEARNING -> LearningState.LEARNING
-                            else -> LearningState.NOT_STARTED
-                        }
+                    val learningState = LearningState.fromTripCount(tripCount)
                     updateState { copy(learningState = learningState) }
                 } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                     // Non-critical error - don't show to user, just default to NOT_STARTED
@@ -203,15 +198,6 @@ class SuggestionsViewModel
         }
 
         companion object {
-            /** Number of shopping trips for LEARNING state */
-            private const val TRIPS_FOR_LEARNING = 1
-
-            /** Number of shopping trips for ALMOST_READY state */
-            private const val TRIPS_FOR_ALMOST_READY = 2
-
-            /** Number of shopping trips for READY state */
-            private const val TRIPS_FOR_READY = 3
-
             // Error messages
             private const val ERROR_LOAD_SUGGESTIONS = "Failed to load suggestions"
             private const val ERROR_ADD_ITEM = "Failed to add item"
