@@ -1,8 +1,7 @@
 package com.restock.feature.suggestions.ui.components
 
-import androidx.compose.animation.core.Spring
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -32,10 +31,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,14 +70,10 @@ private val AccentBarHeight = 3.dp
 private val DismissIconSize = 16.dp
 
 /**
- * Touch target size for dismiss button (accessibility).
+ * Touch target size for dismiss button (accessibility - increased from 24dp to 32dp).
+ * User testing feedback: Previous 24dp was too small for reliable tapping.
  */
-private val DismissButtonTouchTarget = 24.dp
-
-/**
- * Scale factor when card is pressed (0.95 as per task spec).
- */
-private const val PRESSED_SCALE = 0.95f
+private val DismissButtonTouchTarget = 32.dp
 
 // ==================== SUGGESTION CARD COMPONENT ====================
 
@@ -86,20 +84,26 @@ private const val PRESSED_SCALE = 0.95f
  * - Item name prominently displayed
  * - Reason text explaining why it's suggested (e.g., "Usually every 7 days")
  * - A dismiss button for removing unwanted suggestions
- * - An accent bar indicator at the bottom
+ * - An accent bar indicator at the bottom with gradient effect
  * - Haptic feedback on interactions
+ * - Enhanced accessibility with custom actions
  *
  * **Design Specifications:**
  * - Width: 140dp (configurable)
  * - Height: Auto (content-based)
  * - Corner radius: 16dp
  * - Padding: 12dp
- * - Shadow: 2dp elevation
+ * - Shadow: 2dp elevation (no tonal elevation for dark mode)
  *
  * **Interaction Specs:**
- * - Press: Scale to 0.95 with spring animation
+ * - Press: Scale to 0.95 with spring animation, subtle background color change
  * - Tap card: Accept suggestion (haptic: LongPress)
  * - Tap X: Dismiss suggestion (haptic: TextHandleMove)
+ *
+ * **Accessibility:**
+ * - Full content description for screen readers
+ * - Custom accessibility action for dismiss
+ * - 32dp touch target for dismiss button (WCAG compliance)
  *
  * @param suggestion The domain suggestion model to display.
  * @param onAccept Called when the user taps the card to accept the suggestion.
@@ -138,12 +142,19 @@ fun SuggestionCard(
 
     // Press animation with spring physics
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) PRESSED_SCALE else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow,
-        ),
+        targetValue = if (isPressed) SuggestionAnimationSpecs.PRESSED_SCALE else 1f,
+        animationSpec = SuggestionAnimationSpecs.cardPress,
         label = "cardScale",
+    )
+
+    // User testing feedback: Subtle background color change to indicate tappability
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isPressed) {
+            RestockColors.Card.copy(alpha = 0.95f)
+        } else {
+            RestockColors.Card
+        },
+        label = "cardBg",
     )
 
     Surface(
@@ -161,11 +172,22 @@ fun SuggestionCard(
                 },
             )
             .semantics {
-                contentDescription = "Add ${suggestion.itemName} to list. ${suggestion.reason}"
+                // Full description for screen readers
+                contentDescription = "${suggestion.itemName}, ${suggestion.reason}. " +
+                    "Tap to add to list. Double tap and hold for more options."
+
+                // Custom action for dismiss (accessibility)
+                customActions = listOf(
+                    CustomAccessibilityAction("Dismiss suggestion") {
+                        onDismiss()
+                        true
+                    },
+                )
             },
         shape = RoundedCornerShape(RestockCornerRadius.large),
-        color = RestockColors.Card,
+        color = backgroundColor,
         shadowElevation = RestockElevation.suggestionCard,
+        tonalElevation = 0.dp, // Prevent tonal elevation on dark mode
     ) {
         Column(
             modifier = Modifier.padding(RestockSpacing.cardPaddingHorizontal),
@@ -175,6 +197,7 @@ fun SuggestionCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
             ) {
+                // User testing feedback: Increased touch target to 32dp
                 IconButton(
                     onClick = {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -188,7 +211,7 @@ fun SuggestionCard(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Dismiss ${suggestion.itemName} suggestion",
-                        modifier = Modifier.size(DismissIconSize),
+                        modifier = Modifier.size(DismissIconSize), // Visual size stays at 16dp
                     )
                 }
             }
@@ -222,14 +245,20 @@ fun SuggestionCard(
 
             Spacer(Modifier.height(RestockSpacing.sm))
 
-            // Accent indicator bar
+            // Visual polish: Accent bar with gradient effect
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(AccentBarHeight)
                     .background(
-                        RestockColors.Accent.copy(alpha = 0.5f),
-                        RoundedCornerShape(2.dp),
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                RestockColors.Accent.copy(alpha = 0.3f),
+                                RestockColors.Accent.copy(alpha = 0.6f),
+                                RestockColors.Accent.copy(alpha = 0.3f),
+                            ),
+                        ),
+                        shape = RoundedCornerShape(2.dp),
                     ),
             )
         }

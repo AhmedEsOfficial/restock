@@ -1,5 +1,7 @@
 package com.restock.feature.suggestions.ui.components
 
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +13,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +24,47 @@ import com.restock.core.domain.model.LearningState
 import com.restock.core.ui.theme.RestockColors
 import com.restock.core.ui.theme.RestockSpacing
 import com.restock.core.ui.theme.RestockTheme
+import com.restock.core.ui.util.rememberReducedMotion
+
+// ==================== ANIMATED BRAIN EMOJI ====================
+
+/**
+ * An animated brain emoji that pulses to draw attention to the learning state.
+ *
+ * User testing feedback: The learning state was not noticeable enough.
+ * Adding a subtle animation to the brain emoji helps indicate that the
+ * app is actively learning.
+ *
+ * The animation respects reduced motion accessibility settings.
+ *
+ * @param modifier Modifier to be applied to the emoji.
+ */
+@Composable
+fun AnimatedBrainEmoji(
+    modifier: Modifier = Modifier,
+) {
+    val reduceMotion = rememberReducedMotion()
+
+    val scale = if (reduceMotion) {
+        // Static scale when reduced motion is enabled
+        SuggestionAnimationSpecs.BRAIN_PULSE_MIN_SCALE
+    } else {
+        val infiniteTransition = rememberInfiniteTransition(label = "brain")
+        val animatedScale by infiniteTransition.animateFloat(
+            initialValue = SuggestionAnimationSpecs.BRAIN_PULSE_MIN_SCALE,
+            targetValue = SuggestionAnimationSpecs.BRAIN_PULSE_MAX_SCALE,
+            animationSpec = SuggestionAnimationSpecs.brainPulse,
+            label = "brainScale",
+        )
+        animatedScale
+    }
+
+    Text(
+        text = "🧠",
+        modifier = modifier.scale(scale),
+        style = MaterialTheme.typography.titleMedium,
+    )
+}
 
 // ==================== LEARNING STATE CARD ====================
 
@@ -33,11 +78,15 @@ import com.restock.core.ui.theme.RestockTheme
  * - Background: Accent color @ 10% opacity
  * - Corner radius: Medium (14dp)
  * - Padding: 16dp (md)
- * - Emoji: Brain (🧠) indicator
+ * - Emoji: Animated brain (🧠) indicator with subtle pulse
  *
  * **Messages by state:**
  * - LEARNING: "Learning your patterns..." / "Add items and shop normally. Suggestions will appear soon."
  * - ALMOST_READY: "Almost ready!" / "One more shopping trip and suggestions will appear."
+ *
+ * **Accessibility:**
+ * - Full content description for screen readers
+ * - Animation respects reduced motion settings
  *
  * @param message The primary message to display.
  * @param subtext The secondary explanatory text.
@@ -72,10 +121,8 @@ fun LearningStateCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = "🧠",
-                    style = MaterialTheme.typography.titleMedium,
-                )
+                // User testing feedback: Add subtle animation to brain emoji
+                AnimatedBrainEmoji()
 
                 Spacer(Modifier.width(RestockSpacing.sm))
 
@@ -143,6 +190,21 @@ fun LearningStateCardForState(
 }
 
 // ==================== PREVIEWS ====================
+
+@Preview(showBackground = true)
+@Composable
+private fun AnimatedBrainEmojiPreview() {
+    RestockTheme {
+        Row(
+            modifier = Modifier.padding(RestockSpacing.md),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            AnimatedBrainEmoji()
+            Spacer(Modifier.width(RestockSpacing.sm))
+            Text("Brain emoji with pulse animation")
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable

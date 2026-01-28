@@ -1,9 +1,6 @@
 package com.restock.feature.suggestions.ui.components
 
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,28 +12,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.restock.core.domain.model.Suggestion
 import com.restock.core.ui.theme.RestockTheme
 import com.restock.core.ui.util.rememberReducedMotion
-
-// ==================== ANIMATION CONSTANTS ====================
-
-/**
- * Duration for card accept animation (slide up + fade).
- */
-private const val ACCEPT_ANIMATION_DURATION_MS = 300
-
-/**
- * Duration for card dismiss animation (slide right + fade).
- */
-private const val DISMISS_ANIMATION_DURATION_MS = 200
-
-/**
- * Distance to slide up when accepting a suggestion (in pixels).
- */
-private const val ACCEPT_SLIDE_DISTANCE = -100f
-
-/**
- * Distance to slide right when dismissing a suggestion (in pixels).
- */
-private const val DISMISS_SLIDE_DISTANCE = 100f
 
 // ==================== ANIMATION STATE ====================
 
@@ -67,13 +42,13 @@ enum class SuggestionCardState {
  * A wrapper component that adds accept/dismiss animations to SuggestionCard.
  *
  * This component manages the animation state and transitions for suggestion cards:
- * - **Accept animation:** Slides up 100dp and fades out over 300ms (EaseOut)
- * - **Dismiss animation:** Slides right 100dp and fades out over 200ms (EaseIn)
+ * - **Accept animation:** Slides up and fades out (uses SuggestionAnimationSpecs)
+ * - **Dismiss animation:** Slides right and fades out (uses SuggestionAnimationSpecs)
  *
  * The component respects reduced motion accessibility settings and will
  * skip animations when the user has enabled reduced motion.
  *
- * **Animation Specifications:**
+ * **Animation Specifications (from SuggestionAnimationSpecs):**
  * | Animation | Duration | Easing | Movement |
  * |-----------|----------|--------|----------|
  * | Accept | 300ms | EaseOut | Slide up -100px |
@@ -109,13 +84,10 @@ fun AnimatedSuggestionCard(
     // Accept animation: slide up and fade out
     val acceptOffsetY by animateFloatAsState(
         targetValue = when (cardState) {
-            SuggestionCardState.ACCEPTING -> ACCEPT_SLIDE_DISTANCE
+            SuggestionCardState.ACCEPTING -> SuggestionAnimationSpecs.ACCEPT_SLIDE_DISTANCE
             else -> 0f
         },
-        animationSpec = tween(
-            durationMillis = if (reduceMotion) 0 else ACCEPT_ANIMATION_DURATION_MS,
-            easing = EaseOut,
-        ),
+        animationSpec = SuggestionAnimationSpecs.acceptTween(reduceMotion),
         finishedListener = {
             if (cardState == SuggestionCardState.ACCEPTING) {
                 cardState = SuggestionCardState.HIDDEN
@@ -128,13 +100,10 @@ fun AnimatedSuggestionCard(
     // Dismiss animation: slide right and fade out
     val dismissOffsetX by animateFloatAsState(
         targetValue = when (cardState) {
-            SuggestionCardState.DISMISSING -> DISMISS_SLIDE_DISTANCE
+            SuggestionCardState.DISMISSING -> SuggestionAnimationSpecs.DISMISS_SLIDE_DISTANCE
             else -> 0f
         },
-        animationSpec = tween(
-            durationMillis = if (reduceMotion) 0 else DISMISS_ANIMATION_DURATION_MS,
-            easing = EaseIn,
-        ),
+        animationSpec = SuggestionAnimationSpecs.dismissTween(reduceMotion),
         finishedListener = {
             if (cardState == SuggestionCardState.DISMISSING) {
                 cardState = SuggestionCardState.HIDDEN
@@ -153,13 +122,7 @@ fun AnimatedSuggestionCard(
             SuggestionCardState.VISIBLE -> 1f
             SuggestionCardState.HIDDEN -> 0f
         },
-        animationSpec = tween(
-            durationMillis = when (cardState) {
-                SuggestionCardState.ACCEPTING -> if (reduceMotion) 0 else ACCEPT_ANIMATION_DURATION_MS
-                SuggestionCardState.DISMISSING -> if (reduceMotion) 0 else DISMISS_ANIMATION_DURATION_MS
-                else -> if (reduceMotion) 0 else DISMISS_ANIMATION_DURATION_MS
-            },
-        ),
+        animationSpec = SuggestionAnimationSpecs.alphaTween(cardState, reduceMotion),
         label = "alpha",
     )
 

@@ -44,6 +44,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.restock.core.domain.model.CurrentListItem
 import com.restock.core.domain.model.GroceryItem
+import com.restock.core.domain.model.LearningState
+import com.restock.core.domain.model.Suggestion
 import com.restock.core.ui.components.AddItemTextField
 import com.restock.core.ui.components.EmptyListState
 import com.restock.core.ui.components.LearningStatusBanner
@@ -62,6 +64,7 @@ import com.restock.feature.list.ui.ListAction
 import com.restock.feature.list.ui.ListEvent
 import com.restock.feature.list.ui.ListUiState
 import com.restock.feature.list.ui.ListViewModel
+import com.restock.feature.suggestions.ui.components.SuggestionsSection
 import java.time.Instant
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -236,6 +239,18 @@ private fun ListScreenContent(
                             horizontal = RestockSpacing.screenPadding,
                             vertical = RestockSpacing.md,
                         ),
+                )
+
+                // Smart Suggestions Section (Sprint 7-8)
+                SuggestionsSection(
+                    suggestions = uiState.suggestions.toList(),
+                    learningState = uiState.learningState,
+                    onAccept = { suggestion ->
+                        onAction(ListAction.AcceptSuggestion(suggestion))
+                    },
+                    onDismiss = { itemId ->
+                        onAction(ListAction.DismissSuggestion(itemId))
+                    },
                 )
 
                 // List Content
@@ -787,5 +802,78 @@ private fun AddItemSectionWithSuggestionsPreview() {
                 modifier = Modifier.padding(RestockSpacing.md),
             )
         }
+    }
+}
+
+// Sample smart suggestions for previews
+private val sampleSmartSuggestions =
+    listOf(
+        Suggestion(
+            itemId = "s1",
+            itemName = "Milk",
+            reason = "Usually every 7 days",
+            score = 1.5,
+            confidence = 0.85,
+            daysSinceLastPurchase = 8,
+            avgIntervalDays = 7,
+        ),
+        Suggestion(
+            itemId = "s2",
+            itemName = "Eggs",
+            reason = "Last bought 14 days ago",
+            score = 1.8,
+            confidence = 0.75,
+            daysSinceLastPurchase = 14,
+            avgIntervalDays = 10,
+        ),
+        Suggestion(
+            itemId = "s3",
+            itemName = "Bread",
+            reason = "Usually every 5 days",
+            score = 1.2,
+            confidence = 0.80,
+            daysSinceLastPurchase = 6,
+            avgIntervalDays = 5,
+        ),
+    ).toImmutableList()
+
+@LightDarkPreview
+@Composable
+private fun ListScreenWithSmartSuggestionsPreview() {
+    RestockPreviewTheme {
+        ListScreenContent(
+            uiState =
+                ListUiState(
+                    uncheckedItems = sampleUncheckedItems,
+                    checkedItems = persistentListOf(),
+                    suggestions = sampleSmartSuggestions,
+                    learningState = LearningState.READY,
+                    isLoading = false,
+                ),
+            snackbarHostState = remember { SnackbarHostState() },
+            onAction = {},
+            onSubmitItem = {},
+            onSuggestionClick = {},
+        )
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun ListScreenLearningStatePreview() {
+    RestockPreviewTheme {
+        ListScreenContent(
+            uiState =
+                ListUiState(
+                    uncheckedItems = sampleUncheckedItems,
+                    checkedItems = persistentListOf(),
+                    learningState = LearningState.LEARNING,
+                    isLoading = false,
+                ),
+            snackbarHostState = remember { SnackbarHostState() },
+            onAction = {},
+            onSubmitItem = {},
+            onSuggestionClick = {},
+        )
     }
 }

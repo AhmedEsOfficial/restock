@@ -1,8 +1,6 @@
 package com.restock.feature.suggestions.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -17,12 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.CollectionInfo
+import androidx.compose.ui.semantics.collectionInfo
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,17 +35,7 @@ import com.restock.core.ui.theme.RestockSpacing
 import com.restock.core.ui.theme.RestockTheme
 import com.restock.core.ui.util.rememberReducedMotion
 
-// ==================== ANIMATION CONSTANTS ====================
-
-/**
- * Duration for section appear animation (fade + expand).
- */
-private const val SECTION_APPEAR_DURATION_MS = 300
-
-/**
- * Duration for section hide animation (fade + shrink).
- */
-private const val SECTION_HIDE_DURATION_MS = 200
+// ==================== CONSTANTS ====================
 
 /**
  * Maximum number of suggestions to display (per UX spec).
@@ -77,11 +68,21 @@ private const val MAX_SUGGESTIONS = 5
  * └─────────────────────────────────────────────────────────────┘
  * ```
  *
- * **Animation Specifications:**
+ * **Animation Specifications (from SuggestionAnimationSpecs):**
  * | Animation | Duration | Easing |
  * |-----------|----------|--------|
  * | Section appear | 300ms | EaseOut |
  * | Section hide | 200ms | EaseIn |
+ *
+ * **Accessibility:**
+ * - Section header uses heading semantics
+ * - LazyRow uses CollectionInfo for screen reader context
+ * - Respects reduced motion preferences
+ *
+ * **Performance:**
+ * - Uses stable keys for LazyRow items
+ * - Uses rememberLazyListState for scroll state preservation
+ * - Applies animateItem modifier for smooth layout changes
  *
  * **Visibility Rules:**
  * - Shows when suggestions.isNotEmpty()
@@ -121,36 +122,40 @@ fun SuggestionsSection(
     val showSection = suggestions.isNotEmpty() ||
         learningState in listOf(LearningState.LEARNING, LearningState.ALMOST_READY)
 
+    // Animation duration based on reduced motion preference
+    val appearDuration = if (reduceMotion) 0 else SuggestionAnimationSpecs.SECTION_APPEAR_DURATION_MS
+    val hideDuration = if (reduceMotion) 0 else SuggestionAnimationSpecs.SECTION_HIDE_DURATION_MS
+
     AnimatedVisibility(
         visible = showSection,
         enter = fadeIn(
-            animationSpec = tween(
-                durationMillis = if (reduceMotion) 0 else SECTION_APPEAR_DURATION_MS,
-                easing = EaseOut,
-            ),
+            animationSpec = SuggestionAnimationSpecs.sectionAppearTween(reduceMotion),
         ) + expandVertically(
-            animationSpec = tween(
-                durationMillis = if (reduceMotion) 0 else SECTION_APPEAR_DURATION_MS,
-                easing = EaseOut,
-            ),
+            animationSpec = tween(durationMillis = appearDuration),
             expandFrom = Alignment.Top,
         ),
         exit = fadeOut(
-            animationSpec = tween(
-                durationMillis = if (reduceMotion) 0 else SECTION_HIDE_DURATION_MS,
-                easing = EaseIn,
-            ),
+            animationSpec = SuggestionAnimationSpecs.sectionHideTween(reduceMotion),
         ) + shrinkVertically(
-            animationSpec = tween(
-                durationMillis = if (reduceMotion) 0 else SECTION_HIDE_DURATION_MS,
-                easing = EaseIn,
-            ),
+            animationSpec = tween(durationMillis = hideDuration),
             shrinkTowards = Alignment.Top,
         ),
         modifier = modifier,
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            // Section header
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics {
+                    // Group as a region for accessibility
+                    if (suggestions.isNotEmpty()) {
+                        collectionInfo = CollectionInfo(
+                            rowCount = 1,
+                            columnCount = suggestions.take(MAX_SUGGESTIONS).size,
+                        )
+                    }
+                },
+        ) {
+            // Section header with heading semantics
             Text(
                 text = "Suggestions",
                 style = MaterialTheme.typography.titleLarge,
@@ -166,20 +171,23 @@ fun SuggestionsSection(
                 // Show suggestion cards when available
                 suggestions.isNotEmpty() -> {
                     val visibleSuggestions = suggestions.take(MAX_SUGGESTIONS)
+                    val lazyListState = rememberLazyListState()
 
                     LazyRow(
+                        state = lazyListState,
                         contentPadding = PaddingValues(horizontal = RestockSpacing.md),
                         horizontalArrangement = Arrangement.spacedBy(RestockSpacing.sm),
                     ) {
                         items(
                             items = visibleSuggestions,
-                            key = { it.itemId },
+                            key = { it.itemId }, // Stable keys for animation
                         ) { suggestion ->
                             AnimatedSuggestionCard(
                                 suggestion = suggestion,
                                 onAccept = { onAccept(suggestion) },
                                 onDismiss = { onDismiss(suggestion.itemId) },
                                 onAnimationComplete = { /* Handled by ViewModel */ },
+                                modifier = Modifier.animateItem(),
                             )
                         }
                     }
