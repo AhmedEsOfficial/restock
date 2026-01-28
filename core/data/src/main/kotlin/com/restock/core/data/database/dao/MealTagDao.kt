@@ -8,21 +8,16 @@ import com.restock.core.data.database.entity.MealTagEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Combined view of item with its meal tags.
- */
-data class ItemWithMealTags(
-    val itemId: String,
-    val itemName: String,
-    val mealTypes: List<String>,
-)
-
-/**
  * Data Access Object for meal tag associations.
+ *
+ * Provides operations for managing meal-item relationships, including
+ * adding, removing, and querying tags. Also supports frequency tracking
+ * for learning user preferences over time.
  */
 @Dao
 interface MealTagDao {
     /**
-     * Observe all meal tags.
+     * Observe all meal tags ordered by frequency (most used first).
      */
     @Query("SELECT * FROM meal_tags ORDER BY frequency_count DESC")
     fun observeAllTags(): Flow<List<MealTagEntity>>
@@ -34,10 +29,19 @@ interface MealTagDao {
     fun observeTagsForItem(itemId: String): Flow<List<MealTagEntity>>
 
     /**
-     * Get tags for a specific item.
+     * Get tags for a specific item (one-shot).
      */
     @Query("SELECT * FROM meal_tags WHERE item_id = :itemId")
     suspend fun getTagsForItem(itemId: String): List<MealTagEntity>
+
+    /**
+     * Get a specific tag by item and meal type.
+     */
+    @Query("SELECT * FROM meal_tags WHERE item_id = :itemId AND meal_type = :mealType")
+    suspend fun getTag(
+        itemId: String,
+        mealType: String,
+    ): MealTagEntity?
 
     /**
      * Get items by meal type.
@@ -52,6 +56,14 @@ interface MealTagDao {
     """,
     )
     suspend fun getItemsByMealType(mealType: String): List<ItemIdAndName>
+
+    /**
+     * Get item IDs for a specific meal type.
+     *
+     * Used for filtering items by meal.
+     */
+    @Query("SELECT DISTINCT item_id FROM meal_tags WHERE meal_type = :mealType")
+    suspend fun getItemIdsForMeal(mealType: String): List<String>
 
     /**
      * Check if a tag exists for an item.
@@ -72,7 +84,11 @@ interface MealTagDao {
      * Increment frequency count for an existing tag.
      */
     @Query(
-        "UPDATE meal_tags SET frequency_count = frequency_count + 1 WHERE item_id = :itemId AND meal_type = :mealType",
+        """
+        UPDATE meal_tags
+        SET frequency_count = frequency_count + 1
+        WHERE item_id = :itemId AND meal_type = :mealType
+        """,
     )
     suspend fun incrementFrequency(
         itemId: String,
@@ -83,7 +99,7 @@ interface MealTagDao {
      * Delete a tag.
      */
     @Query("DELETE FROM meal_tags WHERE item_id = :itemId AND meal_type = :mealType")
-    suspend fun delete(
+    suspend fun deleteTag(
         itemId: String,
         mealType: String,
     )
@@ -99,6 +115,29 @@ interface MealTagDao {
      */
     @Query("SELECT COUNT(*) FROM meal_tags WHERE meal_type = :mealType")
     suspend fun getCountByMealType(mealType: String): Int
+
+    /**
+     * Get the most frequently used tag for items with similar normalized names.
+     *
+     * Used for suggesting meal tags based on historical patterns.
+     * Searches for items whose normalized name contains the query and
+     * returns the most frequently applied tag across those items.
+     *
+     * @param normalizedName The normalized name to search for
+     * @return The most frequent tag for similar items, or null if none found
+     */
+    @Query(
+        """
+        SELECT * FROM meal_tags
+        WHERE item_id IN (
+            SELECT id FROM items WHERE normalized_name LIKE '%' || :normalizedName || '%'
+        )
+        GROUP BY meal_type
+        ORDER BY SUM(frequency_count) DESC
+        LIMIT 1
+        """,
+    )
+    suspend fun getMostFrequentTagForSimilarItem(normalizedName: String): MealTagEntity?
 }
 
 /**

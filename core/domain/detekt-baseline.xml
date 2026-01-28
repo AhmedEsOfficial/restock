@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
+    <ID>ClassOrdering:LearningState.kt$LearningState.Companion$fun fromTripCount(tripCount: Int): LearningState</ID>
     <ID>ClassOrdering:Pattern.kt$Pattern$/** * Whether this pattern has enough confidence to be suggested. */ val isSuggestionReady: Boolean get() = confidenceScore &gt;= SUGGESTION_CONFIDENCE_THRESHOLD &amp;&amp; sampleCount &gt;= MIN_PURCHASES</ID>
     <ID>ComplexInterface:CurrentListRepository.kt$CurrentListRepository</ID>
     <ID>ComplexInterface:ItemRepository.kt$ItemRepository</ID>
@@ -28,6 +29,7 @@
     <ID>ImportOrdering:SearchItemsUseCaseTest.kt$import app.cash.turbine.test import com.google.common.truth.Truth.assertThat import com.restock.core.domain.model.GroceryItem import com.restock.core.domain.repository.CurrentListRepository import com.restock.core.domain.repository.ItemRepository import io.mockk.coEvery import io.mockk.coVerify import io.mockk.mockk import org.junit.jupiter.api.BeforeEach import org.junit.jupiter.api.DisplayName import org.junit.jupiter.api.Nested import org.junit.jupiter.api.Test import java.time.Instant import kotlinx.coroutines.test.runTest</ID>
     <ID>ImportOrdering:SeedCommonItemsUseCaseTest.kt$import com.google.common.truth.Truth.assertThat import com.restock.core.domain.model.GroceryItem import com.restock.core.domain.repository.ItemRepository import io.mockk.coEvery import io.mockk.coVerify import io.mockk.mockk import org.junit.jupiter.api.BeforeEach import org.junit.jupiter.api.DisplayName import org.junit.jupiter.api.Nested import org.junit.jupiter.api.Test import java.time.Instant import kotlinx.coroutines.test.runTest</ID>
     <ID>ImportOrdering:UpdateQuantityUseCaseTest.kt$import com.google.common.truth.Truth.assertThat import com.restock.core.domain.repository.CurrentListRepository import io.mockk.coEvery import io.mockk.coVerify import io.mockk.mockk import org.junit.jupiter.api.BeforeEach import org.junit.jupiter.api.DisplayName import org.junit.jupiter.api.Nested import org.junit.jupiter.api.Test import kotlinx.coroutines.test.runTest</ID>
+    <ID>MagicNumber:LearningState.kt$LearningState.Companion$3</ID>
     <ID>TooManyFunctions:CurrentListRepository.kt$CurrentListRepository</ID>
     <ID>TooManyFunctions:ItemRepository.kt$ItemRepository</ID>
     <ID>TooManyFunctions:PurchaseRepository.kt$PurchaseRepository</ID>

@@ -4,9 +4,9 @@ import com.restock.core.data.database.dao.ItemDao
 import com.restock.core.data.database.entity.PatternEntity
 import com.restock.core.data.database.entity.PurchaseEntity
 import com.restock.core.domain.model.Suggestion
-import kotlinx.datetime.Clock
 import javax.inject.Inject
 import kotlin.math.roundToInt
+import kotlinx.datetime.Clock
 
 /**
  * Scores patterns to create prioritized suggestions.

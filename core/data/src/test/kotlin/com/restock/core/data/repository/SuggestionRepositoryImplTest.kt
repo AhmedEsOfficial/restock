@@ -8,21 +8,21 @@ import com.restock.core.data.database.dao.SuggestionDismissalDao
 import com.restock.core.data.database.entity.PatternEntity
 import com.restock.core.data.database.entity.PurchaseEntity
 import com.restock.core.data.database.entity.SuggestionDismissalEntity
-import com.restock.core.domain.model.Suggestion
 import com.restock.core.data.suggestion.SuggestionScorer
+import com.restock.core.domain.model.Suggestion
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.runTest
 
 /**
  * Unit tests for [SuggestionRepositoryImpl].

@@ -8,9 +8,11 @@ import com.restock.core.data.database.entity.PatternEntity
 import com.restock.core.data.database.entity.PurchaseEntity
 import com.restock.core.data.database.entity.SuggestionDismissalEntity
 import com.restock.core.data.di.IoDispatcher
+import com.restock.core.data.suggestion.SuggestionScorer
 import com.restock.core.domain.model.Suggestion
 import com.restock.core.domain.repository.SuggestionRepository
-import com.restock.core.data.suggestion.SuggestionScorer
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +22,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Implementation of [SuggestionRepository] using Room database.

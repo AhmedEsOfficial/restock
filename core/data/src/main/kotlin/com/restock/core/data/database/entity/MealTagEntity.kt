@@ -24,6 +24,7 @@ import androidx.room.PrimaryKey
     ],
     indices = [
         Index(value = ["item_id", "meal_type"], unique = true),
+        Index(value = ["meal_type"]),
     ],
 )
 data class MealTagEntity(

@@ -7,13 +7,13 @@ import com.restock.core.data.database.entity.PatternEntity
 import com.restock.core.data.database.entity.PurchaseEntity
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.Clock
 
 /**
  * Unit tests for [SuggestionScorer].
