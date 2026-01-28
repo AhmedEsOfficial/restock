@@ -27,6 +27,11 @@ import com.restock.core.data.database.entity.SuggestionDismissalEntity
  * - patterns: Learned purchase patterns
  * - meal_tags: Item-to-meal associations
  * - suggestion_dismissals: Track dismissed suggestions
+ *
+ * Version History:
+ * - V1: Initial schema
+ * - V2: Added suggestion_dismissals table
+ * - V3: Performance optimization - added indices for is_checked, added_at, purchased_at
  */
 @Database(
     entities = [
@@ -37,7 +42,7 @@ import com.restock.core.data.database.entity.SuggestionDismissalEntity
         MealTagEntity::class,
         SuggestionDismissalEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)

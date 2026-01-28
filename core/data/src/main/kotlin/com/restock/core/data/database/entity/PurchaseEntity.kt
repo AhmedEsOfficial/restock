@@ -23,7 +23,10 @@ import androidx.room.PrimaryKey
         ),
     ],
     indices = [
+        // Composite index for item-specific temporal queries
         Index(value = ["item_id", "purchased_at"]),
+        // Performance optimization: Single-column index for date-only queries
+        Index(value = ["purchased_at"]),
     ],
 )
 data class PurchaseEntity(

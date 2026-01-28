@@ -38,6 +38,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -338,6 +339,7 @@ private fun AddItemSection(
                     onSubmit()
                 }
             },
+            modifier = Modifier.testTag(ADD_ITEM_FIELD_TEST_TAG),
         )
 
         // Auto-complete dropdown
@@ -369,7 +371,7 @@ private fun GroceryList(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.testTag(GROCERY_LIST_TEST_TAG),
         contentPadding =
             PaddingValues(
                 horizontal = RestockSpacing.screenPadding,
@@ -378,9 +380,11 @@ private fun GroceryList(
         verticalArrangement = Arrangement.spacedBy(RestockSpacing.listItemGap),
     ) {
         // Unchecked items (main shopping list) - with drag-drop via ReorderableItem
+        // contentType helps Compose pool and reuse composables of the same type
         itemsIndexed(
             items = uncheckedItems,
             key = { _, item -> item.id },
+            contentType = { _, _ -> CONTENT_TYPE_UNCHECKED_ITEM },
         ) { index, item ->
             ReorderableItem(
                 item = item,
@@ -396,7 +400,10 @@ private fun GroceryList(
 
         // In Cart section (checked items)
         if (checkedItems.isNotEmpty()) {
-            item(key = "in_cart_header") {
+            item(
+                key = "in_cart_header",
+                contentType = CONTENT_TYPE_HEADER,
+            ) {
                 InCartHeader(
                     count = checkedItems.size,
                     modifier =
@@ -412,6 +419,7 @@ private fun GroceryList(
             items(
                 items = checkedItems,
                 key = { it.id },
+                contentType = { CONTENT_TYPE_CHECKED_ITEM },
             ) { item ->
                 GroceryItemCard(
                     item = item,
@@ -425,7 +433,10 @@ private fun GroceryList(
         }
 
         // Bottom padding for scroll comfort
-        item(key = "bottom_spacer") {
+        item(
+            key = "bottom_spacer",
+            contentType = CONTENT_TYPE_SPACER,
+        ) {
             Spacer(modifier = Modifier.height(RestockSpacing.xxxl))
         }
     }
@@ -877,3 +888,42 @@ private fun ListScreenLearningStatePreview() {
         )
     }
 }
+
+// ==================== TEST TAGS ====================
+
+/**
+ * Test tags for UI elements used by benchmark and UI tests.
+ * These tags enable automated testing tools to find UI elements.
+ */
+
+/** Test tag for the main grocery list LazyColumn. */
+const val GROCERY_LIST_TEST_TAG = "grocery_list"
+
+/** Test tag for the add item text field. */
+const val ADD_ITEM_FIELD_TEST_TAG = "add_item_field"
+
+// ==================== CONTENT TYPES ====================
+
+/**
+ * Content types for LazyColumn item recycling optimization.
+ *
+ * LazyColumn uses content types to pool and reuse composables more efficiently.
+ * Items with the same content type share a pool, reducing composition overhead.
+ *
+ * Performance impact:
+ * - Reduces recomposition when scrolling
+ * - Improves frame rate during fast scrolling
+ * - Decreases memory allocations
+ */
+
+/** Content type for unchecked grocery items (draggable). */
+private const val CONTENT_TYPE_UNCHECKED_ITEM = "unchecked_item"
+
+/** Content type for checked grocery items (in cart section). */
+private const val CONTENT_TYPE_CHECKED_ITEM = "checked_item"
+
+/** Content type for section headers (e.g., "In Cart"). */
+private const val CONTENT_TYPE_HEADER = "header"
+
+/** Content type for spacer items. */
+private const val CONTENT_TYPE_SPACER = "spacer"

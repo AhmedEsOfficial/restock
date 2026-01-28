@@ -37,3 +37,6 @@ include(":feature:suggestions")
 include(":feature:meals")
 include(":feature:history")
 include(":feature:settings")
+
+// Benchmark module (for baseline profiles and performance testing)
+include(":benchmark")

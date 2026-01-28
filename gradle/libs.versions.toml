@@ -70,6 +70,14 @@ robolectric = "4.14.1"
 detekt = "1.23.7"
 ktlint = "12.1.2"
 
+# Performance / Benchmark
+benchmark-macro = "1.3.3"
+profileinstaller = "1.4.1"
+uiautomator = "2.3.0"
+
+# Memory Leak Detection
+leakcanary = "2.14"
+
 # SQLCipher (for database encryption)
 sqlcipher = "4.6.1"
 
@@ -210,6 +218,14 @@ javax-inject = { module = "javax.inject:javax.inject", version.ref = "javax-inje
 # Code Quality - Detekt Formatting Rules
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
+# Performance / Benchmark
+benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark-macro" }
+profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
+uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+
+# Memory Leak Detection
+leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+
 [bundles]
 # Compose UI bundle
 compose = [
@@ -314,9 +330,17 @@ testing-hilt = [
     "hilt-android-testing"
 ]
 
+# Benchmark testing bundle
+benchmark = [
+    "benchmark-macro-junit4",
+    "uiautomator",
+    "androidx-test-ext-junit"
+]
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+android-test = { id = "com.android.test", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
@@ -326,3 +350,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 room = { id = "androidx.room", version.ref = "room" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark-macro" }

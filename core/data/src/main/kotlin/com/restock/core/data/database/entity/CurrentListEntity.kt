@@ -25,6 +25,10 @@ import androidx.room.PrimaryKey
     indices = [
         Index(value = ["item_id"]),
         Index(value = ["position"]),
+        // Performance optimization: Index for filtering by checked state
+        Index(value = ["is_checked"]),
+        // Performance optimization: Index for sorting by added time
+        Index(value = ["added_at"]),
     ],
 )
 data class CurrentListEntity(

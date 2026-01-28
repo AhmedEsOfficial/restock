@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -39,6 +40,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+        }
+
+        // Benchmark build type for performance profiling
+        create("benchmark") {
+            initWith(buildTypes.getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+            // Disable obfuscation for better profiling
+            proguardFiles("benchmark-rules.pro")
         }
     }
 
@@ -110,6 +121,18 @@ dependencies {
     // Serialization
     implementation(libs.kotlin.serialization.json)
 
+    // Image Loading (Coil) - for ImageLoaderFactory in Application
+    implementation(libs.bundles.coil)
+
+    // Profile Installer (for baseline profiles)
+    implementation(libs.profileinstaller)
+
+    // Memory Leak Detection (debug only)
+    debugImplementation(libs.leakcanary)
+
+    // Baseline Profile from benchmark module
+    baselineProfile(project(":benchmark"))
+
     // Testing
     testImplementation(libs.bundles.testing)
     testImplementation(libs.robolectric)
@@ -119,4 +142,16 @@ dependencies {
     androidTestImplementation(libs.bundles.testing.hilt)
     androidTestImplementation(libs.work.testing)
     kspAndroidTest(libs.hilt.compiler)
+}
+
+// Configure baseline profile generation
+baselineProfile {
+    // Don't generate on every build (only when explicitly requested)
+    automaticGenerationDuringBuild = false
+    // Save profiles in src/main (for version control)
+    saveInSrc = true
+    // Filter out test-only classes
+    filter {
+        include("com.restock.**")
+    }
 }
