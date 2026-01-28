@@ -150,4 +150,18 @@ interface PurchaseDao {
      */
     @Query("SELECT COUNT(*) FROM purchases")
     suspend fun getTotalCount(): Int
+
+    /**
+     * Get count of distinct days with purchases.
+     *
+     * Used to determine shopping trip count for learning state.
+     * Each unique day with at least one purchase counts as a shopping trip.
+     */
+    @Query(
+        """
+        SELECT COUNT(DISTINCT DATE(purchased_at / 1000, 'unixepoch'))
+        FROM purchases
+    """,
+    )
+    suspend fun getDistinctPurchaseDays(): Int
 }

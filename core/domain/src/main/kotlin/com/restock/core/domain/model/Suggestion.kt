@@ -1,40 +1,62 @@
 package com.restock.core.domain.model
 
 /**
- * Domain model representing a smart suggestion.
+ * Domain model representing a smart suggestion for the user.
  *
- * Suggestions are generated from patterns when an item
- * is predicted to be needed based on purchase history.
+ * Suggestions are generated from learned purchase patterns when:
+ * - Pattern confidence >= 0.6
+ * - Days since last purchase >= avg_interval - 1
+ * - Item is not already on current list
+ * - Item is not persistently dismissed
+ *
+ * @property itemId Unique identifier for the item being suggested.
+ * @property itemName Display name of the item.
+ * @property reason Human-readable reason for the suggestion (e.g., "Usually every 7 days").
+ * @property score Combined score for prioritization (confidence × (1 + urgency_factor)).
+ * @property confidence Pattern confidence score (0.0 to 1.0).
+ * @property daysSinceLastPurchase Number of days since the item was last purchased.
+ * @property avgIntervalDays Average interval in days between purchases.
  */
 data class Suggestion(
     val itemId: String,
     val itemName: String,
     val reason: String,
-    val confidenceScore: Double,
+    val score: Double,
+    val confidence: Double,
     val daysSinceLastPurchase: Int,
-    val expectedIntervalDays: Int,
-    val urgencyScore: Double,
+    val avgIntervalDays: Int,
 ) {
+    /**
+     * Returns true if the item is overdue (past expected purchase date).
+     */
+    val isOverdue: Boolean
+        get() = daysSinceLastPurchase > avgIntervalDays
+
+    /**
+     * Returns the number of days overdue, or 0 if not overdue.
+     */
+    val daysOverdue: Int
+        get() = (daysSinceLastPurchase - avgIntervalDays).coerceAtLeast(0)
+
     companion object {
         /**
-         * Maximum number of suggestions to show at once.
+         * Minimum confidence score required to show a suggestion.
+         */
+        const val MIN_CONFIDENCE = 0.6
+
+        /**
+         * Maximum number of suggestions to display.
          */
         const val MAX_SUGGESTIONS = 5
+
+        /**
+         * Number of consecutive dismissals before permanently hiding.
+         */
+        const val PERSISTENT_DISMISS_THRESHOLD = 3
+
+        /**
+         * Confidence reduction applied per dismissal.
+         */
+        const val CONFIDENCE_REDUCTION = 0.05f
     }
-}
-
-/**
- * Calculate urgency score based on how overdue an item is.
- *
- * Urgency = (days_since_last - expected_interval + 1) / expected_interval
- * Clamped to [0, 2] range.
- */
-fun calculateUrgencyScore(
-    daysSinceLastPurchase: Int,
-    expectedIntervalDays: Int,
-): Double {
-    if (expectedIntervalDays <= 0) return 0.0
-
-    val urgency = (daysSinceLastPurchase - expectedIntervalDays + 1).toDouble() / expectedIntervalDays
-    return urgency.coerceIn(0.0, 2.0)
 }

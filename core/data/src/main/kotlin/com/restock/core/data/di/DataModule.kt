@@ -8,6 +8,7 @@ import com.restock.core.data.database.dao.ItemDao
 import com.restock.core.data.database.dao.MealTagDao
 import com.restock.core.data.database.dao.PatternDao
 import com.restock.core.data.database.dao.PurchaseDao
+import com.restock.core.data.database.dao.SuggestionDismissalDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,5 +82,14 @@ object DataModule {
     @Singleton
     fun provideMealTagDao(database: RestockDatabase): MealTagDao {
         return database.mealTagDao()
+    }
+
+    /**
+     * Provides the SuggestionDismissalDao.
+     */
+    @Provides
+    @Singleton
+    fun provideSuggestionDismissalDao(database: RestockDatabase): SuggestionDismissalDao {
+        return database.suggestionDismissalDao()
     }
 }

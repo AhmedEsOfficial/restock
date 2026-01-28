@@ -119,4 +119,51 @@ interface PatternDao {
      */
     @Query("SELECT COUNT(*) FROM patterns")
     suspend fun getCount(): Int
+
+    /**
+     * Observe patterns above a minimum confidence score.
+     * Used for reactive suggestion generation.
+     */
+    @Query(
+        """
+        SELECT * FROM patterns
+        WHERE confidence_score >= :minConfidence
+        ORDER BY confidence_score DESC
+    """,
+    )
+    fun observePatternsAboveConfidence(minConfidence: Double): Flow<List<PatternEntity>>
+
+    /**
+     * Get patterns above a minimum confidence score.
+     * Used for one-shot suggestion generation.
+     */
+    @Query(
+        """
+        SELECT * FROM patterns
+        WHERE confidence_score >= :minConfidence
+        ORDER BY confidence_score DESC
+    """,
+    )
+    suspend fun getPatternsAboveConfidence(minConfidence: Double): List<PatternEntity>
+
+    /**
+     * Reduce pattern confidence by a specified amount.
+     *
+     * Used when a suggestion is dismissed.
+     * Confidence is clamped to a minimum of 0.0.
+     *
+     * @param itemId The ID of the item whose pattern to update.
+     * @param reduction The amount to reduce confidence by (typically 0.05).
+     */
+    @Query(
+        """
+        UPDATE patterns
+        SET confidence_score = MAX(0.0, confidence_score - :reduction)
+        WHERE item_id = :itemId
+    """,
+    )
+    suspend fun reduceConfidence(
+        itemId: String,
+        reduction: Float,
+    )
 }

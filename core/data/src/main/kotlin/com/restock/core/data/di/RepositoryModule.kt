@@ -5,11 +5,13 @@ import com.restock.core.data.repository.ItemRepositoryImpl
 import com.restock.core.data.repository.MealTagRepositoryImpl
 import com.restock.core.data.repository.PatternRepositoryImpl
 import com.restock.core.data.repository.PurchaseRepositoryImpl
+import com.restock.core.data.repository.SuggestionRepositoryImpl
 import com.restock.core.domain.repository.CurrentListRepository
 import com.restock.core.domain.repository.ItemRepository
 import com.restock.core.domain.repository.MealTagRepository
 import com.restock.core.domain.repository.PatternRepository
 import com.restock.core.domain.repository.PurchaseRepository
+import com.restock.core.domain.repository.SuggestionRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -62,4 +64,11 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindMealTagRepository(impl: MealTagRepositoryImpl): MealTagRepository
+
+    /**
+     * Binds [SuggestionRepositoryImpl] to [SuggestionRepository] interface.
+     */
+    @Binds
+    @Singleton
+    abstract fun bindSuggestionRepository(impl: SuggestionRepositoryImpl): SuggestionRepository
 }

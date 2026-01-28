@@ -9,11 +9,13 @@ import com.restock.core.data.database.dao.ItemDao
 import com.restock.core.data.database.dao.MealTagDao
 import com.restock.core.data.database.dao.PatternDao
 import com.restock.core.data.database.dao.PurchaseDao
+import com.restock.core.data.database.dao.SuggestionDismissalDao
 import com.restock.core.data.database.entity.CurrentListEntity
 import com.restock.core.data.database.entity.ItemEntity
 import com.restock.core.data.database.entity.MealTagEntity
 import com.restock.core.data.database.entity.PatternEntity
 import com.restock.core.data.database.entity.PurchaseEntity
+import com.restock.core.data.database.entity.SuggestionDismissalEntity
 
 /**
  * Room database for Restock application.
@@ -24,6 +26,7 @@ import com.restock.core.data.database.entity.PurchaseEntity
  * - purchases: Purchase history for pattern learning
  * - patterns: Learned purchase patterns
  * - meal_tags: Item-to-meal associations
+ * - suggestion_dismissals: Track dismissed suggestions
  */
 @Database(
     entities = [
@@ -32,8 +35,9 @@ import com.restock.core.data.database.entity.PurchaseEntity
         PurchaseEntity::class,
         PatternEntity::class,
         MealTagEntity::class,
+        SuggestionDismissalEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -47,6 +51,8 @@ abstract class RestockDatabase : RoomDatabase() {
     abstract fun patternDao(): PatternDao
 
     abstract fun mealTagDao(): MealTagDao
+
+    abstract fun suggestionDismissalDao(): SuggestionDismissalDao
 
     companion object {
         const val DATABASE_NAME = "restock_database"

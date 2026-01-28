@@ -133,6 +133,13 @@ interface CurrentListDao {
     suspend fun getCurrentItemIds(): List<String>
 
     /**
+     * Observe the IDs of all items currently in the list.
+     * Used for reactive suggestion filtering.
+     */
+    @Query("SELECT DISTINCT item_id FROM current_list")
+    fun observeCurrentItemIds(): Flow<List<String>>
+
+    /**
      * Get the maximum position in the list.
      */
     @Query("SELECT COALESCE(MAX(position), -1) FROM current_list")
