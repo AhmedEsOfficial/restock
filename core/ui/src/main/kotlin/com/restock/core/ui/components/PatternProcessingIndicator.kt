@@ -115,15 +115,16 @@ fun PatternProcessingIndicator(
             shape = RoundedCornerShape(0.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = RestockSpacing.md,
-                        vertical = RestockSpacing.sm,
-                    )
-                    .semantics {
-                        contentDescription = "Processing: $message"
-                    },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = RestockSpacing.md,
+                            vertical = RestockSpacing.sm,
+                        )
+                        .semantics {
+                            contentDescription = "Processing: $message"
+                        },
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -157,35 +158,40 @@ private fun AnimatedProcessingIndicator() {
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.15f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = PULSE_ANIMATION_DURATION_MS,
-                easing = LinearEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = PULSE_ANIMATION_DURATION_MS,
+                        easing = LinearEasing,
+                    ),
+                repeatMode = RepeatMode.Reverse,
             ),
-            repeatMode = RepeatMode.Reverse,
-        ),
         label = "scale",
     )
 
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.7f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = PULSE_ANIMATION_DURATION_MS,
-                easing = LinearEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = PULSE_ANIMATION_DURATION_MS,
+                        easing = LinearEasing,
+                    ),
+                repeatMode = RepeatMode.Reverse,
             ),
-            repeatMode = RepeatMode.Reverse,
-        ),
         label = "alpha",
     )
 
     Text(
         text = "\uD83E\uDDE0", // 🧠 brain emoji
         style = MaterialTheme.typography.labelMedium,
-        modifier = Modifier
-            .scale(scale)
-            .alpha(alpha),
+        modifier =
+            Modifier
+                .scale(scale)
+                .alpha(alpha),
     )
 }
 
@@ -302,25 +308,28 @@ private fun ProcessingDot(
     val alpha by infiniteTransition.animateFloat(
         initialValue = if (animate) 0.3f else 0.6f,
         targetValue = if (animate) 1f else 0.6f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = DOT_ANIMATION_DURATION_MS,
-                delayMillis = index * DOT_STAGGER_DELAY_MS,
-                easing = LinearEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = DOT_ANIMATION_DURATION_MS,
+                        delayMillis = index * DOT_STAGGER_DELAY_MS,
+                        easing = LinearEasing,
+                    ),
+                repeatMode = RepeatMode.Reverse,
             ),
-            repeatMode = RepeatMode.Reverse,
-        ),
         label = "dot_alpha_$index",
     )
 
     Box(
-        modifier = Modifier
-            .size(4.dp)
-            .alpha(alpha)
-            .background(
-                color = RestockColors.Accent,
-                shape = CircleShape,
-            ),
+        modifier =
+            Modifier
+                .size(4.dp)
+                .alpha(alpha)
+                .background(
+                    color = RestockColors.Accent,
+                    shape = CircleShape,
+                ),
     )
 }
 
@@ -379,9 +388,10 @@ private fun PatternProcessingIndicatorCustomMessagePreview() {
 private fun CompactPatternProcessingIndicatorPreview() {
     RestockPreviewTheme {
         Row(
-            modifier = Modifier
-                .background(RestockColors.Background)
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .background(RestockColors.Background)
+                    .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -396,9 +406,10 @@ private fun CompactPatternProcessingIndicatorPreview() {
 private fun PatternProcessingDotsPreview() {
     RestockPreviewTheme {
         Row(
-            modifier = Modifier
-                .background(RestockColors.Background)
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .background(RestockColors.Background)
+                    .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
@@ -417,9 +428,10 @@ private fun PatternProcessingDotsPreview() {
 private fun AllProcessingIndicatorsPreview() {
     RestockPreviewTheme {
         Column(
-            modifier = Modifier
-                .background(RestockColors.Background)
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .background(RestockColors.Background)
+                    .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             Text(

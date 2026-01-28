@@ -238,9 +238,10 @@ fun LearningCheckbox(
     }
 
     // Generate sparkle particles when triggered
-    val sparkles = remember(animationTriggerKey) {
-        if (animationTriggerKey > 0) generateCheckboxSparkles() else emptyList()
-    }
+    val sparkles =
+        remember(animationTriggerKey) {
+            if (animationTriggerKey > 0) generateCheckboxSparkles() else emptyList()
+        }
 
     // Sparkle animation progress
     val sparkleProgress = remember { Animatable(0f) }
@@ -250,10 +251,11 @@ fun LearningCheckbox(
             sparkleProgress.snapTo(0f)
             sparkleProgress.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(
-                    durationMillis = SPARKLE_ANIMATION_DURATION_MS,
-                    easing = EaseOut,
-                ),
+                animationSpec =
+                    tween(
+                        durationMillis = SPARKLE_ANIMATION_DURATION_MS,
+                        easing = EaseOut,
+                    ),
             )
         }
     }
@@ -266,38 +268,42 @@ fun LearningCheckbox(
             glowAlpha.snapTo(0f)
             glowAlpha.animateTo(
                 targetValue = 0.35f,
-                animationSpec = tween(
-                    durationMillis = GLOW_ANIMATION_DURATION_MS,
-                    easing = EaseOut,
-                ),
+                animationSpec =
+                    tween(
+                        durationMillis = GLOW_ANIMATION_DURATION_MS,
+                        easing = EaseOut,
+                    ),
             )
             glowAlpha.animateTo(
                 targetValue = 0f,
-                animationSpec = tween(
-                    durationMillis = GLOW_FADE_OUT_DURATION_MS,
-                    easing = EaseOut,
-                ),
+                animationSpec =
+                    tween(
+                        durationMillis = GLOW_FADE_OUT_DURATION_MS,
+                        easing = EaseOut,
+                    ),
             )
         }
     }
 
     // Checkbox visual animations
     val backgroundColor by animateColorAsState(
-        targetValue = when {
-            !enabled -> RestockColors.Disabled
-            checked -> RestockColors.Success
-            else -> Color.Transparent
-        },
+        targetValue =
+            when {
+                !enabled -> RestockColors.Disabled
+                checked -> RestockColors.Success
+                else -> Color.Transparent
+            },
         animationSpec = tween(durationMillis = CHECKBOX_ANIMATION_DURATION_MS),
         label = "checkbox_background",
     )
 
     val borderColor by animateColorAsState(
-        targetValue = when {
-            !enabled -> RestockColors.Disabled
-            checked -> RestockColors.Success
-            else -> RestockColors.Muted
-        },
+        targetValue =
+            when {
+                !enabled -> RestockColors.Disabled
+                checked -> RestockColors.Success
+                else -> RestockColors.Muted
+            },
         animationSpec = tween(durationMillis = CHECKBOX_ANIMATION_DURATION_MS),
         label = "checkbox_border",
     )
@@ -311,64 +317,70 @@ fun LearningCheckbox(
     val checkboxShape = RoundedCornerShape(CheckboxCornerRadius)
 
     Box(
-        modifier = modifier
-            .size(CheckboxTouchTarget)
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(
-                interactionSource = interactionSource,
-                indication = ripple(bounded = true),
-                enabled = enabled,
-                role = Role.Checkbox,
-                onClick = { onCheckedChange(!checked) },
-            )
-            .semantics {
-                contentDescription?.let {
-                    this.contentDescription = it
-                }
-                stateDescription = if (checked) "Checked" else "Unchecked"
-            },
+        modifier =
+            modifier
+                .size(CheckboxTouchTarget)
+                .clip(RoundedCornerShape(8.dp))
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = ripple(bounded = true),
+                    enabled = enabled,
+                    role = Role.Checkbox,
+                    onClick = { onCheckedChange(!checked) },
+                )
+                .semantics {
+                    contentDescription?.let {
+                        this.contentDescription = it
+                    }
+                    stateDescription = if (checked) "Checked" else "Unchecked"
+                },
         contentAlignment = Alignment.Center,
     ) {
         // Glow effect behind checkbox
         if (effectiveLearningFeedback && glowAlpha.value > 0f) {
             Box(
-                modifier = Modifier
-                    .size(size + 16.dp)
-                    .drawBehind {
-                        val gradient = Brush.radialGradient(
-                            colors = listOf(
-                                feedbackColor.copy(alpha = glowAlpha.value),
-                                feedbackColor.copy(alpha = glowAlpha.value * 0.4f),
-                                Color.Transparent,
-                            ),
-                            center = center,
-                            radius = this.size.minDimension / 2,
-                        )
-                        drawCircle(brush = gradient)
-                    },
+                modifier =
+                    Modifier
+                        .size(size + 16.dp)
+                        .drawBehind {
+                            val gradient =
+                                Brush.radialGradient(
+                                    colors =
+                                        listOf(
+                                            feedbackColor.copy(alpha = glowAlpha.value),
+                                            feedbackColor.copy(alpha = glowAlpha.value * 0.4f),
+                                            Color.Transparent,
+                                        ),
+                                    center = center,
+                                    radius = this.size.minDimension / 2,
+                                )
+                            drawCircle(brush = gradient)
+                        },
             )
         }
 
         // Checkbox visual
         Box(
-            modifier = Modifier
-                .size(size)
-                .clip(checkboxShape)
-                .background(backgroundColor)
-                .border(
-                    width = CheckboxBorderWidth,
-                    color = borderColor,
-                    shape = checkboxShape,
-                ),
+            modifier =
+                Modifier
+                    .size(size)
+                    .clip(checkboxShape)
+                    .background(backgroundColor)
+                    .border(
+                        width = CheckboxBorderWidth,
+                        color = borderColor,
+                        shape = checkboxShape,
+                    ),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
                 tint = Color.White,
-                modifier = Modifier
-                    .size(CheckmarkSize)
-                    .scale(checkmarkScale),
+                modifier =
+                    Modifier
+                        .size(CheckmarkSize)
+                        .scale(checkmarkScale),
             )
         }
 
@@ -428,13 +440,14 @@ fun LearningLabeledCheckbox(
     contentDescription: String? = null,
 ) {
     Row(
-        modifier = modifier
-            .clickable(
-                enabled = enabled,
-                onClick = { onCheckedChange(!checked) },
-                role = Role.Checkbox,
-            )
-            .padding(vertical = 4.dp),
+        modifier =
+            modifier
+                .clickable(
+                    enabled = enabled,
+                    onClick = { onCheckedChange(!checked) },
+                    role = Role.Checkbox,
+                )
+                .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         LearningCheckbox(
@@ -449,17 +462,19 @@ fun LearningLabeledCheckbox(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = when {
-                !enabled && checked -> RestockColors.Muted
-                !enabled -> RestockColors.Disabled
-                checked -> RestockColors.Muted
-                else -> RestockColors.OnSurface
-            },
-            textDecoration = if (checked) {
-                androidx.compose.ui.text.style.TextDecoration.LineThrough
-            } else {
-                null
-            },
+            color =
+                when {
+                    !enabled && checked -> RestockColors.Muted
+                    !enabled -> RestockColors.Disabled
+                    checked -> RestockColors.Muted
+                    else -> RestockColors.OnSurface
+                },
+            textDecoration =
+                if (checked) {
+                    androidx.compose.ui.text.style.TextDecoration.LineThrough
+                } else {
+                    null
+                },
         )
     }
 }

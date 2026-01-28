@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.ui.Alignment
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -24,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +36,7 @@ import com.restock.core.ui.components.LearningSparkle
 import com.restock.core.ui.components.LearningStatusBanner
 import com.restock.core.ui.components.MealTagChip
 import com.restock.core.ui.components.MealType
+import com.restock.core.ui.components.NoSuggestionsStateCompact
 import com.restock.core.ui.components.RestockBottomNavigation
 import com.restock.core.ui.components.RestockButton
 import com.restock.core.ui.components.RestockCard
@@ -54,6 +55,7 @@ import com.restock.core.ui.components.RestockSmartBadge
 import com.restock.core.ui.components.RestockSnackbar
 import com.restock.core.ui.components.RestockTextButton
 import com.restock.core.ui.components.RestockTextField
+import com.restock.core.ui.components.SuggestionCardStateless
 import com.restock.core.ui.theme.RestockColors
 import com.restock.core.ui.theme.RestockTheme
 
@@ -95,7 +97,7 @@ private fun ComponentLabel(label: String) {
     showBackground = true,
     backgroundColor = 0xFFFFFBF5,
     widthDp = 400,
-    heightDp = 2600,
+    heightDp = 3000,
 )
 @Composable
 fun ComponentGalleryPreview() {
@@ -390,6 +392,51 @@ fun ComponentGalleryPreview() {
             Spacer(modifier = Modifier.height(12.dp))
             ComponentLabel("Generic Chip")
             RestockChip(text = "Custom Chip", color = RestockColors.Info)
+
+            // Suggestion Cards Section
+            SectionHeader("Suggestion Cards")
+
+            ComponentLabel("Standard Suggestion Cards")
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+            ) {
+                SuggestionCardStateless(
+                    itemName = "Milk",
+                    reason = "Usually every 7 days",
+                    onAccept = {},
+                    onDismiss = {},
+                )
+                SuggestionCardStateless(
+                    itemName = "Eggs",
+                    reason = "Last bought 20 days ago",
+                    onAccept = {},
+                    onDismiss = {},
+                )
+                SuggestionCardStateless(
+                    itemName = "Bread",
+                    reason = "Usually every 5 days",
+                    onAccept = {},
+                    onDismiss = {},
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("Long Item Name")
+            SuggestionCardStateless(
+                itemName = "Extra Large Organic Free-Range Eggs",
+                reason = "Usually every 2 weeks",
+                onAccept = {},
+                onDismiss = {},
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ComponentLabel("No Suggestions States")
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                NoSuggestionsStateCompact(tripCount = 0)
+                NoSuggestionsStateCompact(tripCount = 2)
+                NoSuggestionsStateCompact(tripCount = 5)
+            }
 
             // Loading Indicators Section
             SectionHeader("Loading Indicators")

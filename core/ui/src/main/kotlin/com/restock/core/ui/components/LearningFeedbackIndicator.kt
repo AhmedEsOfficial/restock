@@ -6,7 +6,6 @@ import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -222,9 +221,10 @@ fun LearningSparkle(
     }
 
     // Generate new particles each time animation key changes
-    val particles = remember(animationKey) {
-        if (animationKey > 0) generateSparkleParticles() else emptyList()
-    }
+    val particles =
+        remember(animationKey) {
+            if (animationKey > 0) generateSparkleParticles() else emptyList()
+        }
 
     // Animate progress from 0 to 1
     val progress = remember { Animatable(0f) }
@@ -234,21 +234,23 @@ fun LearningSparkle(
             progress.snapTo(0f)
             progress.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(
-                    durationMillis = SPARKLE_ANIMATION_DURATION_MS,
-                    easing = EaseOut,
-                ),
+                animationSpec =
+                    tween(
+                        durationMillis = SPARKLE_ANIMATION_DURATION_MS,
+                        easing = EaseOut,
+                    ),
             )
         }
     }
 
     if (particles.isNotEmpty() && progress.value < 1f) {
         Canvas(
-            modifier = modifier
-                .size(size)
-                .semantics {
-                    contentDescription = "Learning indicator"
-                },
+            modifier =
+                modifier
+                    .size(size)
+                    .semantics {
+                        contentDescription = "Learning indicator"
+                    },
         ) {
             particles.forEach { particle ->
                 drawSparkleParticle(particle, progress.value, color)
@@ -318,38 +320,43 @@ fun LearningGlow(
             // Quick fade in
             glowAlpha.animateTo(
                 targetValue = 0.4f,
-                animationSpec = tween(
-                    durationMillis = GLOW_ANIMATION_DURATION_MS,
-                    easing = EaseOut,
-                ),
+                animationSpec =
+                    tween(
+                        durationMillis = GLOW_ANIMATION_DURATION_MS,
+                        easing = EaseOut,
+                    ),
             )
             // Slower fade out
             glowAlpha.animateTo(
                 targetValue = 0f,
-                animationSpec = tween(
-                    durationMillis = GLOW_FADE_DURATION_MS,
-                    easing = EaseOut,
-                ),
+                animationSpec =
+                    tween(
+                        durationMillis = GLOW_FADE_DURATION_MS,
+                        easing = EaseOut,
+                    ),
             )
         }
     }
 
     if (glowAlpha.value > 0f) {
         Box(
-            modifier = modifier
-                .size(size)
-                .drawBehind {
-                    val gradient = Brush.radialGradient(
-                        colors = listOf(
-                            color.copy(alpha = glowAlpha.value),
-                            color.copy(alpha = glowAlpha.value * 0.5f),
-                            Color.Transparent,
-                        ),
-                        center = center,
-                        radius = this.size.minDimension / 2,
-                    )
-                    drawCircle(brush = gradient)
-                },
+            modifier =
+                modifier
+                    .size(size)
+                    .drawBehind {
+                        val gradient =
+                            Brush.radialGradient(
+                                colors =
+                                    listOf(
+                                        color.copy(alpha = glowAlpha.value),
+                                        color.copy(alpha = glowAlpha.value * 0.5f),
+                                        Color.Transparent,
+                                    ),
+                                center = center,
+                                radius = this.size.minDimension / 2,
+                            )
+                        drawCircle(brush = gradient)
+                    },
         )
     }
 }
@@ -395,12 +402,13 @@ fun LearningStatusBanner(
     // Don't show after enough trips or if explicitly hidden
     val shouldShow = visible && shoppingTripCount < TRIPS_FOR_SUGGESTIONS
 
-    val message = when (shoppingTripCount) {
-        0 -> "Start adding items to begin learning your patterns"
-        1 -> "Learning your patterns..."
-        2 -> "Almost ready to suggest items!"
-        else -> ""
-    }
+    val message =
+        when (shoppingTripCount) {
+            0 -> "Start adding items to begin learning your patterns"
+            1 -> "Learning your patterns..."
+            2 -> "Almost ready to suggest items!"
+            else -> ""
+        }
 
     AnimatedVisibility(
         visible = shouldShow && message.isNotEmpty(),
@@ -413,14 +421,15 @@ fun LearningStatusBanner(
             shape = RoundedCornerShape(0.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .padding(
-                        horizontal = RestockSpacing.md,
-                        vertical = RestockSpacing.sm,
-                    )
-                    .semantics {
-                        contentDescription = "Learning status: $message"
-                    },
+                modifier =
+                    Modifier
+                        .padding(
+                            horizontal = RestockSpacing.md,
+                            vertical = RestockSpacing.sm,
+                        )
+                        .semantics {
+                            contentDescription = "Learning status: $message"
+                        },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 // Brain emoji with subtle pulse
@@ -446,9 +455,7 @@ fun LearningStatusBanner(
  * Respects reduced motion preferences by showing a static icon.
  */
 @Composable
-private fun LearningBrainIcon(
-    modifier: Modifier = Modifier,
-) {
+private fun LearningBrainIcon(modifier: Modifier = Modifier) {
     val reduceMotion = rememberReducedMotion()
 
     if (reduceMotion) {
@@ -466,37 +473,42 @@ private fun LearningBrainIcon(
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = BRAIN_PULSE_DURATION_MS,
-                easing = LinearEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = BRAIN_PULSE_DURATION_MS,
+                        easing = LinearEasing,
+                    ),
+                repeatMode = RepeatMode.Reverse,
             ),
-            repeatMode = RepeatMode.Reverse,
-        ),
         label = "brain_scale",
     )
 
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.7f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = BRAIN_PULSE_DURATION_MS,
-                easing = LinearEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = BRAIN_PULSE_DURATION_MS,
+                        easing = LinearEasing,
+                    ),
+                repeatMode = RepeatMode.Reverse,
             ),
-            repeatMode = RepeatMode.Reverse,
-        ),
         label = "brain_alpha",
     )
 
     Text(
         text = "\uD83E\uDDE0", // 🧠 brain emoji
         style = MaterialTheme.typography.bodySmall,
-        modifier = modifier
-            .alpha(alpha)
-            .drawBehind {
-                // Scale is applied via the drawing, not Modifier.scale, for better performance
-            },
+        modifier =
+            modifier
+                .alpha(alpha)
+                .drawBehind {
+                    // Scale is applied via the drawing, not Modifier.scale, for better performance
+                },
     )
 }
 
@@ -565,11 +577,12 @@ fun LearningNotedBadge(
 
     if (showBadge) {
         Box(
-            modifier = modifier
-                .alpha(badgeAlpha.value)
-                .clip(RoundedCornerShape(4.dp))
-                .background(RestockColors.Accent.copy(alpha = 0.15f))
-                .padding(horizontal = 6.dp, vertical = 2.dp),
+            modifier =
+                modifier
+                    .alpha(badgeAlpha.value)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(RestockColors.Accent.copy(alpha = 0.15f))
+                    .padding(horizontal = 6.dp, vertical = 2.dp),
         ) {
             Text(
                 text = text,
@@ -607,11 +620,12 @@ val DefaultLearningFeedbackConfig = LearningFeedbackConfig()
 /**
  * Disabled configuration for when user has opted out of learning feedback.
  */
-val DisabledLearningFeedbackConfig = LearningFeedbackConfig(
-    showSparkle = false,
-    showGlow = false,
-    showBadge = false,
-)
+val DisabledLearningFeedbackConfig =
+    LearningFeedbackConfig(
+        showSparkle = false,
+        showGlow = false,
+        showBadge = false,
+    )
 
 /**
  * Modifier extension that adds learning feedback overlay effects.
@@ -833,10 +847,11 @@ private fun LearningFeedbackOverlayPreview() {
 
             LearningFeedbackOverlay(
                 trigger = trigger,
-                config = LearningFeedbackConfig(
-                    showSparkle = true,
-                    showGlow = true,
-                ),
+                config =
+                    LearningFeedbackConfig(
+                        showSparkle = true,
+                        showGlow = true,
+                    ),
             ) {
                 RestockCheckbox(
                     checked = trigger,

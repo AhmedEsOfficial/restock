@@ -6,8 +6,6 @@ import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -109,16 +107,17 @@ private data class ConfettiPiece(
  * @return List of [ConfettiPiece] with randomized properties.
  */
 private fun generateConfetti(screenWidth: Float): List<ConfettiPiece> {
-    val colors = listOf(
-        RestockColors.Success,
-        RestockColors.Accent,
-        RestockColors.Breakfast,
-        RestockColors.Lunch,
-        RestockColors.Dinner,
-        RestockColors.Snack,
-        Color(0xFF60A5FA), // Light blue
-        Color(0xFFA78BFA), // Purple
-    )
+    val colors =
+        listOf(
+            RestockColors.Success,
+            RestockColors.Accent,
+            RestockColors.Breakfast,
+            RestockColors.Lunch,
+            RestockColors.Dinner,
+            RestockColors.Snack,
+            Color(0xFF60A5FA), // Light blue
+            Color(0xFFA78BFA), // Purple
+        )
 
     return List(CONFETTI_COUNT) {
         ConfettiPiece(
@@ -267,50 +266,55 @@ private fun FullCelebration(
     LaunchedEffect(Unit) {
         progress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(
-                durationMillis = CELEBRATION_DURATION_MS,
-                easing = EaseOut,
-            ),
+            animationSpec =
+                tween(
+                    durationMillis = CELEBRATION_DURATION_MS,
+                    easing = EaseOut,
+                ),
         )
         onDismiss()
     }
 
     // Message visibility
     val showMessage = progress.value < 0.8f
-    val messageAlpha = if (progress.value > 0.7f) {
-        1f - ((progress.value - 0.7f) / 0.1f).coerceIn(0f, 1f)
-    } else {
-        1f
-    }
+    val messageAlpha =
+        if (progress.value > 0.7f) {
+            1f - ((progress.value - 0.7f) / 0.1f).coerceIn(0f, 1f)
+        } else {
+            1f
+        }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onDismiss,
-            )
-            .semantics {
-                contentDescription = "Celebration: $message. Tap to dismiss."
-            },
+        modifier =
+            modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onDismiss,
+                )
+                .semantics {
+                    contentDescription = "Celebration: $message. Tap to dismiss."
+                },
         contentAlignment = Alignment.Center,
     ) {
         // Confetti layer
         Canvas(modifier = Modifier.fillMaxSize()) {
             confettiPieces.forEach { piece ->
-                val (x, y, rotation) = calculateConfettiPosition(
-                    piece = piece,
-                    progress = progress.value,
-                    screenHeight = screenHeight,
-                )
+                val (x, y, rotation) =
+                    calculateConfettiPosition(
+                        piece = piece,
+                        progress = progress.value,
+                        screenHeight = screenHeight,
+                    )
 
                 // Fade out as confetti falls off screen
-                val alpha = if (y > screenHeight * 0.8f) {
-                    1f - ((y - screenHeight * 0.8f) / (screenHeight * 0.2f)).coerceIn(0f, 1f)
-                } else {
-                    (1f - progress.value * 0.3f).coerceIn(0f, 1f)
-                }
+                val alpha =
+                    if (y > screenHeight * 0.8f) {
+                        1f - ((y - screenHeight * 0.8f) / (screenHeight * 0.2f)).coerceIn(0f, 1f)
+                    } else {
+                        (1f - progress.value * 0.3f).coerceIn(0f, 1f)
+                    }
 
                 // Draw based on shape
                 when (piece.shape) {
@@ -378,19 +382,20 @@ private fun ReducedMotionCelebration(
         modifier = modifier.fillMaxSize(),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = {
-                        visible = false
-                        onDismiss()
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {
+                            visible = false
+                            onDismiss()
+                        },
+                    )
+                    .semantics {
+                        contentDescription = "Celebration: $message. Tap to dismiss."
                     },
-                )
-                .semantics {
-                    contentDescription = "Celebration: $message. Tap to dismiss."
-                },
             contentAlignment = Alignment.Center,
         ) {
             CelebrationMessage(message = message, alpha = 1f)
@@ -408,11 +413,12 @@ private fun CelebrationMessage(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .graphicsLayer { this.alpha = alpha }
-            .clip(RoundedCornerShape(16.dp))
-            .background(RestockColors.Surface.copy(alpha = 0.95f))
-            .padding(horizontal = RestockSpacing.lg, vertical = RestockSpacing.md),
+        modifier =
+            modifier
+                .graphicsLayer { this.alpha = alpha }
+                .clip(RoundedCornerShape(16.dp))
+                .background(RestockColors.Surface.copy(alpha = 0.95f))
+                .padding(horizontal = RestockSpacing.lg, vertical = RestockSpacing.md),
         contentAlignment = Alignment.Center,
     ) {
         Column(
@@ -440,9 +446,10 @@ private fun CelebrationMessage(
 private fun ListCompleteCelebrationPreview() {
     RestockPreviewTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(RestockColors.Background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(RestockColors.Background),
         ) {
             ListCompleteCelebration(
                 show = true,
@@ -457,9 +464,10 @@ private fun ListCompleteCelebrationPreview() {
 private fun CelebrationMessagePreview() {
     RestockPreviewTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(RestockColors.Background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(RestockColors.Background),
             contentAlignment = Alignment.Center,
         ) {
             CelebrationMessage(
@@ -475,9 +483,10 @@ private fun CelebrationMessagePreview() {
 private fun CelebrationMessageCustomPreview() {
     RestockPreviewTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(RestockColors.Background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(RestockColors.Background),
             contentAlignment = Alignment.Center,
         ) {
             CelebrationMessage(

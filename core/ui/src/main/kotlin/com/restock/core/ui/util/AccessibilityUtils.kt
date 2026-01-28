@@ -64,26 +64,28 @@ fun rememberReducedMotion(): Boolean {
 
     return remember {
         // Check if animations are disabled via developer options
-        val animatorDurationScale = try {
-            Settings.Global.getFloat(
-                context.contentResolver,
-                Settings.Global.ANIMATOR_DURATION_SCALE,
-                1f,
-            )
-        } catch (_: Exception) {
-            1f
-        }
+        val animatorDurationScale =
+            try {
+                Settings.Global.getFloat(
+                    context.contentResolver,
+                    Settings.Global.ANIMATOR_DURATION_SCALE,
+                    1f,
+                )
+            } catch (_: Exception) {
+                1f
+            }
 
         // Check if transition animations are disabled
-        val transitionAnimationScale = try {
-            Settings.Global.getFloat(
-                context.contentResolver,
-                Settings.Global.TRANSITION_ANIMATION_SCALE,
-                1f,
-            )
-        } catch (_: Exception) {
-            1f
-        }
+        val transitionAnimationScale =
+            try {
+                Settings.Global.getFloat(
+                    context.contentResolver,
+                    Settings.Global.TRANSITION_ANIMATION_SCALE,
+                    1f,
+                )
+            } catch (_: Exception) {
+                1f
+            }
 
         // Check accessibility services that may indicate motion sensitivity
         val accessibilityManager = context.getSystemService<AccessibilityManager>()

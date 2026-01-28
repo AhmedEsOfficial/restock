@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Icon
@@ -194,13 +195,18 @@ fun RestockSuggestionsEmptyState(modifier: Modifier = Modifier) {
  * - 1-2 trips: "Almost ready!" with countdown to suggestions
  * - 3+ trips: "No suggestions right now" with reassurance
  *
+ * The icon is optional and defaults to a lightbulb for visual consistency with
+ * the "smart suggestions" concept.
+ *
  * @param modifier Modifier to be applied to the container.
  * @param tripCount The number of shopping trips completed.
+ * @param showIcon Whether to display the lightbulb icon. Defaults to true.
  */
 @Composable
 fun NoSuggestionsState(
     modifier: Modifier = Modifier,
     tripCount: Int = 0,
+    showIcon: Boolean = true,
 ) {
     val (title, description) =
         when {
@@ -227,8 +233,47 @@ fun NoSuggestionsState(
     RestockEmptyState(
         title = title,
         description = description,
+        icon = if (showIcon) Icons.Outlined.Lightbulb else null,
         modifier = modifier,
     )
+}
+
+/**
+ * Compact version of NoSuggestionsState for inline use.
+ *
+ * Use this when you need a smaller, inline empty state for the suggestions
+ * section without the full empty state layout.
+ *
+ * @param modifier Modifier to be applied to the container.
+ * @param tripCount The number of shopping trips completed.
+ */
+@Composable
+fun NoSuggestionsStateCompact(
+    modifier: Modifier = Modifier,
+    tripCount: Int = 0,
+) {
+    val message =
+        when {
+            tripCount < 1 -> "Learning your patterns..."
+            tripCount < 3 -> {
+                val remaining = 3 - tripCount
+                val suffix = if (remaining == 1) "" else "s"
+                "After $remaining more trip$suffix, suggestions will appear"
+            }
+            else -> "You're all stocked up!"
+        }
+
+    Column(
+        modifier = modifier.padding(RestockSpacing.md),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodySmall,
+            color = RestockColors.Muted,
+            textAlign = TextAlign.Center,
+        )
+    }
 }
 
 /**
@@ -426,6 +471,26 @@ private fun NoSuggestionsStateAlmostReadyPreview() {
 private fun NoSuggestionsStateStockedUpPreview() {
     RestockPreviewTheme {
         NoSuggestionsState(tripCount = 5)
+    }
+}
+
+@LightPreview
+@Composable
+private fun NoSuggestionsStateNoIconPreview() {
+    RestockPreviewTheme {
+        NoSuggestionsState(tripCount = 1, showIcon = false)
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun NoSuggestionsStateCompactPreview() {
+    RestockPreviewTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            NoSuggestionsStateCompact(tripCount = 0)
+            NoSuggestionsStateCompact(tripCount = 2)
+            NoSuggestionsStateCompact(tripCount = 5)
+        }
     }
 }
 
