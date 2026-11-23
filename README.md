@@ -117,4 +117,4 @@ Design and planning material lives in [`docs/`](docs/README.md): product design 
 
 ## License
 
-All rights reserved — license TBD.
+MIT — see [LICENSE](LICENSE).
